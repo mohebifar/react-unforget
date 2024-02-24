@@ -1,5 +1,5 @@
 import * as babel from "@babel/core";
-import type t from "@babel/types";
+import type * as t from "@babel/types";
 import traverse from "@babel/traverse";
 
 export function transform(

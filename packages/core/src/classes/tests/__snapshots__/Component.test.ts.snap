@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ComponentVariable applyModification adds a cache variable declaration 1`] = `
+"function MyComponent({
+  someProp
+}) {
+  /*
+  0: myDerivedVariable
+  1: state
+  2: setState
+  3: someProp
+  */
+  const _$unforget = useCreateCache$unforget(4);
+  const [state, setState] = useState(0);
+  const myDerivedVariable = state + 1;
+  const unusedVariable = 1;
+  return <div>{myDerivedVariable} {someProp}</div>;
+}"
+`;

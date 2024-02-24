@@ -1,12 +1,13 @@
 import traverse from "@babel/traverse";
 import { getReturnsOfFunction } from "./utils/get-returns-of-function";
+import { Component } from "./classes/Component";
 
 function doesIdMatchComponentName(name: string) {
   return /^_?[A-Z][a-z0-9_]*+$/.test(name);
 }
 
-export function findComponent(program: babel.types.Program) {
-  const components: babel.NodePath<babel.types.Function>[] = [];
+export function findComponents(program: babel.types.Program) {
+  const components: Component[] = [];
 
   traverse(program, {
     Function(path) {
@@ -44,7 +45,9 @@ export function findComponent(program: babel.types.Program) {
       });
 
       if (allReturnsMatch) {
-        components.push(path);
+        components.push(
+          new Component(path as babel.NodePath<babel.types.Function>)
+        );
       }
     },
   });

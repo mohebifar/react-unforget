@@ -1,9 +1,7 @@
-import t from "@babel/types";
-import traverse from "@babel/traverse";
 import { getFunctionParent } from "./get-function-parent";
 
-export function getReturnsOfFunction(fn: babel.NodePath<t.Function>) {
-  const returns: babel.NodePath<t.ReturnStatement>[] = [];
+export function getReturnsOfFunction(fn: babel.NodePath<babel.types.Function>) {
+  const returns: babel.NodePath<babel.types.ReturnStatement>[] = [];
 
   fn.traverse({
     ReturnStatement(path) {

@@ -1,7 +1,11 @@
 {
   "extends": "@react-unforget/typescript-config/react-library.json",
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": false,
+    "baseUrl": "./src",
+    "paths": {
+      "~/*": ["./*"]
+    }
   },
   "exclude": ["node_modules"]
 }

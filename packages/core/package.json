@@ -1,0 +1,25 @@
+{
+  "name": "core",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "yarn build --watch",
+    "build": "tsup src/main.ts --dts --format cjs,esm",
+    "test": "jest",
+    "lint": "eslint . --max-warnings 0"
+  },
+  "devDependencies": {
+    "@babel/plugin-syntax-jsx": "^7.23.3",
+    "@react-unforget/eslint-config": "*",
+    "@react-unforget/jest-config": "*",
+    "@react-unforget/typescript-config": "*",
+    "@types/babel__traverse": "^7.20.5",
+    "tsup": "^8.0.2"
+  },
+  "dependencies": {
+    "@babel/core": "^7.23.9",
+    "@babel/parser": "^7.23.9",
+    "@babel/traverse": "^7.23.9"
+  }
+}

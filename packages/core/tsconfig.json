@@ -1,0 +1,7 @@
+{
+  "extends": "@react-unforget/typescript-config/react-library.json",
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true
+  },
+  "exclude": ["node_modules"]
+}

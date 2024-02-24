@@ -1,0 +1,3 @@
+{
+  "extends": "@react-unforget/typescript-config/base.json"
+}

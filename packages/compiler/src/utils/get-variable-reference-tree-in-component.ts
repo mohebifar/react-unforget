@@ -1,3 +1,4 @@
+import type * as babel from "@babel/core";
 import { Component } from "../classes/Component";
 import { ComponentVariable } from "../classes/ComponentVariable";
 import { getReferencedVariablesInside } from "./get-referenced-variables-inside";

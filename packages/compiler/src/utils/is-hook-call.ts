@@ -1,3 +1,4 @@
+import type * as babel from "@babel/core";
 import { getRightmostIdName } from "./get-rightmost-id-name";
 
 export function isHookCall(path: babel.NodePath<babel.types.CallExpression>) {

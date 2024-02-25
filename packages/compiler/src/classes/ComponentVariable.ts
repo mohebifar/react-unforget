@@ -1,3 +1,4 @@
+import type * as babel from "@babel/core";
 import { Binding } from "@babel/traverse";
 import * as t from "@babel/types";
 import { makeCacheEnqueueCallStatement } from "~/ast-factories/make-cache-enqueue-call-statement";
@@ -188,7 +189,11 @@ export class ComponentVariable {
           const binding = this.component.path.scope.getBinding(id);
 
           if (binding) {
-            dependent = this.component.addComponentVariable(binding);
+            const newComponentVariable =
+              this.component.addComponentVariable(binding);
+            if (newComponentVariable) {
+              dependent = newComponentVariable;
+            }
           }
         }
 

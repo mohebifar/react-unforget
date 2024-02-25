@@ -1,3 +1,4 @@
+import type * as babel from "@babel/core";
 import traverse from "@babel/traverse";
 import { getReturnsOfFunction } from "./utils/get-returns-of-function";
 import { Component } from "./classes/Component";

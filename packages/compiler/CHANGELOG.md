@@ -1,5 +1,11 @@
 # @react-unforget/compiler
 
+## 0.0.1-dev.1
+
+### Patch Changes
+
+- 244994a: Fix dev release dist files missing
+
 ## 0.0.1-dev.0
 
 ### Patch Changes

@@ -12,6 +12,8 @@ import { isHookCall } from "~/utils/is-hook-call";
 import { UnwrappedAssignmentEntry } from "~/utils/unwrap-pattern-assignment";
 import { getDeclaredIdentifiersInLVal } from "../utils/get-declared-identifiers-in-lval";
 import { Component } from "./Component";
+import { makeDependencyCondition } from "~/ast-factories/make-dependency-condition";
+import { variableDeclarationToAssignment } from "~/ast-factories/variable-declaration-to-assignment";
 
 export class ComponentVariable {
   private appliedModification = false;
@@ -212,9 +214,10 @@ export class ComponentVariable {
       } else if (referencePath.isIdentifier()) {
         const referenceParent = referencePath.parentPath;
 
+        // Handle function parameters
         if (
           referenceParent.isFunction() &&
-          referenceParent.get("params").at(0) === referencePath
+          referenceParent.get("params").some((param) => param === referencePath)
         ) {
           visitDependencies([referencePath.node.name]);
         }
@@ -305,24 +308,12 @@ export class ComponentVariable {
         t.ifStatement(
           dependencyConditions,
           t.blockStatement([
-            t.expressionStatement(
-              t.assignmentExpression(
-                "=",
-                t.identifier(this.name),
-                (
-                  variableDeclaration.get(
-                    "declarations.0.init"
-                  ) as babel.NodePath<babel.types.Expression>
-                ).node
-              )
-            ),
+            ...variableDeclarationToAssignment(variableDeclaration),
             cacheUpdateEnqueueStatement,
           ])
         )
       );
-    }
-
-    if (this.binding.kind === "param") {
+    } else if (this.binding.kind === "param") {
       // TODO: Do we need to handle this?
     }
 
@@ -332,18 +323,9 @@ export class ComponentVariable {
   private makeDependencyCondition() {
     const isNotSetCondition = this.getCacheIsNotSetAccessExpression();
 
-    return Array.from(this.dependencies.values()).reduce(
-      (condition, dependency) => {
-        const id = t.identifier(dependency.name);
-        const binaryExpression = t.binaryExpression(
-          "!==",
-          dependency.getCacheValueAccessExpression(),
-          id
-        );
-
-        return t.logicalExpression("||", condition, binaryExpression);
-      },
-      isNotSetCondition as babel.types.Expression
+    return makeDependencyCondition(
+      Array.from(this.dependencies.values()),
+      isNotSetCondition
     );
   }
 

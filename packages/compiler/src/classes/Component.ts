@@ -51,7 +51,7 @@ export class Component {
 
     // If the binding is not in the same function, ignore it i.e. it can't be a component variable
     if (!this.isTheFunctionParentOf(path)) {
-      return;
+      return null;
     }
 
     const name = binding.identifier.name;

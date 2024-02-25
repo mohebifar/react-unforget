@@ -11,9 +11,11 @@ export function getComponentVariablesInComponent(
   const reerencedVariablesInPath = getReferencedVariablesInside(path);
   reerencedVariablesInPath.forEach((referencedVariable) => {
     if (component.isTheFunctionParentOf(referencedVariable.path)) {
-      componentVariables.add(
-        component.addComponentVariable(referencedVariable)
-      );
+      const componentVariable =
+        component.addComponentVariable(referencedVariable);
+      if (componentVariable) {
+        componentVariables.add(componentVariable);
+      }
     }
   });
 

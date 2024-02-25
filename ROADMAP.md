@@ -4,7 +4,7 @@ Type: `Feature` - `Bug` - `Enhancement` - `Refactor` - `Unknown`
 
 ## Compiler
 
-- [ ] `Enhancement` For member expression dependency checks, optimize the check by only checking the last member
+- [x] `Enhancement` For member expression dependency checks, optimize the check by only checking the last member
 - [ ] `Enhancement` Memoize any non-primitive value used in jsx
 - [ ] `Enhancement` Unwrap JSX elements into memoizable variables
 - [ ] `Enhancement` Support memoization of object destructuring

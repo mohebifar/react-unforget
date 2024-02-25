@@ -97,13 +97,13 @@ export class Component {
 
     const body = this.path.get("body");
 
-    if (body.isBlockStatement()) {
-      body.unshiftContainer("body", cacheVariableDeclaration);
-    }
-
     this.componentVariables.forEach((componentVariable) => {
       componentVariable.applyModification();
     });
+
+    if (body.isBlockStatement()) {
+      body.unshiftContainer("body", cacheVariableDeclaration);
+    }
 
     const returns = getReturnsOfFunction(this.path);
 

@@ -2,7 +2,9 @@ import type * as babel from "@babel/core";
 import { Binding } from "@babel/traverse";
 import * as t from "@babel/types";
 import { makeCacheEnqueueCallStatement } from "~/ast-factories/make-cache-enqueue-call-statement";
+import { makeDependencyCondition } from "~/ast-factories/make-dependency-condition";
 import { makeUnwrappedDeclarations } from "~/ast-factories/make-unwrapped-declarations";
+import { variableDeclarationToAssignment } from "~/ast-factories/variable-declaration-to-assignment";
 import {
   DEFAULT_UNWRAPPED_VARIABLE_NAME,
   RUNTIME_MODULE_CACHE_IS_NOT_SET_PROP_NAME,
@@ -13,8 +15,6 @@ import { isHookCall } from "~/utils/is-hook-call";
 import { UnwrappedAssignmentEntry } from "~/utils/unwrap-pattern-assignment";
 import { getDeclaredIdentifiersInLVal } from "../utils/get-declared-identifiers-in-lval";
 import { Component } from "./Component";
-import { makeDependencyCondition } from "~/ast-factories/make-dependency-condition";
-import { variableDeclarationToAssignment } from "~/ast-factories/variable-declaration-to-assignment";
 
 export class ComponentVariable {
   private appliedModification = false;
@@ -251,18 +251,14 @@ export class ComponentVariable {
       return false;
     }
 
-    const variableDeclaratorCheck = (
-      p: babel.NodePath<babel.types.Node>
-    ): p is babel.NodePath<babel.types.VariableDeclarator> =>
-      p.isVariableDeclarator() && this.component.isTheFunctionParentOf(p);
-
     const path = this.binding.path;
 
-    const parentVariableDeclarator = variableDeclaratorCheck(path)
-      ? path
-      : (path.findParent(
-          variableDeclaratorCheck
-        ) as babel.NodePath<babel.types.VariableDeclarator> | null);
+    const parentVariableDeclarator = path.find(
+      (
+        p: babel.NodePath<babel.types.Node>
+      ): p is babel.NodePath<babel.types.VariableDeclarator> =>
+        p.isVariableDeclarator() && this.component.isTheFunctionParentOf(p)
+    ) as babel.NodePath<babel.types.VariableDeclarator> | null;
 
     if (!parentVariableDeclarator) {
       return false;
@@ -319,19 +315,16 @@ export class ComponentVariable {
         )
       );
     } else if (this.binding.kind === "param") {
-      // TODO: Do we need to handle this?
+      this.component
+        .getFunctionBlockStatement()
+        ?.unshiftContainer("body", cacheUpdateEnqueueStatement);
     }
 
     this.appliedModification = true;
   }
 
   private makeDependencyCondition() {
-    const isNotSetCondition = this.getCacheIsNotSetAccessExpression();
-
-    return makeDependencyCondition(
-      Array.from(this.dependencies.values()),
-      isNotSetCondition
-    );
+    return makeDependencyCondition(this);
   }
 
   private getCacheAccessorExpression() {
@@ -356,6 +349,10 @@ export class ComponentVariable {
     );
   }
 
+  getDependencies() {
+    return this.dependencies;
+  }
+
   private getParentStatement() {
     return this.binding.path.getStatementParent();
   }
@@ -363,10 +360,6 @@ export class ComponentVariable {
   // --- DEBUGGING ---
   __debug_getDependents() {
     return this.dependents;
-  }
-
-  __debug_getDependencies() {
-    return this.dependencies;
   }
 
   __debug_getSideEffects() {

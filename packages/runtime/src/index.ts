@@ -2,18 +2,29 @@ import { useRef, type MutableRefObject } from "react";
 
 const UNASSIGNED = Symbol("unassigned");
 
-type CacheEntry<T = any> = {
-  v: T;
-  get n(): boolean;
+type UnassignedType = typeof UNASSIGNED;
+
+type FixedArray<T, N extends number, R extends T[] = []> = number extends N
+  ? T[]
+  : R["length"] extends N
+    ? R
+    : FixedArray<T, N, [T, ...R]>;
+
+interface CacheEntry<T = any> {
+  v: T | UnassignedType;
+  get n(): this["v"] extends UnassignedType ? true : false;
   e(newValue: T): void;
-};
+}
 
 interface Commit {
   (): void;
 }
 
-export const useCreateCache$unforget = (size: number) => {
-  const valuesRef: MutableRefObject<CacheEntry[] | null> = useRef(null);
+export const useCreateCache$unforget = <S extends number>(
+  size: S
+): [FixedArray<CacheEntry, S>, Commit] => {
+  const valuesRef: MutableRefObject<FixedArray<CacheEntry, S> | null> =
+    useRef(null);
 
   const commitRef: MutableRefObject<Commit | null> = useRef(null);
 
@@ -27,8 +38,11 @@ export const useCreateCache$unforget = (size: number) => {
   if (!commitRef.current) {
     commitRef.current = () => {
       valuesToCommit.current!.forEach((value, index) => {
-        valuesRef.current![index]!.v = value;
+        const valuesRefEntry = valuesRef.current![index as never] as CacheEntry;
+        return (valuesRefEntry.v = value);
       });
+
+      valuesToCommit.current!.clear();
     };
   }
 
@@ -43,7 +57,7 @@ export const useCreateCache$unforget = (size: number) => {
           valuesToCommit.current!.set(i, newValue);
         },
       };
-    });
+    }) as FixedArray<CacheEntry, S>;
   }
 
   if (!valuesRef.current || !commitRef.current) {

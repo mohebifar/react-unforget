@@ -13,17 +13,17 @@ exports[`ComponentVariable applyModification Fixture 1 1`] = `
   const _unwrapped = useState(0);
   _$unforgetCache[2].e(_unwrapped);
   let state = _$unforgetCache[1].v;
-  if (_$unforgetCache[1].n || _$unforgetCache[2].v !== _unwrapped) {
+  if (_$unforgetCache[1].n || _unwrapped[0] !== _$unforgetCache[2].v[0]) {
     state = _unwrapped[0];
     _$unforgetCache[1].e(state);
   }
   let setState = _$unforgetCache[3].v;
-  if (_$unforgetCache[3].n || _$unforgetCache[2].v !== _unwrapped) {
+  if (_$unforgetCache[3].n || _unwrapped[1] !== _$unforgetCache[2].v[1]) {
     setState = _unwrapped[1];
     _$unforgetCache[3].e(setState);
   }
   let myDerivedVariable = _$unforgetCache[0].v;
-  if (_$unforgetCache[0].n || _$unforgetCache[1].v !== state) {
+  if (_$unforgetCache[0].n || state !== _$unforgetCache[1].v) {
     myDerivedVariable = state + 1;
     _$unforgetCache[0].e(myDerivedVariable);
   }
@@ -45,25 +45,26 @@ exports[`ComponentVariable applyModification Fixture 2 1`] = `
   5 => _props
   */
   6);
+  _$unforgetCache[5].e(_props);
   let someProp = _$unforgetCache[4].v;
-  if (_$unforgetCache[4].n || _$unforgetCache[5].v !== _props) {
+  if (_$unforgetCache[4].n || _props.someProp !== _$unforgetCache[5].v.someProp) {
     someProp = _props.someProp;
     _$unforgetCache[4].e(someProp);
   }
   const _unwrapped = useState(0);
   _$unforgetCache[2].e(_unwrapped);
   let state = _$unforgetCache[1].v;
-  if (_$unforgetCache[1].n || _$unforgetCache[2].v !== _unwrapped) {
+  if (_$unforgetCache[1].n || _unwrapped[0] !== _$unforgetCache[2].v[0]) {
     state = _unwrapped[0];
     _$unforgetCache[1].e(state);
   }
   let setState = _$unforgetCache[3].v;
-  if (_$unforgetCache[3].n || _$unforgetCache[2].v !== _unwrapped) {
+  if (_$unforgetCache[3].n || _unwrapped[1] !== _$unforgetCache[2].v[1]) {
     setState = _unwrapped[1];
     _$unforgetCache[3].e(setState);
   }
   let myDerivedVariable = _$unforgetCache[0].v;
-  if (_$unforgetCache[0].n || _$unforgetCache[1].v !== state) {
+  if (_$unforgetCache[0].n || state !== _$unforgetCache[1].v) {
     myDerivedVariable = state + 1;
     _$unforgetCache[0].e(myDerivedVariable);
   }
@@ -84,55 +85,63 @@ function MyComponent(_props) {
   2 => _unwrapped
   3 => state
   4 => myDerivedVariable
-  5 => someProp
-  6 => _props
-  7 => valueDerivedFromDefinedOutside
-  8 => someGeneratedValue
+  5 => propDerivedVariable
+  6 => someProp
+  7 => _props
+  8 => valueDerivedFromDefinedOutside
+  9 => someGeneratedValue
   */
-  9);
-  let someProp = _$unforgetCache[5].v;
-  if (_$unforgetCache[5].n || _$unforgetCache[6].v !== _props) {
+  10);
+  _$unforgetCache[7].e(_props);
+  let someProp = _$unforgetCache[6].v;
+  if (_$unforgetCache[6].n || _props.someProp !== _$unforgetCache[7].v.someProp) {
     someProp = _props.someProp;
-    _$unforgetCache[5].e(someProp);
+    _$unforgetCache[6].e(someProp);
   }
   const _unwrapped = useState(0);
   _$unforgetCache[2].e(_unwrapped);
   let state = _$unforgetCache[3].v;
-  if (_$unforgetCache[3].n || _$unforgetCache[2].v !== _unwrapped) {
+  if (_$unforgetCache[3].n || _unwrapped[0] !== _$unforgetCache[2].v[0]) {
     state = _unwrapped[0];
     _$unforgetCache[3].e(state);
   }
   let setState = _$unforgetCache[1].v;
-  if (_$unforgetCache[1].n || _$unforgetCache[2].v !== _unwrapped) {
+  if (_$unforgetCache[1].n || _unwrapped[1] !== _$unforgetCache[2].v[1]) {
     setState = _unwrapped[1];
     _$unforgetCache[1].e(setState);
   }
   let handleIncrement = _$unforgetCache[0].v;
-  if (_$unforgetCache[0].n || _$unforgetCache[1].v !== setState || _$unforgetCache[3].v !== state) {
+  if (_$unforgetCache[0].n || setState !== _$unforgetCache[1].v || state !== _$unforgetCache[3].v) {
     handleIncrement = () => {
       setState(state + 1);
+      console.log('current state', state);
     };
     _$unforgetCache[0].e(handleIncrement);
   }
   let myDerivedVariable = _$unforgetCache[4].v;
-  if (_$unforgetCache[4].n || _$unforgetCache[3].v !== state) {
+  if (_$unforgetCache[4].n || state !== _$unforgetCache[3].v) {
     myDerivedVariable = state + 1;
     _$unforgetCache[4].e(myDerivedVariable);
   }
-  let someGeneratedValue = _$unforgetCache[8].v;
-  if (_$unforgetCache[8].n) {
+  let propDerivedVariable = _$unforgetCache[5].v;
+  if (_$unforgetCache[5].n || someProp !== _$unforgetCache[6].v) {
+    propDerivedVariable = someProp + "_" + someProp;
+    _$unforgetCache[5].e(propDerivedVariable);
+  }
+  let someGeneratedValue = _$unforgetCache[9].v;
+  if (_$unforgetCache[9].n) {
     someGeneratedValue = generateValue();
-    _$unforgetCache[8].e(someGeneratedValue);
+    _$unforgetCache[9].e(someGeneratedValue);
   }
   const unusedVariable = 1;
-  let valueDerivedFromDefinedOutside = _$unforgetCache[7].v;
-  if (_$unforgetCache[7].n) {
+  let valueDerivedFromDefinedOutside = _$unforgetCache[8].v;
+  if (_$unforgetCache[8].n) {
     valueDerivedFromDefinedOutside = varDefinedOutside * 10;
-    _$unforgetCache[7].e(valueDerivedFromDefinedOutside);
+    _$unforgetCache[8].e(valueDerivedFromDefinedOutside);
   }
   _$unforgetCommit();
   return <button onClick={handleIncrement}>
-      Test {myDerivedVariable} {someProp} {varDefinedOutside} {valueDerivedFromDefinedOutside} {someGeneratedValue}
+      Test {myDerivedVariable} {propDerivedVariable} {varDefinedOutside} {valueDerivedFromDefinedOutside} {someGeneratedValue}
     </button>;
 }"
 `;
@@ -141,35 +150,46 @@ exports[`ComponentVariable applyModification Fixture 4 1`] = `
 "function double(n) {
   return n * 2;
 }
-function MyComponent() {
+function MyComponent(_props) {
   const [_$unforgetCache, _$unforgetCommit] = useCreateCache$unforget(
   /*
   0 => count
   1 => doubleCount
   2 => _unwrapped
   3 => setCount
+  4 => someProp
+  5 => _props
   */
-  4);
+  6);
+  _$unforgetCache[5].e(_props);
+  let someProp = _$unforgetCache[4].v;
+  if (_$unforgetCache[4].n || _props.someProp !== _$unforgetCache[5].v.someProp) {
+    someProp = _props.someProp;
+    _$unforgetCache[4].e(someProp);
+  }
   const _unwrapped = useState(0);
   _$unforgetCache[2].e(_unwrapped);
   let count = _$unforgetCache[0].v;
-  if (_$unforgetCache[0].n || _$unforgetCache[2].v !== _unwrapped) {
+  if (_$unforgetCache[0].n || _unwrapped[0] !== _$unforgetCache[2].v[0]) {
     count = _unwrapped[0];
     _$unforgetCache[0].e(count);
   }
   let setCount = _$unforgetCache[3].v;
-  if (_$unforgetCache[3].n || _$unforgetCache[2].v !== _unwrapped) {
+  if (_$unforgetCache[3].n || _unwrapped[1] !== _$unforgetCache[2].v[1]) {
     setCount = _unwrapped[1];
     _$unforgetCache[3].e(setCount);
   }
   let doubleCount = _$unforgetCache[1].v;
-  if (_$unforgetCache[1].n || _$unforgetCache[0].v !== count) {
+  if (_$unforgetCache[1].n || count !== _$unforgetCache[0].v) {
     doubleCount = double(count);
     _$unforgetCache[1].e(doubleCount);
   }
   _$unforgetCommit();
   return <div>
       Hello! Current count is {count} and its double is {doubleCount}
+      <br />
+      The prop is {someProp}
+      <br />
       <button onClick={() => setCount(count + 1)}>Increment</button>
       <button onClick={() => setCount(count - 1)}>Decrement</button>
     </div>;

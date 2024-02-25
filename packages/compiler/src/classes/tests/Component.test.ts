@@ -48,9 +48,12 @@ function MyComponent({someProp}) {
 
   const handleIncrement = () => {
     setState(state + 1);
+    console.log('current state', state);
   }
 
   const myDerivedVariable = state + 1;
+
+  const propDerivedVariable = someProp + "_" + someProp;
 
   const someGeneratedValue = generateValue();
 
@@ -59,7 +62,7 @@ function MyComponent({someProp}) {
 
   return (
     <button onClick={handleIncrement}>
-      Test {myDerivedVariable} {someProp} {varDefinedOutside} {valueDerivedFromDefinedOutside} {someGeneratedValue}
+      Test {myDerivedVariable} {propDerivedVariable} {varDefinedOutside} {valueDerivedFromDefinedOutside} {someGeneratedValue}
     </button>
   );
 }
@@ -70,7 +73,7 @@ function double(n) {
   return n * 2;
 }
 
-function MyComponent() {
+function MyComponent({someProp}) {
   const [count, setCount] = useState(0);
 
   const doubleCount = double(count);
@@ -78,6 +81,9 @@ function MyComponent() {
   return (
     <div>
       Hello! Current count is {count} and its double is {doubleCount}
+      <br />
+      The prop is {someProp}
+      <br />
       <button onClick={() => setCount(count + 1)}>Increment</button>
       <button onClick={() => setCount(count - 1)}>Decrement</button>
     </div>
@@ -107,14 +113,14 @@ describe("ComponentVariable", () => {
 
       // state depends on nothing
       expect([
-        ...componentVariables.get("state")!.__debug_getDependencies().keys(),
+        ...componentVariables.get("state")!.getDependencies().keys(),
       ]).toStrictEqual([]);
 
       // myDerivedVariable depends on state
       expect([
         ...componentVariables
           .get("myDerivedVariable")!
-          .__debug_getDependencies()
+          .getDependencies()
           .keys(),
       ]).toStrictEqual(["state"]);
 
@@ -145,8 +151,8 @@ describe("ComponentVariable", () => {
     it.each([
       ["Fixture 1", FIXTURE_1],
       ["Fixture 2", FIXTURE_2],
-      ["Fixture 3", FIXTURE_3],
       ["Fixture 4", FIXTURE_4],
+      ["Fixture 3", FIXTURE_3],
     ])("%s", (_, code) => {
       const [component, program] = parseCodeAndRun(code);
       component.computeComponentVariables();

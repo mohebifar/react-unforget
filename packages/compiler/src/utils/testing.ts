@@ -1,7 +1,9 @@
 import * as babel from "@babel/core";
-import type * as t from "@babel/types";
 import * as generateBase from "@babel/generator";
 import traverse from "@babel/traverse";
+import type * as t from "@babel/types";
+import * as fs from "fs";
+import * as path from "path";
 
 export function transform(
   input: string,
@@ -29,6 +31,14 @@ export function parse(input: string, extraPlugins: babel.PluginItem[] = []) {
   });
 
   return result!;
+}
+
+export function parseFixture(fixturePath: string) {
+  const fixture = path.resolve(__dirname, "../fixtures", fixturePath + ".js");
+
+  const fileContent = fs.readFileSync(fixture, "utf-8");
+
+  return parse(fileContent);
 }
 
 export function generate(path: babel.types.Node) {

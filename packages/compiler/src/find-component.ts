@@ -1,16 +1,15 @@
 import type * as babel from "@babel/core";
-import traverse from "@babel/traverse";
 import { getReturnsOfFunction } from "./utils/get-returns-of-function";
 import { Component } from "./classes/Component";
 
 function doesIdMatchComponentName(name: string) {
-  return /^_?[A-Z][a-z0-9_]*+$/.test(name);
+  return /^_?[A-Z]/.test(name);
 }
 
-export function findComponents(program: babel.types.Program) {
+export function findComponents(program: babel.NodePath<babel.types.Program>) {
   const components: Component[] = [];
 
-  traverse(program, {
+  program.traverse({
     Function(path) {
       let id: babel.types.Identifier | null | undefined = null;
 
@@ -28,7 +27,7 @@ export function findComponents(program: babel.types.Program) {
         }
       }
 
-      if (id && !doesIdMatchComponentName(id.name)) {
+      if (!id || !doesIdMatchComponentName(id.name)) {
         return;
       }
 

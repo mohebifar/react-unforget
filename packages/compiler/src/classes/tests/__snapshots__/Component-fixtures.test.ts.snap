@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ComponentVariable applyModification Fixture 1 1`] = `
-"function MyComponent() {
+exports[`Component fixtures applyModification fixture_1 1`] = `
+"export function MyComponent() {
   const [_$unforgetCache, _$unforgetCommit] = useCreateCache$unforget(
   /*
   0 => myDerivedVariable
@@ -33,7 +33,7 @@ exports[`ComponentVariable applyModification Fixture 1 1`] = `
 }"
 `;
 
-exports[`ComponentVariable applyModification Fixture 2 1`] = `
+exports[`Component fixtures applyModification fixture_2 1`] = `
 "function MyComponent(_props) {
   const [_$unforgetCache, _$unforgetCommit] = useCreateCache$unforget(
   /*
@@ -70,11 +70,14 @@ exports[`ComponentVariable applyModification Fixture 2 1`] = `
   }
   const unusedVariable = 1;
   _$unforgetCommit();
-  return <div>{myDerivedVariable} {someProp}</div>;
-}"
+  return <div>
+      {myDerivedVariable} {someProp}
+    </div>;
+}
+export default MyComponent;"
 `;
 
-exports[`ComponentVariable applyModification Fixture 3 1`] = `
+exports[`Component fixtures applyModification fixture_3 1`] = `
 "const varDefinedOutside = 1;
 const generateValue = () => 2;
 function MyComponent(_props) {
@@ -114,7 +117,7 @@ function MyComponent(_props) {
   if (_$unforgetCache[0].n || setState !== _$unforgetCache[1].v || state !== _$unforgetCache[3].v) {
     handleIncrement = () => {
       setState(state + 1);
-      console.log('current state', state);
+      console.log("current state", state);
     };
     _$unforgetCache[0].e(handleIncrement);
   }
@@ -141,16 +144,18 @@ function MyComponent(_props) {
   }
   _$unforgetCommit();
   return <button onClick={handleIncrement}>
-      Test {myDerivedVariable} {propDerivedVariable} {varDefinedOutside} {valueDerivedFromDefinedOutside} {someGeneratedValue}
+      Test {myDerivedVariable} {propDerivedVariable} {varDefinedOutside}{" "}
+      {valueDerivedFromDefinedOutside} {someGeneratedValue}
     </button>;
-}"
+}
+export { MyComponent };"
 `;
 
-exports[`ComponentVariable applyModification Fixture 4 1`] = `
+exports[`Component fixtures applyModification fixture_4 1`] = `
 "function double(n) {
   return n * 2;
 }
-function MyComponent(_props) {
+export function MyComponent(_props) {
   const [_$unforgetCache, _$unforgetCommit] = useCreateCache$unforget(
   /*
   0 => count

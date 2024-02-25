@@ -1,6 +1,6 @@
 {
   "name": "@react-unforget/compiler",
-  "version": "0.0.0",
+  "version": "0.0.1-dev.0",
   "license": "MIT",
   "type": "module",
   "files": [

@@ -7,7 +7,7 @@
     "lint": "turbo lint",
     "test": "turbo test",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "release": "changeset publish"
+    "release": "yarn build && yarn changeset publish"
   },
   "devDependencies": {
     "@react-unforget/eslint-config": "*",

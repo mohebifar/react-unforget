@@ -1,19 +1,177 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ComponentVariable applyModification adds a cache variable declaration 1`] = `
-"function MyComponent({
-  someProp
-}) {
+exports[`ComponentVariable applyModification Fixture 1 1`] = `
+"function MyComponent() {
+  const [_$unforgetCache, _$unforgetCommit] = useCreateCache$unforget(
   /*
-  0: myDerivedVariable
-  1: state
-  2: setState
-  3: someProp
+  0 => myDerivedVariable
+  1 => state
+  2 => _unwrapped
+  3 => setState
   */
-  const _$unforget = useCreateCache$unforget(4);
-  const [state, setState] = useState(0);
-  const myDerivedVariable = state + 1;
+  4);
+  const _unwrapped = useState(0);
+  _$unforgetCache[2].e(_unwrapped);
+  let state = _$unforgetCache[1].v;
+  if (_$unforgetCache[1].n || _$unforgetCache[2].v !== _unwrapped) {
+    state = _unwrapped[0];
+    _$unforgetCache[1].e(state);
+  }
+  let setState = _$unforgetCache[3].v;
+  if (_$unforgetCache[3].n || _$unforgetCache[2].v !== _unwrapped) {
+    setState = _unwrapped[1];
+    _$unforgetCache[3].e(setState);
+  }
+  let myDerivedVariable = _$unforgetCache[0].v;
+  if (_$unforgetCache[0].n || _$unforgetCache[1].v !== state) {
+    myDerivedVariable = state + 1;
+    _$unforgetCache[0].e(myDerivedVariable);
+  }
   const unusedVariable = 1;
+  _$unforgetCommit();
+  return <div>{myDerivedVariable}</div>;
+}"
+`;
+
+exports[`ComponentVariable applyModification Fixture 2 1`] = `
+"function MyComponent(_props) {
+  const [_$unforgetCache, _$unforgetCommit] = useCreateCache$unforget(
+  /*
+  0 => myDerivedVariable
+  1 => state
+  2 => _unwrapped
+  3 => setState
+  4 => someProp
+  5 => _props
+  */
+  6);
+  let someProp = _$unforgetCache[4].v;
+  if (_$unforgetCache[4].n || _$unforgetCache[5].v !== _props) {
+    someProp = _props.someProp;
+    _$unforgetCache[4].e(someProp);
+  }
+  const _unwrapped = useState(0);
+  _$unforgetCache[2].e(_unwrapped);
+  let state = _$unforgetCache[1].v;
+  if (_$unforgetCache[1].n || _$unforgetCache[2].v !== _unwrapped) {
+    state = _unwrapped[0];
+    _$unforgetCache[1].e(state);
+  }
+  let setState = _$unforgetCache[3].v;
+  if (_$unforgetCache[3].n || _$unforgetCache[2].v !== _unwrapped) {
+    setState = _unwrapped[1];
+    _$unforgetCache[3].e(setState);
+  }
+  let myDerivedVariable = _$unforgetCache[0].v;
+  if (_$unforgetCache[0].n || _$unforgetCache[1].v !== state) {
+    myDerivedVariable = state + 1;
+    _$unforgetCache[0].e(myDerivedVariable);
+  }
+  const unusedVariable = 1;
+  _$unforgetCommit();
   return <div>{myDerivedVariable} {someProp}</div>;
+}"
+`;
+
+exports[`ComponentVariable applyModification Fixture 3 1`] = `
+"const varDefinedOutside = 1;
+const generateValue = () => 2;
+function MyComponent(_props) {
+  const [_$unforgetCache, _$unforgetCommit] = useCreateCache$unforget(
+  /*
+  0 => handleIncrement
+  1 => setState
+  2 => _unwrapped
+  3 => state
+  4 => myDerivedVariable
+  5 => someProp
+  6 => _props
+  7 => valueDerivedFromDefinedOutside
+  8 => someGeneratedValue
+  */
+  9);
+  let someProp = _$unforgetCache[5].v;
+  if (_$unforgetCache[5].n || _$unforgetCache[6].v !== _props) {
+    someProp = _props.someProp;
+    _$unforgetCache[5].e(someProp);
+  }
+  const _unwrapped = useState(0);
+  _$unforgetCache[2].e(_unwrapped);
+  let state = _$unforgetCache[3].v;
+  if (_$unforgetCache[3].n || _$unforgetCache[2].v !== _unwrapped) {
+    state = _unwrapped[0];
+    _$unforgetCache[3].e(state);
+  }
+  let setState = _$unforgetCache[1].v;
+  if (_$unforgetCache[1].n || _$unforgetCache[2].v !== _unwrapped) {
+    setState = _unwrapped[1];
+    _$unforgetCache[1].e(setState);
+  }
+  let handleIncrement = _$unforgetCache[0].v;
+  if (_$unforgetCache[0].n || _$unforgetCache[1].v !== setState || _$unforgetCache[3].v !== state) {
+    handleIncrement = () => {
+      setState(state + 1);
+    };
+    _$unforgetCache[0].e(handleIncrement);
+  }
+  let myDerivedVariable = _$unforgetCache[4].v;
+  if (_$unforgetCache[4].n || _$unforgetCache[3].v !== state) {
+    myDerivedVariable = state + 1;
+    _$unforgetCache[4].e(myDerivedVariable);
+  }
+  let someGeneratedValue = _$unforgetCache[8].v;
+  if (_$unforgetCache[8].n) {
+    someGeneratedValue = generateValue();
+    _$unforgetCache[8].e(someGeneratedValue);
+  }
+  const unusedVariable = 1;
+  let valueDerivedFromDefinedOutside = _$unforgetCache[7].v;
+  if (_$unforgetCache[7].n) {
+    valueDerivedFromDefinedOutside = varDefinedOutside * 10;
+    _$unforgetCache[7].e(valueDerivedFromDefinedOutside);
+  }
+  _$unforgetCommit();
+  return <button onClick={handleIncrement}>
+      Test {myDerivedVariable} {someProp} {varDefinedOutside} {valueDerivedFromDefinedOutside} {someGeneratedValue}
+    </button>;
+}"
+`;
+
+exports[`ComponentVariable applyModification Fixture 4 1`] = `
+"function double(n) {
+  return n * 2;
+}
+function MyComponent() {
+  const [_$unforgetCache, _$unforgetCommit] = useCreateCache$unforget(
+  /*
+  0 => count
+  1 => doubleCount
+  2 => _unwrapped
+  3 => setCount
+  */
+  4);
+  const _unwrapped = useState(0);
+  _$unforgetCache[2].e(_unwrapped);
+  let count = _$unforgetCache[0].v;
+  if (_$unforgetCache[0].n || _$unforgetCache[2].v !== _unwrapped) {
+    count = _unwrapped[0];
+    _$unforgetCache[0].e(count);
+  }
+  let setCount = _$unforgetCache[3].v;
+  if (_$unforgetCache[3].n || _$unforgetCache[2].v !== _unwrapped) {
+    setCount = _unwrapped[1];
+    _$unforgetCache[3].e(setCount);
+  }
+  let doubleCount = _$unforgetCache[1].v;
+  if (_$unforgetCache[1].n || _$unforgetCache[0].v !== count) {
+    doubleCount = double(count);
+    _$unforgetCache[1].e(doubleCount);
+  }
+  _$unforgetCommit();
+  return <div>
+      Hello! Current count is {count} and its double is {doubleCount}
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+      <button onClick={() => setCount(count - 1)}>Decrement</button>
+    </div>;
 }"
 `;

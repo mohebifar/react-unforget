@@ -25,9 +25,18 @@ export class Component {
     this.cacheCommitIdentifier = path.scope.generateUidIdentifier(
       DEFAULT_CACHE_COMMIT_VARIABLE_NAME
     );
-
-    this.computeComponentVariables();
   }
+
+  computeComponentVariables() {
+    getReturnsOfFunction(this.path).forEach((returnPath) => {
+      const bindings = getReferencedVariablesInside(returnPath);
+      bindings.forEach((binding) => {
+        this.addComponentVariable(binding);
+      });
+    });
+  }
+
+  prepareComponentBody() {}
 
   hasComponentVariable(name: string) {
     return this.componentVariables.has(name);
@@ -38,6 +47,13 @@ export class Component {
   }
 
   addComponentVariable(binding: Binding) {
+    const path = binding.path;
+
+    // If the binding is not in the same function, ignore it i.e. it can't be a component variable
+    if (!this.isTheFunctionParentOf(path)) {
+      return;
+    }
+
     const name = binding.identifier.name;
 
     if (this.hasComponentVariable(name)) {
@@ -51,18 +67,10 @@ export class Component {
     );
 
     this.componentVariables.set(name, componentVariable);
+    componentVariable.unwrapAssignmentPatterns();
     componentVariable.computeDependencyGraph();
 
     return componentVariable;
-  }
-
-  computeComponentVariables() {
-    getReturnsOfFunction(this.path).forEach((returnPath) => {
-      const bindings = getReferencedVariablesInside(returnPath);
-      bindings.forEach((binding) => {
-        const componentVariable = this.addComponentVariable(binding);
-      });
-    });
   }
 
   isTheFunctionParentOf(path: babel.NodePath<babel.types.Node>) {
@@ -75,37 +83,12 @@ export class Component {
     );
   }
 
-  public getCacheVariableIdentifier() {
+  getCacheVariableIdentifier() {
     return t.cloneNode(this.cacheValueIdentifier);
   }
 
-  public getCacheCommitIdentifier() {
+  getCacheCommitIdentifier() {
     return t.cloneNode(this.cacheCommitIdentifier);
-  }
-
-  private makeCacheVariableDeclaration() {
-    const declaration = t.variableDeclaration("const", [
-      t.variableDeclarator(
-        t.arrayPattern([this.cacheValueIdentifier, this.cacheCommitIdentifier]),
-        t.callExpression(t.identifier(RUNTIME_MODULE_CREATE_CACHE_HOOK_NAME), [
-          t.numericLiteral(this.componentVariables.size),
-        ])
-      ),
-    ]);
-
-    t.addComment(
-      declaration,
-      "leading",
-      "\n" +
-        [...this.componentVariables.values()]
-          .map((componentVariable) => {
-            return `${componentVariable.getIndex()}: ${componentVariable.name}`;
-          })
-          .join("\n") +
-        "\n"
-    );
-
-    return declaration;
   }
 
   applyModification() {
@@ -116,6 +99,62 @@ export class Component {
     if (body.isBlockStatement()) {
       body.unshiftContainer("body", cacheVariableDeclaration);
     }
+
+    this.componentVariables.forEach((componentVariable) => {
+      componentVariable.applyModification();
+    });
+
+    const returns = getReturnsOfFunction(this.path);
+
+    returns.forEach((returnPath) => {
+      returnPath.insertBefore(
+        t.expressionStatement(t.callExpression(this.cacheCommitIdentifier, []))
+      );
+    });
+  }
+
+  getFunctionBlockStatement(): babel.NodePath<babel.types.BlockStatement> | null {
+    const path = this.path;
+    if (path.isFunctionExpression()) {
+      return path.get("body");
+    }
+    // Need to duplicate the check because the type guard with || is not working
+    else if (path.isFunctionDeclaration()) {
+      return path.get("body");
+    } else if (path.isArrowFunctionExpression()) {
+      const body = path.get("body");
+      if (body.isBlockStatement()) {
+        return body;
+      }
+    }
+
+    return null;
+  }
+
+  private makeCacheVariableDeclaration() {
+    const sizeNumber = t.numericLiteral(this.componentVariables.size);
+    const declaration = t.variableDeclaration("const", [
+      t.variableDeclarator(
+        t.arrayPattern([this.cacheValueIdentifier, this.cacheCommitIdentifier]),
+        t.callExpression(t.identifier(RUNTIME_MODULE_CREATE_CACHE_HOOK_NAME), [
+          sizeNumber,
+        ])
+      ),
+    ]);
+
+    t.addComment(
+      sizeNumber,
+      "leading",
+      "\n" +
+        Array.from(this.componentVariables.values())
+          .map((componentVariable) => {
+            return `${componentVariable.getIndex()} => ${componentVariable.name}`;
+          })
+          .join("\n") +
+        "\n"
+    );
+
+    return declaration;
   }
 
   // --- DEBUGGING ---

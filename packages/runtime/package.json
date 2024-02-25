@@ -1,0 +1,22 @@
+{
+  "name": "@react-unforget/runtime",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "yarn build --watch",
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "test": "echo 'Add test script here'",
+    "lint": "echo 'Add lint script here'"
+  },
+  "devDependencies": {
+    "@react-unforget/eslint-config": "*",
+    "@react-unforget/jest-config": "*",
+    "@react-unforget/typescript-config": "*",
+    "@types/react": "^18.2.58",
+    "react": "^18.2.0",
+    "tsup": "^8.0.2"
+  },
+  "peerDependencies": {
+    "react": ">=16.2.0"
+  }
+}

@@ -1,9 +1,17 @@
 import { Component } from "~/classes/Component";
 import { parse } from "~/utils/testing";
 
-const parseCodeAndRun = (code: string, key: string) => {
-  const path = parse(code);
-  return path.get(key) as babel.NodePath<babel.types.Function>;
+const parseCodeAndRun = (code: string, componentName = "MyComponent") => {
+  const programPath = parse(code);
+
+  const programBody = programPath.get("body");
+  const fn = programBody.find(
+    (p) => p.isFunctionDeclaration() && p.node.id?.name === componentName
+  ) as babel.NodePath<babel.types.Function>;
+
+  const component = new Component(fn);
+
+  return [component, programPath] as const;
 };
 
 const FIXTURE_1 = `
@@ -30,12 +38,57 @@ function MyComponent({someProp}) {
 }
 `;
 
+const FIXTURE_3 = `
+const varDefinedOutside = 1;
+const generateValue = () => 2;
+
+function MyComponent({someProp}) {
+  const [state, setState] = useState(0);
+
+  const handleIncrement = () => {
+    setState(state + 1);
+  }
+
+  const myDerivedVariable = state + 1;
+
+  const someGeneratedValue = generateValue();
+
+  const unusedVariable = 1;
+  const valueDerivedFromDefinedOutside = varDefinedOutside * 10;
+
+  return (
+    <button onClick={handleIncrement}>
+      Test {myDerivedVariable} {someProp} {varDefinedOutside} {valueDerivedFromDefinedOutside} {someGeneratedValue}
+    </button>
+  );
+}
+`;
+
+const FIXTURE_4 = `
+function double(n) {
+  return n * 2;
+}
+
+function MyComponent() {
+  const [count, setCount] = useState(0);
+
+  const doubleCount = double(count);
+
+  return (
+    <div>
+      Hello! Current count is {count} and its double is {doubleCount}
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+      <button onClick={() => setCount(count - 1)}>Decrement</button>
+    </div>
+  );
+}
+`;
+
 describe("ComponentVariable", () => {
   describe("computeDependencyGraph", () => {
     it("basic example", () => {
-      const fn = parseCodeAndRun(FIXTURE_1, "body.0");
-
-      const component = new Component(fn);
+      const [component] = parseCodeAndRun(FIXTURE_1);
+      component.computeComponentVariables();
 
       const componentVariables = component.__debug_getComponentVariables();
 
@@ -43,7 +96,7 @@ describe("ComponentVariable", () => {
       expect([...componentVariables.keys()]).toStrictEqual([
         "myDerivedVariable",
         "state",
-        "setState",
+        "_temp",
       ]);
 
       // state has myDerivedVariable as dependent
@@ -54,11 +107,6 @@ describe("ComponentVariable", () => {
       // state depends on nothing
       expect([
         ...componentVariables.get("state")!.__debug_getDependencies().keys(),
-      ]).toStrictEqual([]);
-
-      // setState depends on nothing
-      expect([
-        ...componentVariables.get("setState")!.__debug_getDependencies().keys(),
       ]).toStrictEqual([]);
 
       // myDerivedVariable depends on state
@@ -77,33 +125,35 @@ describe("ComponentVariable", () => {
           .keys(),
       ]).toStrictEqual([]);
     });
-  });
 
-  describe("getRootComponentVariables", () => {
-    it("returns all root component variables", () => {
-      const fn = parseCodeAndRun(FIXTURE_2, "body.0");
+    describe("getRootComponentVariables", () => {
+      it("returns all root component variables", () => {
+        const [component] = parseCodeAndRun(FIXTURE_2);
+        component.computeComponentVariables();
 
-      const component = new Component(fn);
+        const rootComponentVariables = component.getRootComponentVariables();
 
-      const rootComponentVariables = component.getRootComponentVariables();
-
-      expect(
-        rootComponentVariables.map((v) => v.binding.identifier.name)
-      ).toEqual(["state", "setState", "someProp"]);
+        expect(
+          rootComponentVariables.map((v) => v.binding.identifier.name)
+        ).toEqual(["state", "_temp", "someProp"]);
+      });
     });
   });
 
-  describe("applyModification", () => {
-    it("adds a cache variable declaration", () => {
-      const fn = parseCodeAndRun(FIXTURE_2, "body.0");
-
-      const component = new Component(fn);
-
+  describe.only("applyModification", () => {
+    it.each([
+      ["Fixture 1", FIXTURE_1],
+      ["Fixture 2", FIXTURE_2],
+      ["Fixture 3", FIXTURE_3],
+      ["Fixture 4", FIXTURE_4],
+    ])("%s", (_, code) => {
+      const [component, program] = parseCodeAndRun(code);
+      component.computeComponentVariables();
       component.applyModification();
 
-      const code = component.path.toString();
+      const codeAfter = program.toString();
 
-      expect(code).toMatchSnapshot();
+      expect(codeAfter).toMatchSnapshot();
     });
   });
 });

@@ -1,3 +1,4 @@
+import type * as babel from "@babel/core";
 import { getFunctionParent } from "./get-function-parent";
 
 export function getReturnsOfFunction(fn: babel.NodePath<babel.types.Function>) {

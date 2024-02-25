@@ -1,3 +1,4 @@
+import type * as babel from "@babel/core";
 import { RightmostIdNotFound } from "./errors/RightmostIdNotFound";
 
 export function getRightmostIdName(
@@ -5,21 +6,19 @@ export function getRightmostIdName(
     babel.types.Expression | babel.types.V8IntrinsicIdentifier
   >
 ): string {
-  let currentPath = path;
-
-  if (currentPath.isMemberExpression()) {
-    const property = currentPath.get("property");
+  if (path.isMemberExpression()) {
+    const property = path.get("property");
 
     if (property.isStringLiteral()) {
       return property.node.value;
-    } else if (property.isIdentifier() && !currentPath.node.computed) {
+    } else if (property.isIdentifier() && !path.node.computed) {
       return property.node.name;
     } else if (property.isNumericLiteral()) {
       return property.node.value.toString();
     }
-  } else if (currentPath.isIdentifier()) {
-    return currentPath.node.name;
+  } else if (path.isIdentifier()) {
+    return path.node.name;
   }
 
-  throw new RightmostIdNotFound(currentPath);
+  throw new RightmostIdNotFound(path);
 }

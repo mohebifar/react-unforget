@@ -1,3 +1,4 @@
+import type * as babel from "@babel/core";
 import { Binding } from "@babel/traverse";
 import * as t from "@babel/types";
 import {

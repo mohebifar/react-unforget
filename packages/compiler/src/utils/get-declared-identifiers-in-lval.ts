@@ -1,3 +1,5 @@
+import type * as babel from "@babel/core";
+
 export function getDeclaredIdentifiersInLVal(
   lval: babel.NodePath<babel.types.LVal | null>,
   identifiers: Set<string> = new Set()

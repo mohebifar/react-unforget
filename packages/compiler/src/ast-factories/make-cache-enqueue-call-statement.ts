@@ -1,3 +1,4 @@
+import type * as babel from "@babel/core";
 import * as t from "@babel/types";
 import { RUNTIME_MODULE_CACHE_ENQUEUE_METHOD_NAME } from "~/utils/constants";
 

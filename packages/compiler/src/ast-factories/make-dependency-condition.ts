@@ -1,3 +1,4 @@
+import type * as babel from "@babel/core";
 import * as t from "@babel/types";
 import { ComponentVariable } from "~/classes/ComponentVariable";
 

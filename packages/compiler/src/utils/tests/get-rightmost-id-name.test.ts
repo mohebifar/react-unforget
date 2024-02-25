@@ -1,3 +1,4 @@
+import type * as babel from "@babel/core";
 import { RightmostIdNotFound } from "../errors/RightmostIdNotFound";
 import { getRightmostIdName } from "../get-rightmost-id-name";
 import { parse } from "../testing";

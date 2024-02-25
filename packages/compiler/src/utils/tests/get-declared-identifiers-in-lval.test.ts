@@ -1,3 +1,4 @@
+import type * as babel from "@babel/core";
 import { getDeclaredIdentifiersInLVal } from "../get-declared-identifiers-in-lval";
 import { parse } from "../testing";
 

@@ -1,3 +1,4 @@
+import type * as babel from "@babel/core";
 import * as t from "@babel/types";
 import { DEFAULT_UNUSED_VARIABLE_NAME } from "./constants";
 
@@ -32,9 +33,13 @@ export function unwrapPatternAssignment(
           return [
             {
               id: t.arrayPattern(
-                Array.from({ length: index }, (_, i) =>
-                  lval.scope.generateUidIdentifier(DEFAULT_UNUSED_VARIABLE_NAME)
-                ).concat([element.node as babel.types.RestElement] as any[])
+                Array.from(
+                  { length: index },
+                  () =>
+                    lval.scope.generateUidIdentifier(
+                      DEFAULT_UNUSED_VARIABLE_NAME
+                    ) as babel.types.Identifier | babel.types.RestElement
+                ).concat([element.node as babel.types.RestElement])
               ),
               value: t.cloneNode(rval),
               name: arg.node.name,
@@ -85,18 +90,21 @@ export function unwrapPatternAssignment(
               id: t.objectPattern(
                 properties
                   .slice(0, index)
-                  .map((prop) => {
-                    const objectProp = prop.node as babel.types.ObjectProperty;
+                  .map<babel.types.ObjectProperty | babel.types.RestElement>(
+                    (prop) => {
+                      const objectProp =
+                        prop.node as babel.types.ObjectProperty;
 
-                    return t.objectProperty(
-                      t.cloneNode(objectProp).key,
-                      t.identifier(
-                        prop.scope.generateUid(DEFAULT_UNUSED_VARIABLE_NAME)
-                      ),
-                      objectProp.computed
-                    );
-                  })
-                  .concat([property.node as babel.types.RestElement] as any[])
+                      return t.objectProperty(
+                        t.cloneNode(objectProp).key,
+                        t.identifier(
+                          prop.scope.generateUid(DEFAULT_UNUSED_VARIABLE_NAME)
+                        ),
+                        objectProp.computed
+                      );
+                    }
+                  )
+                  .concat([property.node as babel.types.RestElement])
               ),
               value: t.cloneNode(rval),
               name: arg.node.name,

@@ -9,5 +9,7 @@
     "@react-unforget/runtime": "0.0.0",
     "@react-unforget/typescript-config": "0.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "wild-dryers-work"
+  ]
 }

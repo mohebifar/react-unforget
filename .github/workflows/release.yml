@@ -11,17 +11,28 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v3
+    permissions:
+      id-token: write
+      contents: write
+      packages: write
+      pull-requests: write
+      issues: read
 
-      - name: Setup Node.js 20.x
-        uses: actions/setup-node@v3
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4
         with:
-          node-version: 20.x
+          node-version: 20
+          cache: "yarn"
 
       - name: Install Dependencies
-        run: yarn
+        run: yarn install --frozen-lockfile
+
+      - name: Build
+        run: yarn build
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets

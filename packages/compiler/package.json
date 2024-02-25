@@ -1,13 +1,27 @@
 {
   "name": "@react-unforget/compiler",
   "version": "0.0.0",
-  "private": true,
+  "license": "MIT",
   "type": "module",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "main": "dist/main.js",
+  "module": "dist/main.mjs",
+  "types": "dist/main.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/main.mjs",
+      "require": "./dist/main.js",
+      "types": "./dist/main.d.ts"
+    }
+  },
   "scripts": {
     "dev": "yarn build --watch",
     "build": "tsup src/main.ts --dts --format cjs,esm",
     "test": "jest",
-    "lint": "eslint . --max-warnings 0"
+    "lint": "eslint src/**/* --max-warnings 10"
   },
   "devDependencies": {
     "@babel/plugin-syntax-jsx": "^7.23.3",

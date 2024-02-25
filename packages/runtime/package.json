@@ -1,12 +1,25 @@
 {
   "name": "@react-unforget/runtime",
   "version": "0.0.0",
-  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    "require": "./dist/index.js",
+    "import": "./dist/index.mjs",
+    "types": "./dist/index.d.ts"
+  },
   "scripts": {
     "dev": "yarn build --watch",
     "build": "tsup src/index.ts --format cjs,esm --dts",
-    "test": "echo 'Add test script here'",
-    "lint": "echo 'Add lint script here'"
+    "test": "echo 'No checks yet'",
+    "lint": "echo 'No checks yet'"
   },
   "devDependencies": {
     "@react-unforget/eslint-config": "*",
@@ -18,5 +31,8 @@
   },
   "peerDependencies": {
     "react": ">=16.2.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

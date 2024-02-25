@@ -1,3 +1,5 @@
+import type * as babel from "@babel/core";
+
 // The native NodePath#getFunctionParent does not recognize the parent of a function if it is a variable declarator.
 export function getFunctionParent(path: babel.NodePath<babel.types.Node>) {
   const parent = path.findParent((p) => {

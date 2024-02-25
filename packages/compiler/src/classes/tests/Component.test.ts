@@ -1,3 +1,4 @@
+import type * as babel from "@babel/core";
 import { Component } from "~/classes/Component";
 import { parse } from "~/utils/testing";
 

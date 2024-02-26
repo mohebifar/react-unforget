@@ -2,7 +2,6 @@ import type * as babel from "@babel/core";
 import { Binding } from "@babel/traverse";
 import * as t from "@babel/types";
 import { makeCacheEnqueueCallStatement } from "~/ast-factories/make-cache-enqueue-call-statement";
-import { makeDependencyCondition } from "~/ast-factories/make-dependency-condition";
 import { makeUnwrappedDeclarations } from "~/ast-factories/make-unwrapped-declarations";
 import { variableDeclarationToAssignment } from "~/ast-factories/variable-declaration-to-assignment";
 import {
@@ -11,30 +10,21 @@ import {
   RUNTIME_MODULE_CACHE_VALUE_PROP_NAME,
 } from "~/utils/constants";
 import { getReferencedVariablesInside } from "~/utils/get-referenced-variables-inside";
-import { isHookCall } from "~/utils/is-hook-call";
 import { UnwrappedAssignmentEntry } from "~/utils/unwrap-pattern-assignment";
 import { getDeclaredIdentifiersInLVal } from "../utils/get-declared-identifiers-in-lval";
 import { Component } from "./Component";
+import { ComponentMutableSegment } from "./ComponentMutableSegment";
 
-export class ComponentVariable {
+export class ComponentVariable extends ComponentMutableSegment {
   private appliedModification = false;
-
-  private computedDependencyGraph = false;
-
-  // The side effects of this variable
-  private sideEffects = new Set<babel.NodePath<babel.types.Node>>();
-
-  // ComponentVariables that reference this
-  private dependents = new Map<string, ComponentVariable>();
-
-  // ComponentVariables that this depends on
-  private dependencies = new Map<string, ComponentVariable>();
 
   constructor(
     public binding: Binding,
-    public component: Component,
+    component: Component,
     private index: number
-  ) {}
+  ) {
+    super(component, "ComponentVariable");
+  }
 
   get name() {
     return this.binding.identifier.name;
@@ -42,14 +32,6 @@ export class ComponentVariable {
 
   getIndex() {
     return this.index;
-  }
-
-  addSideEffect(path: babel.NodePath<babel.types.Node>) {
-    this.sideEffects.add(path);
-  }
-
-  addDependency(componentVariable: ComponentVariable) {
-    this.dependencies.set(componentVariable.name, componentVariable);
   }
 
   unwrapAssignmentPatterns() {
@@ -104,7 +86,6 @@ export class ComponentVariable {
       unwrappedEntries = unwrapResult.unwrappedEntries;
     }
 
-    // TODO: Check if the param is positioned in the first position
     if (this.binding.kind === "param") {
       const componentBlock = this.component.getFunctionBlockStatement();
 
@@ -168,17 +149,8 @@ export class ComponentVariable {
     });
   }
 
-  updateBinding(binding: Binding) {
-    this.binding = binding;
-
-    if (this.computedDependencyGraph) {
-      this.computeDependencyGraph();
-    }
-  }
-
   computeDependencyGraph() {
     this.dependencies.clear();
-    this.dependents.clear();
     this.sideEffects.clear();
 
     const visitDependencies = (dependencyIds: string[]) => {
@@ -198,7 +170,6 @@ export class ComponentVariable {
         }
 
         if (dependent) {
-          this.dependents.set(id, dependent);
           dependent.addDependency(this);
         }
       });
@@ -216,18 +187,29 @@ export class ComponentVariable {
         const ids = getDeclaredIdentifiersInLVal(lval);
 
         visitDependencies(ids);
-      } else if (referencePath.isIdentifier()) {
-        const referenceParent = referencePath.parentPath;
-
-        // Handle function parameters
-        if (
-          referenceParent.isFunction() &&
-          referenceParent.get("params").some((param) => param === referencePath)
-        ) {
-          visitDependencies([referencePath.node.name]);
-        }
       } else {
         // TODO: Side effect calculation
+        const parentStatement = referencePath.find(
+          (p) =>
+            p.isStatement() && p.parentPath === this.component.path.get("body")
+        ) as babel.NodePath<babel.types.Statement> | null;
+
+        if (
+          !parentStatement ||
+          // Skip variable declarations for side effects
+          parentStatement.isVariableDeclaration() ||
+          // Skip return statements for side effects
+          parentStatement.isReturnStatement()
+        ) {
+          return;
+        }
+
+        const sideEffect = this.component.addSideEffect(parentStatement);
+
+        if (sideEffect) {
+          this.addSideEffect(sideEffect);
+          sideEffect.addDependency(this);
+        }
       }
     });
 
@@ -238,39 +220,6 @@ export class ComponentVariable {
     referencedVariablesInDeclaration.forEach((binding) => {
       this.component.addComponentVariable(binding);
     });
-
-    this.computedDependencyGraph = true;
-  }
-
-  isDerived() {
-    return this.dependencies.size > 0;
-  }
-
-  isHook() {
-    if (this.isDerived()) {
-      return false;
-    }
-
-    const path = this.binding.path;
-
-    const parentVariableDeclarator = path.find(
-      (
-        p: babel.NodePath<babel.types.Node>
-      ): p is babel.NodePath<babel.types.VariableDeclarator> =>
-        p.isVariableDeclarator() && this.component.isTheFunctionParentOf(p)
-    ) as babel.NodePath<babel.types.VariableDeclarator> | null;
-
-    if (!parentVariableDeclarator) {
-      return false;
-    }
-
-    const init = parentVariableDeclarator.get("init");
-
-    if (!init.isCallExpression()) {
-      return false;
-    }
-
-    return isHookCall(init);
   }
 
   applyModification() {
@@ -290,41 +239,43 @@ export class ComponentVariable {
       ),
     ]);
 
-    if (
-      this.binding.kind === "const" ||
-      this.binding.kind === "let" ||
-      this.binding.kind === "var"
-    ) {
-      const variableDeclaration =
-        this.getParentStatement() as babel.NodePath<babel.types.VariableDeclaration>;
+    switch (this.binding.kind) {
+      case "const":
+      case "let":
+      case "var": {
+        const variableDeclaration =
+          this.getParentStatement() as babel.NodePath<babel.types.VariableDeclaration>;
 
-      if (this.isHook()) {
-        variableDeclaration.insertAfter(cacheUpdateEnqueueStatement);
-        return;
+        if (this.hasHookCall()) {
+          variableDeclaration.insertAfter(cacheUpdateEnqueueStatement);
+          return;
+        }
+
+        const dependencyConditions = this.makeDependencyCondition();
+        if (dependencyConditions) {
+          variableDeclaration.insertBefore(valueDeclarationWithCache);
+          variableDeclaration.replaceWith(
+            t.ifStatement(
+              dependencyConditions,
+              t.blockStatement([
+                ...variableDeclarationToAssignment(variableDeclaration),
+                cacheUpdateEnqueueStatement,
+              ])
+            )
+          );
+        }
+        break;
       }
 
-      const dependencyConditions = this.makeDependencyCondition();
-      variableDeclaration.insertBefore(valueDeclarationWithCache);
-      variableDeclaration.replaceWith(
-        t.ifStatement(
-          dependencyConditions,
-          t.blockStatement([
-            ...variableDeclarationToAssignment(variableDeclaration),
-            cacheUpdateEnqueueStatement,
-          ])
-        )
-      );
-    } else if (this.binding.kind === "param") {
-      this.component
-        .getFunctionBlockStatement()
-        ?.unshiftContainer("body", cacheUpdateEnqueueStatement);
+      case "param": {
+        this.component
+          .getFunctionBlockStatement()
+          ?.unshiftContainer("body", cacheUpdateEnqueueStatement);
+        break;
+      }
     }
 
     this.appliedModification = true;
-  }
-
-  private makeDependencyCondition() {
-    return makeDependencyCondition(this);
   }
 
   private getCacheAccessorExpression() {
@@ -349,20 +300,7 @@ export class ComponentVariable {
     );
   }
 
-  getDependencies() {
-    return this.dependencies;
-  }
-
-  private getParentStatement() {
-    return this.binding.path.getStatementParent();
-  }
-
-  // --- DEBUGGING ---
-  __debug_getDependents() {
-    return this.dependents;
-  }
-
-  __debug_getSideEffects() {
-    return this.sideEffects;
+  get path() {
+    return this.binding.path;
   }
 }

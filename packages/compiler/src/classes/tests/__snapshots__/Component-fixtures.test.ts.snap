@@ -1,262 +1,83 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Component fixtures applyModification fixture_1 1`] = `
-"export function MyComponent() {
+exports[`Component fixtures applyModification fixture_5 1`] = `
+"const useMovies = () => {
+  return [{
+    title: "The Shawshank Redemption",
+    year: 1994
+  }, {
+    title: "The Godfather",
+    year: 1972
+  }, {
+    title: "The Dark Knight",
+    year: 2008
+  }];
+};
+const object = {
+  key1: "value1",
+  key2: "value2"
+};
+export function MyComponent() {
   const [_$unforgetCache, _$unforgetCommit] = useCreateCache$unforget(
   /*
-  0 => _unwrappedJsxEl
-  1 => myDerivedVariable
-  2 => state
-  3 => _unwrapped
-  4 => setState
-  */
-  5);
-  const _unwrapped = useState(0);
-  _$unforgetCache[3].e(_unwrapped);
-  let state = _$unforgetCache[2].v;
-  if (_$unforgetCache[2].n || _unwrapped[0] !== _$unforgetCache[3].v[0]) {
-    state = _unwrapped[0];
-    _$unforgetCache[2].e(state);
-  }
-  let setState = _$unforgetCache[4].v;
-  if (_$unforgetCache[4].n || _unwrapped[1] !== _$unforgetCache[3].v[1]) {
-    setState = _unwrapped[1];
-    _$unforgetCache[4].e(setState);
-  }
-  let myDerivedVariable = _$unforgetCache[1].v;
-  if (_$unforgetCache[1].n || state !== _$unforgetCache[2].v) {
-    myDerivedVariable = state + 1;
-    _$unforgetCache[1].e(myDerivedVariable);
-  }
-  const unusedVariable = 1;
-  let _unwrappedJsxEl = _$unforgetCache[0].v;
-  if (_$unforgetCache[0].n || myDerivedVariable !== _$unforgetCache[1].v) {
-    _unwrappedJsxEl = <div>{myDerivedVariable}</div>;
-    _$unforgetCache[0].e(_unwrappedJsxEl);
-  }
-  _$unforgetCommit();
-  return _unwrappedJsxEl;
-}"
-`;
-
-exports[`Component fixtures applyModification fixture_2 1`] = `
-"function MyComponent(_props) {
-  const [_$unforgetCache, _$unforgetCommit] = useCreateCache$unforget(
-  /*
-  0 => _unwrappedJsxEl
-  1 => myDerivedVariable
-  2 => state
-  3 => _unwrapped
-  4 => setState
-  5 => someProp
-  6 => _props
+  0 => _unwrappedJsxEl2
+  1 => _unwrappedJsxExp
+  2 => filteredMovies
+  3 => _unwrappedJsxEl
+  4 => _unwrappedJsxExp2
+  5 => _unwrappedJsxExp3
+  6 => movies
   */
   7);
-  _$unforgetCache[6].e(_props);
-  let someProp = _$unforgetCache[5].v;
-  if (_$unforgetCache[5].n || _props.someProp !== _$unforgetCache[6].v.someProp) {
-    someProp = _props.someProp;
-    _$unforgetCache[5].e(someProp);
-  }
-  const _unwrapped = useState(0);
-  _$unforgetCache[3].e(_unwrapped);
-  let state = _$unforgetCache[2].v;
-  if (_$unforgetCache[2].n || _unwrapped[0] !== _$unforgetCache[3].v[0]) {
-    state = _unwrapped[0];
-    _$unforgetCache[2].e(state);
-  }
-  let setState = _$unforgetCache[4].v;
-  if (_$unforgetCache[4].n || _unwrapped[1] !== _$unforgetCache[3].v[1]) {
-    setState = _unwrapped[1];
-    _$unforgetCache[4].e(setState);
-  }
-  let myDerivedVariable = _$unforgetCache[1].v;
-  if (_$unforgetCache[1].n || state !== _$unforgetCache[2].v) {
-    myDerivedVariable = state + 1;
-    _$unforgetCache[1].e(myDerivedVariable);
-  }
-  const unusedVariable = 1;
-  let _unwrappedJsxEl = _$unforgetCache[0].v;
-  if (_$unforgetCache[0].n || myDerivedVariable !== _$unforgetCache[1].v || someProp !== _$unforgetCache[5].v) {
-    _unwrappedJsxEl = <div>
-      {myDerivedVariable} {someProp}
-    </div>;
-    _$unforgetCache[0].e(_unwrappedJsxEl);
-  }
-  _$unforgetCommit();
-  return _unwrappedJsxEl;
-}
-export default MyComponent;"
-`;
+  const movies = useMovies();
 
-exports[`Component fixtures applyModification fixture_3 1`] = `
-"const varDefinedOutside = 1;
-const generateValue = () => 2;
-function MyComponent(_props) {
-  const [_$unforgetCache, _$unforgetCommit] = useCreateCache$unforget(
-  /*
-  0 => _unwrappedJsxEl
-  1 => handleIncrement
-  2 => setState
-  3 => _unwrapped
-  4 => state
-  5 => myDerivedVariable
-  6 => propDerivedVariable
-  7 => someProp
-  8 => _props
-  9 => valueDerivedFromDefinedOutside
-  10 => someGeneratedValue
-  */
-  11);
-  _$unforgetCache[8].e(_props);
-  let someProp = _$unforgetCache[7].v;
-  if (_$unforgetCache[7].n || _props.someProp !== _$unforgetCache[8].v.someProp) {
-    someProp = _props.someProp;
-    _$unforgetCache[7].e(someProp);
-  }
-  const _unwrapped = useState(0);
-  _$unforgetCache[3].e(_unwrapped);
-  let state = _$unforgetCache[4].v;
-  if (_$unforgetCache[4].n || _unwrapped[0] !== _$unforgetCache[3].v[0]) {
-    state = _unwrapped[0];
-    _$unforgetCache[4].e(state);
-  }
-  let setState = _$unforgetCache[2].v;
-  if (_$unforgetCache[2].n || _unwrapped[1] !== _$unforgetCache[3].v[1]) {
-    setState = _unwrapped[1];
-    _$unforgetCache[2].e(setState);
-  }
-  let handleIncrement = _$unforgetCache[1].v;
-  if (_$unforgetCache[1].n || setState !== _$unforgetCache[2].v || state !== _$unforgetCache[4].v) {
-    handleIncrement = () => {
-      setState(state + 1);
-      console.log("current state", state);
-    };
-    _$unforgetCache[1].e(handleIncrement);
-  }
-  let myDerivedVariable = _$unforgetCache[5].v;
-  if (_$unforgetCache[5].n || state !== _$unforgetCache[4].v) {
-    myDerivedVariable = state + 1;
-    _$unforgetCache[5].e(myDerivedVariable);
-  }
-  let propDerivedVariable = _$unforgetCache[6].v;
-  if (_$unforgetCache[6].n || someProp !== _$unforgetCache[7].v) {
-    propDerivedVariable = someProp + "_" + someProp;
-    _$unforgetCache[6].e(propDerivedVariable);
-  }
-  let someGeneratedValue = _$unforgetCache[10].v;
-  if (_$unforgetCache[10].n) {
-    someGeneratedValue = generateValue();
-    _$unforgetCache[10].e(someGeneratedValue);
-  }
-  const unusedVariable = 1;
-  let valueDerivedFromDefinedOutside = _$unforgetCache[9].v;
-  if (_$unforgetCache[9].n) {
-    valueDerivedFromDefinedOutside = varDefinedOutside * 10;
-    _$unforgetCache[9].e(valueDerivedFromDefinedOutside);
-  }
-  let _unwrappedJsxEl = _$unforgetCache[0].v;
-  if (_$unforgetCache[0].n || handleIncrement !== _$unforgetCache[1].v || myDerivedVariable !== _$unforgetCache[5].v || propDerivedVariable !== _$unforgetCache[6].v || valueDerivedFromDefinedOutside !== _$unforgetCache[9].v || someGeneratedValue !== _$unforgetCache[10].v) {
-    _unwrappedJsxEl = <button onClick={handleIncrement}>
-      Test {myDerivedVariable} {propDerivedVariable} {varDefinedOutside}{" "}
-      {valueDerivedFromDefinedOutside} {someGeneratedValue}
-    </button>;
-    _$unforgetCache[0].e(_unwrappedJsxEl);
-  }
-  _$unforgetCommit();
-  return _unwrappedJsxEl;
-}
-export { MyComponent };"
-`;
+  // const key = useKey();
 
-exports[`Component fixtures applyModification fixture_4 1`] = `
-"function double(n) {
-  return n * 2;
-}
-export function MyComponent(_props) {
-  const [_$unforgetCache, _$unforgetCommit] = useCreateCache$unforget(
-  /*
-  0 => _unwrappedJsxEl5
-  1 => count
-  2 => doubleCount
-  3 => _unwrappedJsxExp
-  4 => _unwrappedJsxEl3
-  5 => setCount
-  6 => _unwrappedJsxExp2
-  7 => _unwrappedJsxEl4
-  8 => _unwrapped
-  9 => _unwrappedJsxEl
-  10 => someProp
-  11 => _props
-  12 => _unwrappedJsxEl2
-  */
-  13);
-  _$unforgetCache[11].e(_props);
-  let someProp = _$unforgetCache[10].v;
-  if (_$unforgetCache[10].n || _props.someProp !== _$unforgetCache[11].v.someProp) {
-    someProp = _props.someProp;
-    _$unforgetCache[10].e(someProp);
+  // const value = object[key];
+  _$unforgetCache[6].e(movies);
+  let filteredMovies = _$unforgetCache[2].v;
+  if (_$unforgetCache[2].n) {
+    filteredMovies = [];
+    _$unforgetCache[2].e(filteredMovies);
+  } // const i = 5;
+  if (movies.length !== _$unforgetCache[6].v.length || movies !== _$unforgetCache[6].v || filteredMovies !== _$unforgetCache[2].v) {
+    for (let i = 0; i < movies.length; i++) {
+      if (movies[i].year > 2000) {
+        filteredMovies.push(movies[i]);
+      }
+    }
   }
-  const _unwrapped = useState(0);
-  _$unforgetCache[8].e(_unwrapped);
-  let count = _$unforgetCache[1].v;
-  if (_$unforgetCache[1].n || _unwrapped[0] !== _$unforgetCache[8].v[0]) {
-    count = _unwrapped[0];
-    _$unforgetCache[1].e(count);
+  let _unwrappedJsxExp2 = _$unforgetCache[4].v;
+  if (_$unforgetCache[4].n) {
+    _unwrappedJsxExp2 = movie.title;
+    _$unforgetCache[4].e(_unwrappedJsxExp2);
   }
-  let setCount = _$unforgetCache[5].v;
-  if (_$unforgetCache[5].n || _unwrapped[1] !== _$unforgetCache[8].v[1]) {
-    setCount = _unwrapped[1];
-    _$unforgetCache[5].e(setCount);
+  let _unwrappedJsxExp3 = _$unforgetCache[5].v;
+  if (_$unforgetCache[5].n) {
+    _unwrappedJsxExp3 = movie.title;
+    _$unforgetCache[5].e(_unwrappedJsxExp3);
   }
-  let doubleCount = _$unforgetCache[2].v;
-  if (_$unforgetCache[2].n || count !== _$unforgetCache[1].v) {
-    doubleCount = double(count);
-    _$unforgetCache[2].e(doubleCount);
+  let _unwrappedJsxEl = _$unforgetCache[3].v;
+  if (_$unforgetCache[3].n || _unwrappedJsxExp2 !== _$unforgetCache[4].v || _unwrappedJsxExp3 !== _$unforgetCache[5].v) {
+    _unwrappedJsxEl = <div key={_unwrappedJsxExp2}>
+          {_unwrappedJsxExp3} 
+          {/* {value} */}
+        </div>;
+    _$unforgetCache[3].e(_unwrappedJsxEl);
   }
-  let _unwrappedJsxExp = _$unforgetCache[3].v;
-  if (_$unforgetCache[3].n || setCount !== _$unforgetCache[5].v || count !== _$unforgetCache[1].v) {
-    _unwrappedJsxExp = () => setCount(count + 1);
-    _$unforgetCache[3].e(_unwrappedJsxExp);
+  let _unwrappedJsxExp = _$unforgetCache[1].v;
+  if (_$unforgetCache[1].n || filteredMovies !== _$unforgetCache[2].v || _unwrappedJsxEl !== _$unforgetCache[3].v) {
+    _unwrappedJsxExp = filteredMovies.map(movie => _unwrappedJsxEl);
+    _$unforgetCache[1].e(_unwrappedJsxExp);
   }
-  let _unwrappedJsxExp2 = _$unforgetCache[6].v;
-  if (_$unforgetCache[6].n || setCount !== _$unforgetCache[5].v || count !== _$unforgetCache[1].v) {
-    _unwrappedJsxExp2 = () => setCount(count - 1);
-    _$unforgetCache[6].e(_unwrappedJsxExp2);
-  }
-  let _unwrappedJsxEl = _$unforgetCache[9].v;
-  if (_$unforgetCache[9].n) {
-    _unwrappedJsxEl = <br />;
-    _$unforgetCache[9].e(_unwrappedJsxEl);
-  }
-  let _unwrappedJsxEl2 = _$unforgetCache[12].v;
-  if (_$unforgetCache[12].n) {
-    _unwrappedJsxEl2 = <br />;
-    _$unforgetCache[12].e(_unwrappedJsxEl2);
-  }
-  let _unwrappedJsxEl3 = _$unforgetCache[4].v;
-  if (_$unforgetCache[4].n || _unwrappedJsxExp !== _$unforgetCache[3].v) {
-    _unwrappedJsxEl3 = <button onClick={_unwrappedJsxExp}>Increment</button>;
-    _$unforgetCache[4].e(_unwrappedJsxEl3);
-  }
-  let _unwrappedJsxEl4 = _$unforgetCache[7].v;
-  if (_$unforgetCache[7].n || _unwrappedJsxExp2 !== _$unforgetCache[6].v) {
-    _unwrappedJsxEl4 = <button onClick={_unwrappedJsxExp2}>Decrement</button>;
-    _$unforgetCache[7].e(_unwrappedJsxEl4);
-  }
-  let _unwrappedJsxEl5 = _$unforgetCache[0].v;
-  if (_$unforgetCache[0].n || count !== _$unforgetCache[1].v || doubleCount !== _$unforgetCache[2].v || _unwrappedJsxEl !== _$unforgetCache[9].v || someProp !== _$unforgetCache[10].v || _unwrappedJsxEl2 !== _$unforgetCache[12].v || _unwrappedJsxEl3 !== _$unforgetCache[4].v || _unwrappedJsxEl4 !== _$unforgetCache[7].v) {
-    _unwrappedJsxEl5 = <div>
-      Hello! Current count is {count} and its double is {doubleCount}
-      {_unwrappedJsxEl}
-      The prop is {someProp}
-      {_unwrappedJsxEl2}
-      {_unwrappedJsxEl3}
-      {_unwrappedJsxEl4}
+  let _unwrappedJsxEl2 = _$unforgetCache[0].v;
+  if (_$unforgetCache[0].n || _unwrappedJsxExp !== _$unforgetCache[1].v) {
+    _unwrappedJsxEl2 = <div>
+      {_unwrappedJsxExp}
     </div>;
-    _$unforgetCache[0].e(_unwrappedJsxEl5);
+    _$unforgetCache[0].e(_unwrappedJsxEl2);
   }
   _$unforgetCommit();
-  return _unwrappedJsxEl5;
+  return _unwrappedJsxEl2;
 }"
 `;

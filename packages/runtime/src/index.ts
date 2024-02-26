@@ -31,6 +31,9 @@ export const useCreateCache$unforget = <S extends number>(
   const valuesToCommit: MutableRefObject<Map<number, any> | null> =
     useRef(null);
 
+  // This is needed for hot reloading to work
+  const previousSize = useRef(size);
+
   if (!valuesToCommit.current) {
     valuesToCommit.current = new Map();
   }
@@ -46,7 +49,8 @@ export const useCreateCache$unforget = <S extends number>(
     };
   }
 
-  if (!valuesRef.current) {
+  if (!valuesRef.current || previousSize.current !== size) {
+    previousSize.current = size;
     valuesRef.current = Array.from({ length: size }, (_, i) => {
       return {
         v: UNASSIGNED,

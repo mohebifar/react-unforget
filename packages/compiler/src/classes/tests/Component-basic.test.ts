@@ -26,11 +26,6 @@ describe.skip("ComponentVariable", () => {
         "setState",
       ]);
 
-      // state has myDerivedVariable as dependent
-      expect([
-        ...componentVariables.get("state")!.__debug_getDependents().keys(),
-      ]).toStrictEqual(["myDerivedVariable"]);
-
       // state depends on nothing
       expect([
         ...componentVariables.get("state")!.getDependencies().keys(),
@@ -44,13 +39,6 @@ describe.skip("ComponentVariable", () => {
           .keys(),
       ]).toStrictEqual(["state"]);
 
-      // myDerivedVariable has no dependents
-      expect([
-        ...componentVariables
-          .get("myDerivedVariable")!
-          .__debug_getDependents()
-          .keys(),
-      ]).toStrictEqual([]);
     });
 
     describe("getRootComponentVariables", () => {

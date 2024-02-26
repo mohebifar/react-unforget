@@ -1,6 +1,6 @@
 import type * as babel from "@babel/core";
-import { getReturnsOfFunction } from "./utils/get-returns-of-function";
-import { Component } from "./classes/Component";
+import { getReturnsOfFunction } from "./get-returns-of-function";
+import { Component } from "../classes/Component";
 
 function doesIdMatchComponentName(name: string) {
   return /^_?[A-Z]/.test(name);
@@ -40,7 +40,8 @@ export function findComponents(program: babel.NodePath<babel.types.Program>) {
       const allReturnsMatch = returns.every((ret) => {
         return (
           ret.get("argument").isNullLiteral() ||
-          ret.get("argument").isJSXElement()
+          ret.get("argument").isJSXElement() ||
+          ret.get("argument").isJSXFragment()
         );
       });
 

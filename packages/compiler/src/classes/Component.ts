@@ -11,6 +11,7 @@ import { getReturnsOfFunction } from "~/utils/get-returns-of-function";
 import { getFunctionParent } from "../utils/get-function-parent";
 import { ComponentVariable } from "./ComponentVariable";
 import { unwrapJsxExpressions } from "~/utils/unwrap-jsx-expressions";
+import { unwrapJsxElements } from "~/utils/unwrap-jsx-elements";
 
 export class Component {
   private componentVariables = new Map<string, ComponentVariable>();
@@ -41,6 +42,7 @@ export class Component {
 
   prepareComponentBody() {
     unwrapJsxExpressions(this.path);
+    unwrapJsxElements(this.path);
   }
 
   hasComponentVariable(name: string) {

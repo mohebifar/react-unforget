@@ -10,6 +10,7 @@ import { getReferencedVariablesInside } from "~/utils/get-referenced-variables-i
 import { getReturnsOfFunction } from "~/utils/get-returns-of-function";
 import { getFunctionParent } from "../utils/get-function-parent";
 import { ComponentVariable } from "./ComponentVariable";
+import { unwrapJsxExpressions } from "~/utils/unwrap-jsx-expressions";
 
 export class Component {
   private componentVariables = new Map<string, ComponentVariable>();
@@ -29,6 +30,7 @@ export class Component {
   }
 
   computeComponentVariables() {
+    this.prepareComponentBody();
     getReturnsOfFunction(this.path).forEach((returnPath) => {
       const bindings = getReferencedVariablesInside(returnPath);
       bindings.forEach((binding) => {
@@ -37,7 +39,9 @@ export class Component {
     });
   }
 
-  prepareComponentBody() {}
+  prepareComponentBody() {
+    unwrapJsxExpressions(this.path);
+  }
 
   hasComponentVariable(name: string) {
     return this.componentVariables.has(name);

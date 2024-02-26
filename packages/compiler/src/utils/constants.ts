@@ -5,6 +5,7 @@ export const DEFAULT_CACHE_COMMIT_VARIABLE_NAME = "$unforgetCommit";
 
 export const DEFAULT_UNUSED_VARIABLE_NAME = "_unused";
 export const DEFAULT_UNWRAPPED_VARIABLE_NAME = "_unwrapped";
+export const DEFAULT_UNWRAPPED_JSX_EXPRESSION_VARIABLE_NAME = "_unwrappedJsxExp";
 
 export const RUNTIME_MODULE_CACHE_ENQUEUE_METHOD_NAME = "e";
 export const RUNTIME_MODULE_CACHE_VALUE_PROP_NAME = "v";

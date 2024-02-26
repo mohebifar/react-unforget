@@ -160,27 +160,29 @@ export function MyComponent(_props) {
   /*
   0 => count
   1 => doubleCount
-  2 => _unwrapped
+  2 => _unwrappedJsxExp
   3 => setCount
-  4 => someProp
-  5 => _props
+  4 => _unwrappedJsxExp2
+  5 => _unwrapped
+  6 => someProp
+  7 => _props
   */
-  6);
-  _$unforgetCache[5].e(_props);
-  let someProp = _$unforgetCache[4].v;
-  if (_$unforgetCache[4].n || _props.someProp !== _$unforgetCache[5].v.someProp) {
+  8);
+  _$unforgetCache[7].e(_props);
+  let someProp = _$unforgetCache[6].v;
+  if (_$unforgetCache[6].n || _props.someProp !== _$unforgetCache[7].v.someProp) {
     someProp = _props.someProp;
-    _$unforgetCache[4].e(someProp);
+    _$unforgetCache[6].e(someProp);
   }
   const _unwrapped = useState(0);
-  _$unforgetCache[2].e(_unwrapped);
+  _$unforgetCache[5].e(_unwrapped);
   let count = _$unforgetCache[0].v;
-  if (_$unforgetCache[0].n || _unwrapped[0] !== _$unforgetCache[2].v[0]) {
+  if (_$unforgetCache[0].n || _unwrapped[0] !== _$unforgetCache[5].v[0]) {
     count = _unwrapped[0];
     _$unforgetCache[0].e(count);
   }
   let setCount = _$unforgetCache[3].v;
-  if (_$unforgetCache[3].n || _unwrapped[1] !== _$unforgetCache[2].v[1]) {
+  if (_$unforgetCache[3].n || _unwrapped[1] !== _$unforgetCache[5].v[1]) {
     setCount = _unwrapped[1];
     _$unforgetCache[3].e(setCount);
   }
@@ -189,14 +191,24 @@ export function MyComponent(_props) {
     doubleCount = double(count);
     _$unforgetCache[1].e(doubleCount);
   }
+  let _unwrappedJsxExp = _$unforgetCache[2].v;
+  if (_$unforgetCache[2].n || setCount !== _$unforgetCache[3].v || count !== _$unforgetCache[0].v) {
+    _unwrappedJsxExp = () => setCount(count + 1);
+    _$unforgetCache[2].e(_unwrappedJsxExp);
+  }
+  let _unwrappedJsxExp2 = _$unforgetCache[4].v;
+  if (_$unforgetCache[4].n || setCount !== _$unforgetCache[3].v || count !== _$unforgetCache[0].v) {
+    _unwrappedJsxExp2 = () => setCount(count - 1);
+    _$unforgetCache[4].e(_unwrappedJsxExp2);
+  }
   _$unforgetCommit();
   return <div>
       Hello! Current count is {count} and its double is {doubleCount}
       <br />
       The prop is {someProp}
       <br />
-      <button onClick={() => setCount(count + 1)}>Increment</button>
-      <button onClick={() => setCount(count - 1)}>Decrement</button>
+      <button onClick={_unwrappedJsxExp}>Increment</button>
+      <button onClick={_unwrappedJsxExp2}>Decrement</button>
     </div>;
 }"
 `;

@@ -1,5 +1,12 @@
 # @react-unforget/runtime
 
+## 0.1.0-dev.3
+
+### Minor Changes
+
+- 4b56e7e: - Support JSX element memeization
+  - Support JSX expression memoization for non-primitive values
+
 ## 0.0.1-dev.2
 
 ### Patch Changes

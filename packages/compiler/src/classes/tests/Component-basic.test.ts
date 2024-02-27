@@ -14,7 +14,7 @@ describe.skip("ComponentVariable", () => {
   describe("computeDependencyGraph", () => {
     it("basic example", () => {
       const [component] = parseCodeAndRun("fixture_1");
-      component.computeComponentVariables();
+      component.computeComponentSegments();
 
       const componentVariables = component.__debug_getComponentVariables();
 
@@ -44,7 +44,7 @@ describe.skip("ComponentVariable", () => {
     describe("getRootComponentVariables", () => {
       it("returns all root component variables", () => {
         const [component] = parseCodeAndRun("fixture_2");
-        component.computeComponentVariables();
+        component.computeComponentSegments();
 
         const rootComponentVariables = component.getRootComponentVariables();
 

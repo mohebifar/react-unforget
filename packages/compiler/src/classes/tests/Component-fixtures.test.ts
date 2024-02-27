@@ -6,7 +6,7 @@ const parseCodeAndRun = (fixtureName: string) => {
   const components = findComponents(programPath);
 
   components.forEach((component) => {
-    component.computeComponentVariables();
+    component.computeComponentSegments();
     component.applyTransformation();
   });
 

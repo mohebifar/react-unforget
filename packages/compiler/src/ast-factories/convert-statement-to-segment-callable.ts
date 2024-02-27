@@ -5,7 +5,6 @@ export function convertStatementToSegmentCallable(
   statement: babel.NodePath<babel.types.Statement>,
   {
     initialValue,
-    performReplacement = true,
     cacheNullValue,
     segmentCallableId = statement.scope.generateUidIdentifier(
       DEFAULT_SEGMENT_CALLABLE_VARIABLE_NAME
@@ -57,24 +56,20 @@ export function convertStatementToSegmentCallable(
       })
       .filter((v): v is t.ExpressionStatement => Boolean(v));
 
-    if (performReplacement) {
-      replacements = [
-        newDeclaration,
-        makeSegmentCallable(assignmentExpressionStatements),
-      ];
-    }
+    replacements = [
+      newDeclaration,
+      makeSegmentCallable(assignmentExpressionStatements),
+    ];
   } else {
     replacements = [makeSegmentCallable([statement.node])];
   }
 
-  const newPaths =
-    performReplacement && replacements
-      ? statement.replaceWithMultiple(replacements)
-      : null;
+  const prformTransformation = () =>
+    replacements ? statement.replaceWithMultiple(replacements) : null;
 
   return {
     segmentCallableId,
     replacements,
-    newPaths,
+    prformTransformation,
   };
 }

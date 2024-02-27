@@ -71,40 +71,36 @@ export function MyComponent() {
   const _segment7 = () => {
     i = 5;
   };
-  const _segment8 = () => {
-    for (let i = 0; i < movies.length; i++) {
-      if (movies[i].year > 2000) {
-        filteredMovies.push(movies[i]);
-      }
+  for (let i = 0; i < movies.length; i++) {
+    if (movies[i].year > 2000) {
+      filteredMovies.push(movies[i]);
     }
-  };
-  const _segment9 = () => {
-    if (filteredMovies.length > 0) {
-      // Just some side effect
-      console.log("Movies after 2000: ", filteredMovies);
-    }
-  };
+  }
+  if (filteredMovies.length > 0) {
+    // Just some side effect
+    console.log("Movies after 2000: ", filteredMovies);
+  }
   let _unwrappedJsxExp = _$unforgetCache[6].v;
-  const _segment10 = () => {
+  const _segment8 = () => {
     _unwrappedJsxExp = movies.length;
   };
   let _unwrappedJsxExp2 = _$unforgetCache[7].v;
-  const _segment11 = () => {
+  const _segment9 = () => {
     _unwrappedJsxExp2 = filteredMovies.map(movie => <div key={movie.title}>
           {movie.title}
           {value}
         </div>);
   };
   let _unwrappedJsxEl = _$unforgetCache[1].v;
-  const _segment12 = () => {
+  const _segment10 = () => {
     _unwrappedJsxEl = <button onClick={addRandomMovie}>Add random movie</button>;
   };
   let _unwrappedJsxEl2 = _$unforgetCache[5].v;
-  const _segment13 = () => {
+  const _segment11 = () => {
     _unwrappedJsxEl2 = <div>total number of movies: {_unwrappedJsxExp}</div>;
   };
   let _unwrappedJsxEl3 = _$unforgetCache[0].v;
-  const _segment14 = () => {
+  const _segment12 = () => {
     _unwrappedJsxEl3 = <div>
       {_unwrappedJsxEl}
       {_unwrappedJsxEl2}
@@ -117,7 +113,7 @@ export function MyComponent() {
     _segment2();
     _$unforgetCache[2].e(addRandomMovie);
   }
-  if (_$unforgetCache[4].n || _unwrapped[0] !== _$unforgetCache[3].v[0]) {
+  if (_$unforgetCache[4].n) {
     _segment3();
     _$unforgetCache[4].e(movies);
   }
@@ -132,30 +128,24 @@ export function MyComponent() {
     _$unforgetCache[8].e(filteredMovies);
   }
   _segment7();
-  if (_unwrapped !== _$unforgetCache[3].v || addRandomMovie !== _$unforgetCache[2].v || movies !== _$unforgetCache[4].v || key !== _$unforgetCache[10].v || value !== _$unforgetCache[9].v || filteredMovies !== _$unforgetCache[8].v || movies.length !== _$unforgetCache[4].v.length || _unwrappedJsxExp !== _$unforgetCache[6].v || _unwrappedJsxEl !== _$unforgetCache[1].v || _unwrappedJsxEl2 !== _$unforgetCache[5].v || _unwrappedJsxExp2 !== _$unforgetCache[7].v || _unwrappedJsxEl3 !== _$unforgetCache[0].v || filteredMovies.length !== _$unforgetCache[8].v.length) {
-    _segment8();
-  }
-  if (_unwrapped !== _$unforgetCache[3].v || addRandomMovie !== _$unforgetCache[2].v || movies !== _$unforgetCache[4].v || key !== _$unforgetCache[10].v || value !== _$unforgetCache[9].v || filteredMovies !== _$unforgetCache[8].v || filteredMovies.length !== _$unforgetCache[8].v.length || _unwrappedJsxExp !== _$unforgetCache[6].v || _unwrappedJsxEl !== _$unforgetCache[1].v || _unwrappedJsxEl2 !== _$unforgetCache[5].v || _unwrappedJsxExp2 !== _$unforgetCache[7].v || _unwrappedJsxEl3 !== _$unforgetCache[0].v) {
-    _segment9();
-  }
   if (_$unforgetCache[6].n) {
-    _segment10();
+    _segment8();
     _$unforgetCache[6].e(_unwrappedJsxExp);
   }
   if (_$unforgetCache[7].n || filteredMovies !== _$unforgetCache[8].v || value !== _$unforgetCache[9].v) {
-    _segment11();
+    _segment9();
     _$unforgetCache[7].e(_unwrappedJsxExp2);
   }
   if (_$unforgetCache[1].n || addRandomMovie !== _$unforgetCache[2].v) {
-    _segment12();
+    _segment10();
     _$unforgetCache[1].e(_unwrappedJsxEl);
   }
   if (_$unforgetCache[5].n || _unwrappedJsxExp !== _$unforgetCache[6].v) {
-    _segment13();
+    _segment11();
     _$unforgetCache[5].e(_unwrappedJsxEl2);
   }
   if (_$unforgetCache[0].n || _unwrappedJsxEl !== _$unforgetCache[1].v || _unwrappedJsxEl2 !== _$unforgetCache[5].v || _unwrappedJsxExp2 !== _$unforgetCache[7].v) {
-    _segment14();
+    _segment12();
     _$unforgetCache[0].e(_unwrappedJsxEl3);
   }
   return _unwrappedJsxEl3;

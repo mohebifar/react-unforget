@@ -16,18 +16,19 @@ import { UnwrappedAssignmentEntry } from "~/utils/unwrap-pattern-assignment";
 import { getDeclaredIdentifiersInLVal } from "../utils/get-declared-identifiers-in-lval";
 import { Component } from "./Component";
 import { ComponentMutableSegment } from "./ComponentMutableSegment";
+import { findMutatingExpression } from "~/utils/find-mutating-expression";
 
 export class ComponentVariable extends ComponentMutableSegment {
   private variableSideEffects = new Set<ComponentVariable>();
 
-  private segmentCallableId: t.Identifier | null = null;
 
   constructor(
-    public binding: Binding,
     component: Component,
+    parent: ComponentMutableSegment | null = null,
+    public binding: Binding,
     private index: number
   ) {
-    super(component, "ComponentVariable");
+    super(component, parent, "ComponentVariable");
   }
 
   get name() {
@@ -50,7 +51,7 @@ export class ComponentVariable extends ComponentMutableSegment {
     if (path.isVariableDeclarator()) {
       const id = path.get("id");
       const parentPath =
-        this.getParentStatement() as babel.NodePath<babel.types.VariableDeclaration>;
+        this.path.getStatementParent() as babel.NodePath<babel.types.VariableDeclaration>;
       const kind = parentPath.node.kind;
 
       if (id.isIdentifier()) {
@@ -168,7 +169,6 @@ export class ComponentVariable extends ComponentMutableSegment {
 
   computeDependencyGraph() {
     this.dependencies.clear();
-    this.sideEffects.clear();
 
     const visitDependencies = (dependencyIds: string[]) => {
       dependencyIds.forEach((id) => {
@@ -205,11 +205,30 @@ export class ComponentVariable extends ComponentMutableSegment {
 
         visitDependencies(ids);
       } else {
+        const immediateParentStatement =
+          referencePath.getStatementParent() as babel.NodePath<babel.types.Statement>;
+        const parentUntilBody = referencePath.find(
+          (p) => p.parentPath === this.component.path.get("body")
+        );
+
+        getReferencedVariablesInside(immediateParentStatement).forEach(
+          (binding, innerRefPath) => {
+            if (!this.component.isBindingInComponentScope(binding)) {
+              return;
+            }
+
+            const mutatingExpression = findMutatingExpression(innerRefPath);
+
+            if (!mutatingExpression) {
+              return;
+            }
+          }
+        );
       }
     });
 
-    const referencedVariablesInDeclaration = getReferencedVariablesInside(
-      this.binding.path
+    const referencedVariablesInDeclaration = Array.from(
+      getReferencedVariablesInside(this.binding.path).values()
     );
 
     referencedVariablesInDeclaration.forEach((binding) => {
@@ -222,16 +241,6 @@ export class ComponentVariable extends ComponentMutableSegment {
       this.getCacheAccessorExpression(),
       this.name
     );
-  }
-
-  getSegmentCallableId() {
-    if (!this.segmentCallableId) {
-      this.segmentCallableId = this.component.path.scope.generateUidIdentifier(
-        DEFAULT_SEGMENT_CALLABLE_VARIABLE_NAME
-      );
-    }
-
-    return this.segmentCallableId;
   }
 
   applyTransformation(performReplacement = true) {
@@ -254,7 +263,7 @@ export class ComponentVariable extends ComponentMutableSegment {
 
         const dependencyConditions = this.makeDependencyCondition();
 
-        const { newPaths, segmentCallableId, replacements } =
+        const { prformTransformation, segmentCallableId, replacements } =
           convertStatementToSegmentCallable(variableDeclaration, {
             initialValue: cacheValueAccessExpression,
             performReplacement,
@@ -263,19 +272,12 @@ export class ComponentVariable extends ComponentMutableSegment {
 
         this.appliedTransformation = true;
 
-        const newId = newPaths?.[0]?.get(
-          "declarations.0.id"
-        ) as babel.NodePath<babel.types.LVal>;
-
-        if (newId) {
-          this.binding.path = newId;
-        }
 
         return {
           replacements,
           segmentCallableId,
           dependencyConditions,
-          newPaths,
+          prformTransformation,
           hasHookCall,
           updateCache: cacheUpdateEnqueueStatement,
         };

@@ -19,7 +19,7 @@ export function makeDependencyCondition(
 
   const allDependencies = [
     ...dependencies.values(),
-    ...mutableSegment.getSideEffectDependencies(),
+    // ...mutableSegment.getSideEffectDependencies(),
   ].filter((dependency) => dependency !== mutableSegment);
 
   allDependencies.forEach((dependency) => {

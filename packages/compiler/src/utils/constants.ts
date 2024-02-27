@@ -16,3 +16,19 @@ export const DEFAULT_SEGMENT_CALLABLE_VARIABLE_NAME = "_segment";
 export const RUNTIME_MODULE_CACHE_ENQUEUE_METHOD_NAME = "e";
 export const RUNTIME_MODULE_CACHE_VALUE_PROP_NAME = "v";
 export const RUNTIME_MODULE_CACHE_IS_NOT_SET_PROP_NAME = "n";
+
+export const MUTATING_METHODS = [
+  "push",
+  "pop",
+  "shift",
+  "unshift",
+  "splice",
+  "sort",
+  "reverse",
+  "copyWithin",
+  "fill",
+  "set",
+  "delete",
+  "add",
+  "clear",
+];

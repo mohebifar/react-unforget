@@ -1,83 +1,164 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Component fixtures applyModification fixture_5 1`] = `
-"const useMovies = () => {
-  return [{
-    title: "The Shawshank Redemption",
-    year: 1994
-  }, {
-    title: "The Godfather",
-    year: 1972
-  }, {
-    title: "The Dark Knight",
-    year: 2008
-  }];
+"const words = ["Shawshank", "Redemption", "Godfather", "Dark", "Knight", "Forest", "Gump", "Private", "Ryan"];
+const initalMovies = [{
+  title: "The Shawshank Redemption",
+  year: 1994
+}, {
+  title: "The Godfather",
+  year: 1972
+}, {
+  title: "The Dark Knight",
+  year: 2008
+}];
+const useMovies = () => {
+  const [movies, setMovies] = useState(initalMovies);
+  const addRandomMovie = () => {
+    setMovies(p => [...p, {
+      title: "The " + words[Math.floor(Math.random() * words.length)] + " " + words[Math.floor(Math.random() * words.length)],
+      year: 1990 + Math.floor(Math.random() * 20)
+    }]);
+  };
+  return [movies, addRandomMovie];
 };
+const useKey = () => "key1";
 const object = {
   key1: "value1",
   key2: "value2"
 };
 export function MyComponent() {
-  const [_$unforgetCache, _$unforgetCommit] = useCreateCache$unforget(
+  const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
-  0 => _unwrappedJsxEl2
-  1 => _unwrappedJsxExp
-  2 => filteredMovies
-  3 => _unwrappedJsxEl
-  4 => _unwrappedJsxExp2
-  5 => _unwrappedJsxExp3
-  6 => movies
+  0 => _unwrappedJsxEl3
+  1 => _unwrappedJsxEl
+  2 => addRandomMovie
+  3 => _unwrapped
+  4 => movies
+  5 => _unwrappedJsxEl2
+  6 => _unwrappedJsxExp
+  7 => _unwrappedJsxExp2
+  8 => filteredMovies
+  9 => value
+  10 => key
   */
-  7);
-  const movies = useMovies();
-
-  // const key = useKey();
-
-  // const value = object[key];
-  _$unforgetCache[6].e(movies);
-  let filteredMovies = _$unforgetCache[2].v;
-  if (_$unforgetCache[2].n) {
+  11);
+  let _unwrapped = _$unforgetCache[3].v;
+  const _segment = () => {
+    _unwrapped = useMovies();
+  };
+  let addRandomMovie = _$unforgetCache[2].v;
+  const _segment2 = () => {
+    addRandomMovie = _unwrapped[1];
+  };
+  let movies = _$unforgetCache[4].v;
+  const _segment3 = () => {
+    movies = _unwrapped[0];
+  };
+  let key = _$unforgetCache[10].v;
+  const _segment4 = () => {
+    key = useKey();
+  };
+  let value = _$unforgetCache[9].v;
+  const _segment5 = () => {
+    value = object[key];
+  };
+  let filteredMovies = _$unforgetCache[8].v;
+  const _segment6 = () => {
     filteredMovies = [];
-    _$unforgetCache[2].e(filteredMovies);
-  } // const i = 5;
-  if (movies.length !== _$unforgetCache[6].v.length || movies !== _$unforgetCache[6].v || filteredMovies !== _$unforgetCache[2].v) {
+  };
+  let i;
+  const _segment7 = () => {
+    i = 5;
+  };
+  const _segment8 = () => {
     for (let i = 0; i < movies.length; i++) {
       if (movies[i].year > 2000) {
         filteredMovies.push(movies[i]);
       }
     }
-  }
-  let _unwrappedJsxExp2 = _$unforgetCache[4].v;
-  if (_$unforgetCache[4].n) {
-    _unwrappedJsxExp2 = movie.title;
-    _$unforgetCache[4].e(_unwrappedJsxExp2);
-  }
-  let _unwrappedJsxExp3 = _$unforgetCache[5].v;
-  if (_$unforgetCache[5].n) {
-    _unwrappedJsxExp3 = movie.title;
-    _$unforgetCache[5].e(_unwrappedJsxExp3);
-  }
-  let _unwrappedJsxEl = _$unforgetCache[3].v;
-  if (_$unforgetCache[3].n || _unwrappedJsxExp2 !== _$unforgetCache[4].v || _unwrappedJsxExp3 !== _$unforgetCache[5].v) {
-    _unwrappedJsxEl = <div key={_unwrappedJsxExp2}>
-          {_unwrappedJsxExp3} 
-          {/* {value} */}
-        </div>;
-    _$unforgetCache[3].e(_unwrappedJsxEl);
-  }
-  let _unwrappedJsxExp = _$unforgetCache[1].v;
-  if (_$unforgetCache[1].n || filteredMovies !== _$unforgetCache[2].v || _unwrappedJsxEl !== _$unforgetCache[3].v) {
-    _unwrappedJsxExp = filteredMovies.map(movie => _unwrappedJsxEl);
-    _$unforgetCache[1].e(_unwrappedJsxExp);
-  }
-  let _unwrappedJsxEl2 = _$unforgetCache[0].v;
-  if (_$unforgetCache[0].n || _unwrappedJsxExp !== _$unforgetCache[1].v) {
-    _unwrappedJsxEl2 = <div>
-      {_unwrappedJsxExp}
+  };
+  const _segment9 = () => {
+    if (filteredMovies.length > 0) {
+      // Just some side effect
+      console.log("Movies after 2000: ", filteredMovies);
+    }
+  };
+  let _unwrappedJsxExp = _$unforgetCache[6].v;
+  const _segment10 = () => {
+    _unwrappedJsxExp = movies.length;
+  };
+  let _unwrappedJsxExp2 = _$unforgetCache[7].v;
+  const _segment11 = () => {
+    _unwrappedJsxExp2 = filteredMovies.map(movie => <div key={movie.title}>
+          {movie.title}
+          {value}
+        </div>);
+  };
+  let _unwrappedJsxEl = _$unforgetCache[1].v;
+  const _segment12 = () => {
+    _unwrappedJsxEl = <button onClick={addRandomMovie}>Add random movie</button>;
+  };
+  let _unwrappedJsxEl2 = _$unforgetCache[5].v;
+  const _segment13 = () => {
+    _unwrappedJsxEl2 = <div>total number of movies: {_unwrappedJsxExp}</div>;
+  };
+  let _unwrappedJsxEl3 = _$unforgetCache[0].v;
+  const _segment14 = () => {
+    _unwrappedJsxEl3 = <div>
+      {_unwrappedJsxEl}
+      {_unwrappedJsxEl2}
+      {_unwrappedJsxExp2}
     </div>;
-    _$unforgetCache[0].e(_unwrappedJsxEl2);
+  };
+  _segment();
+  _$unforgetCache[3].e(_unwrapped);
+  if (_$unforgetCache[2].n || _unwrapped[1] !== _$unforgetCache[3].v[1]) {
+    _segment2();
+    _$unforgetCache[2].e(addRandomMovie);
   }
-  _$unforgetCommit();
-  return _unwrappedJsxEl2;
-}"
+  if (_$unforgetCache[4].n || _unwrapped[0] !== _$unforgetCache[3].v[0]) {
+    _segment3();
+    _$unforgetCache[4].e(movies);
+  }
+  _segment4();
+  _$unforgetCache[10].e(key);
+  if (_$unforgetCache[9].n) {
+    _segment5();
+    _$unforgetCache[9].e(value);
+  }
+  if (_$unforgetCache[8].n) {
+    _segment6();
+    _$unforgetCache[8].e(filteredMovies);
+  }
+  _segment7();
+  if (_unwrapped !== _$unforgetCache[3].v || addRandomMovie !== _$unforgetCache[2].v || movies !== _$unforgetCache[4].v || key !== _$unforgetCache[10].v || value !== _$unforgetCache[9].v || filteredMovies !== _$unforgetCache[8].v || movies.length !== _$unforgetCache[4].v.length || _unwrappedJsxExp !== _$unforgetCache[6].v || _unwrappedJsxEl !== _$unforgetCache[1].v || _unwrappedJsxEl2 !== _$unforgetCache[5].v || _unwrappedJsxExp2 !== _$unforgetCache[7].v || _unwrappedJsxEl3 !== _$unforgetCache[0].v || filteredMovies.length !== _$unforgetCache[8].v.length) {
+    _segment8();
+  }
+  if (_unwrapped !== _$unforgetCache[3].v || addRandomMovie !== _$unforgetCache[2].v || movies !== _$unforgetCache[4].v || key !== _$unforgetCache[10].v || value !== _$unforgetCache[9].v || filteredMovies !== _$unforgetCache[8].v || filteredMovies.length !== _$unforgetCache[8].v.length || _unwrappedJsxExp !== _$unforgetCache[6].v || _unwrappedJsxEl !== _$unforgetCache[1].v || _unwrappedJsxEl2 !== _$unforgetCache[5].v || _unwrappedJsxExp2 !== _$unforgetCache[7].v || _unwrappedJsxEl3 !== _$unforgetCache[0].v) {
+    _segment9();
+  }
+  if (_$unforgetCache[6].n) {
+    _segment10();
+    _$unforgetCache[6].e(_unwrappedJsxExp);
+  }
+  if (_$unforgetCache[7].n || filteredMovies !== _$unforgetCache[8].v || value !== _$unforgetCache[9].v) {
+    _segment11();
+    _$unforgetCache[7].e(_unwrappedJsxExp2);
+  }
+  if (_$unforgetCache[1].n || addRandomMovie !== _$unforgetCache[2].v) {
+    _segment12();
+    _$unforgetCache[1].e(_unwrappedJsxEl);
+  }
+  if (_$unforgetCache[5].n || _unwrappedJsxExp !== _$unforgetCache[6].v) {
+    _segment13();
+    _$unforgetCache[5].e(_unwrappedJsxEl2);
+  }
+  if (_$unforgetCache[0].n || _unwrappedJsxEl !== _$unforgetCache[1].v || _unwrappedJsxEl2 !== _$unforgetCache[5].v || _unwrappedJsxExp2 !== _$unforgetCache[7].v) {
+    _segment14();
+    _$unforgetCache[0].e(_unwrappedJsxEl3);
+  }
+  return _unwrappedJsxEl3;
+}
+export default MyComponent;"
 `;

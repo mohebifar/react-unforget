@@ -22,7 +22,7 @@ interface Commit {
 
 export const useCreateCache$unforget = <S extends number>(
   size: S
-): [FixedArray<CacheEntry, S>, Commit] => {
+): [FixedArray<CacheEntry, S>, Commit, UnassignedType] => {
   const valuesRef: MutableRefObject<FixedArray<CacheEntry, S> | null> =
     useRef(null);
 
@@ -68,5 +68,5 @@ export const useCreateCache$unforget = <S extends number>(
     throw new Error("Unreachable");
   }
 
-  return [valuesRef.current, commitRef.current];
+  return [valuesRef.current, commitRef.current, UNASSIGNED];
 };

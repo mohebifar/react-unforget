@@ -1,6 +1,6 @@
 import type * as babel from "@babel/core";
 import { makeDependencyCondition } from "~/ast-factories/make-dependency-condition";
-import { isHookCall } from "~/utils/is-hook-call";
+import { hasHookCall } from "~/utils/is-hook-call";
 import { Component } from "./Component";
 import type { ComponentSideEffect } from "./ComponentSideEffect";
 import type { ComponentVariable } from "./ComponentVariable";
@@ -16,7 +16,19 @@ type ComponentMutableSegmentType =
   | typeof COMPONENT_MUTABLE_SEGMENT_COMPONENT_VARIABLE_TYPE
   | typeof COMPONENT_MUTABLE_SEGMENT_COMPONENT_SIDE_EFFECT_TYPE;
 
+export type SegmentTransformationResult = {
+  segmentCallableId: babel.types.Identifier;
+  dependencyConditions: babel.types.Expression | null;
+  newPaths: babel.NodePath<babel.types.Node>[] | null;
+  hasHookCall: boolean;
+  returnDescendant?: babel.NodePath<babel.types.Node> | null;
+  updateCache?: babel.types.Statement | null;
+  replacements: babel.types.Node[] | null;
+} | null;
+
 export abstract class ComponentMutableSegment {
+  protected appliedTransformation = false;
+
   // The side effects of this segment
   protected sideEffects = new Map<
     babel.NodePath<babel.types.Statement>,
@@ -39,10 +51,6 @@ export abstract class ComponentMutableSegment {
     this.dependencies.set(componentVariable.name, componentVariable);
   }
 
-  protected makeDependencyCondition() {
-    return makeDependencyCondition(this);
-  }
-
   hasDependencies() {
     return this.dependencies.size > 0;
   }
@@ -51,8 +59,16 @@ export abstract class ComponentMutableSegment {
     return this.dependencies;
   }
 
-  computeDependencyGraph() {
-    throw new Error("Not implemented");
+  abstract computeDependencyGraph(): void;
+
+  abstract get path(): babel.NodePath<babel.types.Node>;
+
+  abstract applyTransformation(
+    performReplacement?: boolean
+  ): SegmentTransformationResult;
+
+  protected makeDependencyCondition() {
+    return makeDependencyCondition(this);
   }
 
   getSideEffectDependencies() {
@@ -64,32 +80,15 @@ export abstract class ComponentMutableSegment {
   }
 
   hasHookCall() {
-    if (this.hasDependencies()) {
-      return false;
-    }
-
-    let hasHookCall = false;
-    this.path.traverse({
-      CallExpression: (innerPath) => {
-        if (
-          isHookCall(innerPath) &&
-          this.component.isTheFunctionParentOf(innerPath)
-        ) {
-          hasHookCall = true;
-          return;
-        }
-      },
-    });
-
-    return hasHookCall;
+    return hasHookCall(this.path, this.component.path);
   }
 
   getParentStatement() {
-    return this.path.getStatementParent();
-  }
+    const parentStatement = this.path.find(
+      (p) => p.isStatement() && p.parentPath === this.component.path.get("body")
+    ) as babel.NodePath<babel.types.Statement> | null;
 
-  get path(): babel.NodePath<babel.types.Node> {
-    throw new Error("Not implemented");
+    return parentStatement;
   }
 
   isComponentVariable(): this is ComponentVariable {

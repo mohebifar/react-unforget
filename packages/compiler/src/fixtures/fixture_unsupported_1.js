@@ -1,9 +1,12 @@
 const useMovies = () => {
-  return [
-    { title: "The Shawshank Redemption", year: 1994 },
-    { title: "The Godfather", year: 1972 },
-    { title: "The Dark Knight", year: 2008 },
-  ];
+  return {
+    data: [
+      { title: "The Shawshank Redemption", year: 1994 },
+      { title: "The Godfather", year: 1972 },
+      { title: "The Dark Knight", year: 2008 },
+    ],
+    loading: false,
+  };
 };
 
 const object = { key1: "value1", key2: "value2" };
@@ -15,7 +18,11 @@ export function MyComponent() {
 
   i = [{ title: "The Shawshank Redemption", year: 1994 }];
 
-  const movies = useMovies();
+  const { movies, loading } = useMovies();
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   for (let i = 0; i < movies.length; i++) {
     if (movies[i].year > 2000) {
@@ -53,17 +60,9 @@ export function MyComponent() {
     i = [{ title: "The Shawshank Redemption", year: 1994 }];
   };
 
-  let movies;
+  let movies, loading;
   const updater_4 = () => {
-    movies = useMovies();
-  };
-
-  const updater_5 = () => {
-    for (let i = 0; i < movies.length; i++) {
-      if (movies[i].year > 2000) {
-        filteredMovies.push(movies[i]);
-      }
-    }
+    ({movies, loading}) = useMovies();
   };
 
   updater_1();
@@ -74,6 +73,19 @@ export function MyComponent() {
 
   updater_3();
   updater_4();
+  
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  const updater_5 = () => {
+    for (let i = 0; i < movies.length; i++) {
+      if (movies[i].year > 2000) {
+        filteredMovies.push(movies[i]);
+      }
+    }
+  };
+
 
   if (movies_check || filteredMovies_check) {
     updater_5();

@@ -3,6 +3,7 @@ import { Binding } from "@babel/traverse";
 import * as t from "@babel/types";
 import {
   DEFAULT_CACHE_COMMIT_VARIABLE_NAME,
+  DEFAULT_CACHE_NULL_VARIABLE_NAME,
   DEFAULT_CACHE_VARIABLE_NAME,
   RUNTIME_MODULE_CREATE_CACHE_HOOK_NAME,
 } from "~/utils/constants";
@@ -13,6 +14,12 @@ import { unwrapJsxExpressions } from "~/utils/unwrap-jsx-expressions";
 import { getFunctionParent } from "../utils/get-function-parent";
 import { ComponentSideEffect } from "./ComponentSideEffect";
 import { ComponentVariable } from "./ComponentVariable";
+import {
+  ComponentMutableSegment,
+  SegmentTransformationResult,
+} from "./ComponentMutableSegment";
+import { hasHookCall } from "~/utils/is-hook-call";
+import { convertStatementToSegmentCallable } from "~/ast-factories/convert-statement-to-segment-callable";
 
 export class Component {
   private sideEffects = new Map<
@@ -26,6 +33,11 @@ export class Component {
   >();
   private cacheValueIdentifier: t.Identifier;
   private cacheCommitIdentifier: t.Identifier;
+  private cacheNullIdentifier: t.Identifier;
+  private mapOfReturnStatementToReferencedBindings = new Map<
+    babel.NodePath<babel.types.ReturnStatement>,
+    Binding[]
+  >();
 
   constructor(public path: babel.NodePath<babel.types.Function>) {
     path.assertFunction();
@@ -37,12 +49,21 @@ export class Component {
     this.cacheCommitIdentifier = path.scope.generateUidIdentifier(
       DEFAULT_CACHE_COMMIT_VARIABLE_NAME
     );
+
+    this.cacheNullIdentifier = path.scope.generateUidIdentifier(
+      DEFAULT_CACHE_NULL_VARIABLE_NAME
+    );
   }
 
   computeComponentVariables() {
     this.prepareComponentBody();
     getReturnsOfFunction(this.path).forEach((returnPath) => {
-      const bindings = getReferencedVariablesInside(returnPath);
+      const bindings = getReferencedVariablesInside(returnPath).filter(
+        (binding) => this.isBindingInComponentScope(binding)
+      );
+
+      this.mapOfReturnStatementToReferencedBindings.set(returnPath, bindings);
+
       bindings.forEach((binding) => {
         this.addComponentVariable(binding);
       });
@@ -81,7 +102,8 @@ export class Component {
     const name = binding.identifier.name;
 
     if (this.hasComponentVariable(name)) {
-      return this.getComponentVariable(name);
+      const componentVariable = this.getComponentVariable(name)!;
+      return componentVariable;
     }
 
     const componentVariable = new ComponentVariable(
@@ -91,6 +113,7 @@ export class Component {
     );
 
     this.componentVariables.set(name, componentVariable);
+
     componentVariable.unwrapAssignmentPatterns();
     componentVariable.computeDependencyGraph();
 
@@ -128,30 +151,185 @@ export class Component {
     return t.cloneNode(this.cacheCommitIdentifier);
   }
 
-  applyModification() {
+  applyTransformation() {
     const cacheVariableDeclaration = this.makeCacheVariableDeclaration();
 
     const body = this.path.get("body");
 
-    this.componentVariables.forEach((componentVariable) => {
-      componentVariable.applyModification();
-    });
-
-    if (body.isBlockStatement()) {
-      body.unshiftContainer("body", cacheVariableDeclaration);
+    if (!body.isBlockStatement()) {
+      return;
     }
 
-    this.sideEffects.forEach((sideEffect) => {
-      sideEffect.applyModification();
+    const statementsToMutableSegmentMap = new Map<
+      babel.NodePath<babel.types.Statement>,
+      ComponentMutableSegment
+    >();
+
+    const statementsMapSet = (segment: ComponentMutableSegment) => {
+      const parent = segment.getParentStatement();
+      if (parent) {
+        statementsToMutableSegmentMap.set(parent, segment);
+      }
+    };
+
+    this.componentVariables.forEach(statementsMapSet);
+    this.sideEffects.forEach(statementsMapSet);
+
+    const statements = body.get("body");
+
+    let lastStatementWithHookCallIdx = -1;
+
+    for (let i = statements.length - 1; i >= 0; i--) {
+      const currentStatement = statements[i]!;
+      if (hasHookCall(currentStatement, this.path)) {
+        lastStatementWithHookCallIdx = i;
+        break;
+      }
+    }
+
+    const clonedStatements = statements.slice();
+
+    const getLastComponentVariableStatementIdx = (bindings: Binding[]) => {
+      return bindings.reduce((lastStatement, binding) => {
+        const componentVariable = this.getComponentVariable(
+          binding.identifier.name
+        );
+        if (componentVariable) {
+          const statement = componentVariable.getParentStatement();
+          if (statement) {
+            const index = clonedStatements.indexOf(statement);
+            if (index > lastStatement) {
+              return index;
+            }
+          }
+        }
+
+        return lastStatement;
+      }, -1);
+    };
+
+    const transformStatement = (
+      statement: babel.NodePath<babel.types.Statement>
+    ) => {
+      if (statement.isReturnStatement()) {
+        return null;
+      }
+
+      const returnDescendant = Array.from(
+        this.mapOfReturnStatementToReferencedBindings.keys()
+      ).find((returnStatement) => returnStatement.isDescendant(statement));
+      const shouldPerformReplacement = !returnDescendant;
+
+      const segment = shouldPerformReplacement
+        ? statementsToMutableSegmentMap.get(statement)
+        : null;
+
+      if (segment) {
+        const transformationResult = segment.applyTransformation(
+          shouldPerformReplacement
+        );
+        if (transformationResult) {
+          return { ...transformationResult, returnDescendant };
+        } else {
+          return null;
+        }
+      }
+
+      const hadHookCall = hasHookCall(statement, this.path);
+
+      this.componentVariables.forEach((componentVariable) => {
+        if (
+          componentVariable.path.isDescendant(statement) &&
+          statement !== componentVariable.path
+        ) {
+          const transformation = componentVariable.applyTransformation();
+          const callStatement = this.makeSegmentCallStatement(transformation);
+          if (callStatement && transformation) {
+            const lastPath = transformation.newPaths?.pop();
+            lastPath?.insertAfter(callStatement);
+          }
+        }
+      });
+
+      const { segmentCallableId, newPaths, replacements } =
+        convertStatementToSegmentCallable(statement, {
+          cacheNullValue: returnDescendant
+            ? this.cacheNullIdentifier
+            : undefined,
+        });
+
+      return {
+        dependencyConditions: null,
+        replacements,
+        segmentCallableId,
+        newPaths,
+        hasHookCall: hadHookCall,
+        returnDescendant,
+      };
+    };
+
+    let currentIndex = -1;
+    let currentScanIndex = 0;
+
+    const returnsSize = this.mapOfReturnStatementToReferencedBindings.size;
+    this.mapOfReturnStatementToReferencedBindings.forEach(
+      (bindings, returnPath) => {
+        currentIndex++;
+        let maxIndex = -1;
+
+        if (currentIndex === 0) {
+          maxIndex = Math.max(lastStatementWithHookCallIdx, maxIndex);
+        }
+
+        maxIndex = Math.max(
+          getLastComponentVariableStatementIdx(bindings),
+          maxIndex
+        );
+
+        const statementsToTransform: babel.NodePath<babel.types.Statement>[] =
+          [];
+
+        if (currentIndex === returnsSize - 1) {
+          statementsToTransform.push(...statements);
+        } else {
+          for (; currentScanIndex <= maxIndex; currentScanIndex++) {
+            const statement = statements.shift();
+            if (statement) {
+              statementsToTransform.push(statement);
+            }
+          }
+        }
+
+        const returnStatement = returnPath.find(
+          (p) => p.isStatement() && p.parentPath === body
+        );
+
+        statementsToTransform.forEach((statement) => {
+          const transformation = transformStatement(statement);
+          const callStatement = this.makeSegmentCallStatement(transformation);
+
+          if (transformation && callStatement) {
+            if (transformation.returnDescendant) {
+              transformation.newPaths?.[0]?.insertAfter(callStatement);
+            } else {
+              returnStatement?.insertBefore(callStatement);
+            }
+          }
+        });
+      }
+    );
+
+    this.componentVariables.forEach((componentVariable) => {
+      const transformation = componentVariable.applyTransformation();
+      const callStatement = this.makeSegmentCallStatement(transformation);
+
+      if (callStatement && transformation) {
+        const lastNewPath = transformation.newPaths?.pop();
+        lastNewPath?.insertAfter(callStatement);
+      }
     });
 
-    const returns = getReturnsOfFunction(this.path);
-
-    returns.forEach((returnPath) => {
-      returnPath.insertBefore(
-        t.expressionStatement(t.callExpression(this.cacheCommitIdentifier, []))
-      );
-    });
+    body.unshiftContainer("body", cacheVariableDeclaration);
   }
 
   getFunctionBlockStatement(): babel.NodePath<babel.types.BlockStatement> | null {
@@ -176,7 +354,11 @@ export class Component {
     const sizeNumber = t.numericLiteral(this.componentVariables.size);
     const declaration = t.variableDeclaration("const", [
       t.variableDeclarator(
-        t.arrayPattern([this.cacheValueIdentifier, this.cacheCommitIdentifier]),
+        t.arrayPattern([
+          this.cacheValueIdentifier,
+          this.cacheCommitIdentifier,
+          this.cacheNullIdentifier,
+        ]),
         t.callExpression(t.identifier(RUNTIME_MODULE_CREATE_CACHE_HOOK_NAME), [
           sizeNumber,
         ])
@@ -201,5 +383,67 @@ export class Component {
   // --- DEBUGGING ---
   __debug_getComponentVariables() {
     return this.componentVariables;
+  }
+
+  isBindingInComponentScope(binding: Binding) {
+    return this.path.scope.getBinding(binding.identifier.name) === binding;
+  }
+
+  private makeSegmentCallStatement(
+    transformation: SegmentTransformationResult
+  ) {
+    if (!transformation) {
+      return null;
+    }
+
+    const {
+      dependencyConditions,
+      segmentCallableId,
+      hasHookCall,
+      updateCache,
+      returnDescendant,
+    } = transformation;
+
+    const callSegmentCallable = t.callExpression(segmentCallableId, []);
+    const updateStatements: t.Statement[] = [];
+
+    if (returnDescendant) {
+      const customCallVariable = this.path.scope.generateUidIdentifier();
+      updateStatements.push(
+        t.variableDeclaration("const", [
+          t.variableDeclarator(customCallVariable, callSegmentCallable),
+        ])
+      );
+
+      updateStatements.push(
+        // if customCallVariable not equal to null, return it
+        t.ifStatement(
+          t.binaryExpression(
+            "!==",
+            customCallVariable,
+            this.cacheNullIdentifier
+          ),
+          t.blockStatement([t.returnStatement(customCallVariable)])
+        )
+      );
+    } else {
+      updateStatements.push(t.expressionStatement(callSegmentCallable));
+    }
+
+    if (updateCache) {
+      updateStatements.push(updateCache);
+    }
+
+    const callStatementWithCondition =
+      dependencyConditions && !hasHookCall
+        ? [
+            t.ifStatement(
+              dependencyConditions,
+              t.blockStatement(updateStatements)
+            ),
+          ]
+        : updateStatements;
+
+    return callStatementWithCondition;
   }
 }

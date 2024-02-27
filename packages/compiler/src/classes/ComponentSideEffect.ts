@@ -3,10 +3,9 @@ import * as t from "@babel/types";
 import { Component } from "./Component";
 import { ComponentMutableSegment } from "./ComponentMutableSegment";
 import { getReferencedVariablesInside } from "~/utils/get-referenced-variables-inside";
+import { convertStatementToSegmentCallable } from "~/ast-factories/convert-statement-to-segment-callable";
 
 export class ComponentSideEffect extends ComponentMutableSegment {
-  private appliedModification = false;
-
   constructor(
     component: Component,
     private _path: babel.NodePath<babel.types.Statement>
@@ -30,23 +29,24 @@ export class ComponentSideEffect extends ComponentMutableSegment {
     });
   }
 
-  applyModification() {
-    if (this.appliedModification) {
-      return;
+  applyTransformation(performReplacement = true) {
+    if (this.appliedTransformation) {
+      return null;
     }
 
-    const dependenciesCondition = this.makeDependencyCondition();
+    const hasHookCall = this.hasHookCall();
 
-    if (dependenciesCondition) {
-      this.path.replaceWithMultiple([
-        t.ifStatement(
-          dependenciesCondition,
-          t.blockStatement([this.path.node])
-        ),
-      ]);
-    }
+    const { segmentCallableId, newPaths, replacements } =
+      convertStatementToSegmentCallable(this.path, { performReplacement });
+    this.appliedTransformation = true;
 
-    this.appliedModification = true;
+    return {
+      replacements,
+      segmentCallableId,
+      newPaths,
+      hasHookCall,
+      dependencyConditions: this.makeDependencyCondition(),
+    };
   }
 
   get path() {

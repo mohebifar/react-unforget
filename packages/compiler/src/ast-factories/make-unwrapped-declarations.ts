@@ -10,9 +10,14 @@ export function makeUnwrappedDeclarations(
   const unwrappedEntries = unwrapPatternAssignment(id, tempVariableId);
 
   const unwrappedDeclarations = unwrappedEntries.map((entry) => {
-    return t.variableDeclaration(kind, [
-      t.variableDeclarator(entry.id, entry.value),
-    ]);
+    const binding = id.scope.getBinding(entry.name);
+
+    return [
+      t.variableDeclaration(kind, [
+        t.variableDeclarator(entry.id, entry.value),
+      ]),
+      binding,
+    ] as const;
   });
 
   return {

@@ -1,6 +1,7 @@
 import * as babel from "@babel/core";
 import * as t from "@babel/types";
 import { DEFAULT_UNWRAPPED_JSX_ELEMENT_VARIABLE_NAME } from "./constants";
+import { isInTheSameFunctionScope } from "./is-in-the-same-function-scope";
 import { unwrapGenericExpression } from "./unwrap-generic-expression";
 
 type JSXChild = t.JSXElement["children"][number];
@@ -23,6 +24,9 @@ export function unwrapJsxElements(fn: babel.NodePath<t.Function>) {
     }
 
     if (path.isJSXElement() || path.isJSXFragment()) {
+      if (!isInTheSameFunctionScope(path, fn)) {
+        return;
+      }
       const childrenPath = path.get("children") as babel.NodePath<
         t.JSXElement["children"][number]
       >[];

@@ -1,5 +1,18 @@
 # @react-unforget/compiler
 
+## 0.1.0-dev.4
+
+### Patch Changes
+
+- 216c581: Re-architecture
+
+  - Supports side effects
+  - Supports nested blocks
+  - Supports hooks
+  - Supports arrow functions
+  - Supports multiple return statements
+  - Intelligently re-ordering statements in blocks
+
 ## 0.1.0-dev.3
 
 ### Minor Changes

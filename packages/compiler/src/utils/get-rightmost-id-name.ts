@@ -1,24 +1,22 @@
-import type * as babel from "@babel/core";
+import * as t from "@babel/types";
 import { RightmostIdNotFound } from "./errors/RightmostIdNotFound";
 
 export function getRightmostIdName(
-  path: babel.NodePath<
-    babel.types.Expression | babel.types.V8IntrinsicIdentifier
-  >
+  node: t.Expression | t.V8IntrinsicIdentifier
 ): string {
-  if (path.isMemberExpression()) {
-    const property = path.get("property");
+  if (t.isMemberExpression(node) || t.isOptionalMemberExpression(node)) {
+    const property = node.property;
 
-    if (property.isStringLiteral()) {
-      return property.node.value;
-    } else if (property.isIdentifier() && !path.node.computed) {
-      return property.node.name;
-    } else if (property.isNumericLiteral()) {
-      return property.node.value.toString();
+    if (t.isStringLiteral(property)) {
+      return property.value;
+    } else if (t.isIdentifier(property) && !node.computed) {
+      return property.name;
+    } else if (t.isNumericLiteral(property)) {
+      return property.value.toString();
     }
-  } else if (path.isIdentifier()) {
-    return path.node.name;
+  } else if (t.isIdentifier(node)) {
+    return node.name;
   }
 
-  throw new RightmostIdNotFound(path);
+  throw new RightmostIdNotFound(node);
 }

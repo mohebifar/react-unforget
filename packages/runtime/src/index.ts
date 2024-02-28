@@ -22,7 +22,7 @@ interface Commit {
 
 export const useCreateCache$unforget = <S extends number>(
   size: S
-): [FixedArray<CacheEntry, S>, Commit] => {
+): [FixedArray<CacheEntry, S>, Commit, UnassignedType] => {
   const valuesRef: MutableRefObject<FixedArray<CacheEntry, S> | null> =
     useRef(null);
 
@@ -30,6 +30,9 @@ export const useCreateCache$unforget = <S extends number>(
 
   const valuesToCommit: MutableRefObject<Map<number, any> | null> =
     useRef(null);
+
+  // This is needed for hot reloading to work
+  const previousSize = useRef(size);
 
   if (!valuesToCommit.current) {
     valuesToCommit.current = new Map();
@@ -46,7 +49,8 @@ export const useCreateCache$unforget = <S extends number>(
     };
   }
 
-  if (!valuesRef.current) {
+  if (!valuesRef.current || previousSize.current !== size) {
+    previousSize.current = size;
     valuesRef.current = Array.from({ length: size }, (_, i) => {
       return {
         v: UNASSIGNED,
@@ -64,5 +68,5 @@ export const useCreateCache$unforget = <S extends number>(
     throw new Error("Unreachable");
   }
 
-  return [valuesRef.current, commitRef.current];
+  return [valuesRef.current, commitRef.current, UNASSIGNED];
 };

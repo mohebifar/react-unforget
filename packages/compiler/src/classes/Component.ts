@@ -3,20 +3,34 @@ import { Binding } from "@babel/traverse";
 import * as t from "@babel/types";
 import {
   DEFAULT_CACHE_COMMIT_VARIABLE_NAME,
+  DEFAULT_CACHE_NULL_VARIABLE_NAME,
   DEFAULT_CACHE_VARIABLE_NAME,
   RUNTIME_MODULE_CREATE_CACHE_HOOK_NAME,
 } from "~/utils/constants";
-import { getReferencedVariablesInside } from "~/utils/get-referenced-variables-inside";
-import { getReturnsOfFunction } from "~/utils/get-returns-of-function";
-import { getFunctionParent } from "../utils/get-function-parent";
-import { ComponentVariable } from "./ComponentVariable";
-import { unwrapJsxExpressions } from "~/utils/unwrap-jsx-expressions";
+import { isVariableInScopeOf } from "~/utils/is-variable-in-scope-of";
 import { unwrapJsxElements } from "~/utils/unwrap-jsx-elements";
+import { unwrapJsxExpressions } from "~/utils/unwrap-jsx-expressions";
+import { getFunctionParent } from "../utils/get-function-parent";
+import { ComponentMutableSegment } from "./ComponentMutableSegment";
+import { ComponentRunnableSegment } from "./ComponentRunnableSegment";
+import { ComponentVariable } from "./ComponentVariable";
 
 export class Component {
-  private componentVariables = new Map<string, ComponentVariable>();
+  private runnableSegments = new Map<
+    babel.NodePath<babel.types.Statement>,
+    ComponentRunnableSegment
+  >();
+  private componentVariables = new Map<Binding, ComponentVariable>();
   private cacheValueIdentifier: t.Identifier;
   private cacheCommitIdentifier: t.Identifier;
+  private cacheNullIdentifier: t.Identifier;
+
+  private rootSegment: ComponentRunnableSegment | null = null;
+
+  private mapBlockStatementToComponentRunnableSegment = new Map<
+    babel.NodePath<babel.types.BlockStatement>,
+    ComponentRunnableSegment
+  >();
 
   constructor(public path: babel.NodePath<babel.types.Function>) {
     path.assertFunction();
@@ -28,16 +42,22 @@ export class Component {
     this.cacheCommitIdentifier = path.scope.generateUidIdentifier(
       DEFAULT_CACHE_COMMIT_VARIABLE_NAME
     );
+
+    this.cacheNullIdentifier = path.scope.generateUidIdentifier(
+      DEFAULT_CACHE_NULL_VARIABLE_NAME
+    );
   }
 
-  computeComponentVariables() {
+  computeComponentSegments() {
     this.prepareComponentBody();
-    getReturnsOfFunction(this.path).forEach((returnPath) => {
-      const bindings = getReferencedVariablesInside(returnPath);
-      bindings.forEach((binding) => {
-        this.addComponentVariable(binding);
-      });
-    });
+
+    const body = this.path.get("body");
+    if (!body.isBlockStatement()) {
+      return;
+    }
+
+    this.rootSegment = this.addRunnableSegment(body);
+    this.rootSegment.computeDependencyGraph();
   }
 
   prepareComponentBody() {
@@ -45,39 +65,83 @@ export class Component {
     unwrapJsxElements(this.path);
   }
 
-  hasComponentVariable(name: string) {
-    return this.componentVariables.has(name);
+  hasComponentVariable(binding: Binding) {
+    return this.componentVariables.has(binding);
   }
 
-  getComponentVariable(name: string) {
-    return this.componentVariables.get(name);
+  getComponentVariable(binding: Binding) {
+    return this.componentVariables.get(binding);
+  }
+
+  private findBlockStatementOfPath(path: babel.NodePath<babel.types.Node>) {
+    return path.findParent(
+      (innerPath) =>
+        innerPath.isBlockStatement() && innerPath.isDescendant(this.path)
+    ) as babel.NodePath<babel.types.BlockStatement> | null;
   }
 
   addComponentVariable(binding: Binding) {
-    const path = binding.path;
-
     // If the binding is not in the same function, ignore it i.e. it can't be a component variable
-    if (!this.isTheFunctionParentOf(path)) {
+    if (binding.scope !== this.path.scope) {
       return null;
     }
 
-    const name = binding.identifier.name;
+    const { path } = binding;
 
-    if (this.hasComponentVariable(name)) {
-      return this.getComponentVariable(name);
+    const blockStatement = this.findBlockStatementOfPath(path);
+    const parent = blockStatement
+      ? this.mapBlockStatementToComponentRunnableSegment.get(blockStatement) ??
+        null
+      : null;
+
+    if (this.hasComponentVariable(binding)) {
+      const componentVariable = this.getComponentVariable(binding)!;
+      componentVariable.setParent(parent);
+      return componentVariable;
     }
 
     const componentVariable = new ComponentVariable(
-      binding,
       this,
+      parent,
+      binding,
       this.componentVariables.size
     );
 
-    this.componentVariables.set(name, componentVariable);
+    this.componentVariables.set(binding, componentVariable);
+
     componentVariable.unwrapAssignmentPatterns();
     componentVariable.computeDependencyGraph();
 
     return componentVariable;
+  }
+
+  addRunnableSegment(path: babel.NodePath<babel.types.Statement>) {
+    const blockStatement = this.findBlockStatementOfPath(path);
+    const parent = blockStatement
+      ? this.mapBlockStatementToComponentRunnableSegment.get(blockStatement) ??
+        null
+      : null;
+
+    if (this.runnableSegments.has(path)) {
+      const found = this.runnableSegments.get(path)!;
+      found.setParent(parent);
+      return found;
+    }
+
+    const runnableSegment = new ComponentRunnableSegment(this, parent, path);
+
+    if (path.isBlockStatement()) {
+      this.mapBlockStatementToComponentRunnableSegment.set(
+        path,
+        runnableSegment
+      );
+    }
+
+    this.runnableSegments.set(path, runnableSegment);
+
+    runnableSegment.computeDependencyGraph();
+
+    return runnableSegment;
   }
 
   isTheFunctionParentOf(path: babel.NodePath<babel.types.Node>) {
@@ -86,7 +150,7 @@ export class Component {
 
   getRootComponentVariables() {
     return [...this.componentVariables.values()].filter(
-      (componentVariable) => !componentVariable.isDerived()
+      (componentVariable) => !componentVariable.hasDependencies()
     );
   }
 
@@ -98,26 +162,56 @@ export class Component {
     return t.cloneNode(this.cacheCommitIdentifier);
   }
 
-  applyModification() {
+  getCacheNullIdentifier() {
+    return t.cloneNode(this.cacheNullIdentifier);
+  }
+
+  private statementsToMutableSegmentMapCache: Map<
+    babel.NodePath<babel.types.Statement>,
+    ComponentMutableSegment
+  > | null = null;
+
+  getStatementsToMutableSegmentMap() {
+    if (this.statementsToMutableSegmentMapCache) {
+      return this.statementsToMutableSegmentMapCache;
+    }
+
+    const statementsToMutableSegmentMap = new Map<
+      babel.NodePath<babel.types.Statement>,
+      ComponentMutableSegment
+    >();
+
+    const statementsMapSet = (segment: ComponentMutableSegment) => {
+      const parent = segment.getParentStatement();
+      if (parent) {
+        statementsToMutableSegmentMap.set(parent, segment);
+      }
+    };
+
+    this.runnableSegments.forEach(statementsMapSet);
+    this.componentVariables.forEach(statementsMapSet);
+
+    this.statementsToMutableSegmentMapCache = statementsToMutableSegmentMap;
+
+    return statementsToMutableSegmentMap;
+  }
+
+  applyTransformation() {
     const cacheVariableDeclaration = this.makeCacheVariableDeclaration();
+
+    if (!this.rootSegment) {
+      throw new Error("Root segment not found");
+    }
 
     const body = this.path.get("body");
 
-    this.componentVariables.forEach((componentVariable) => {
-      componentVariable.applyModification();
-    });
-
-    if (body.isBlockStatement()) {
-      body.unshiftContainer("body", cacheVariableDeclaration);
+    if (!body.isBlockStatement()) {
+      return;
     }
 
-    const returns = getReturnsOfFunction(this.path);
+    this.rootSegment.applyTransformation();
 
-    returns.forEach((returnPath) => {
-      returnPath.insertBefore(
-        t.expressionStatement(t.callExpression(this.cacheCommitIdentifier, []))
-      );
-    });
+    body.unshiftContainer("body", cacheVariableDeclaration);
   }
 
   getFunctionBlockStatement(): babel.NodePath<babel.types.BlockStatement> | null {
@@ -142,7 +236,11 @@ export class Component {
     const sizeNumber = t.numericLiteral(this.componentVariables.size);
     const declaration = t.variableDeclaration("const", [
       t.variableDeclarator(
-        t.arrayPattern([this.cacheValueIdentifier, this.cacheCommitIdentifier]),
+        t.arrayPattern([
+          this.cacheValueIdentifier,
+          this.cacheCommitIdentifier,
+          this.cacheNullIdentifier,
+        ]),
         t.callExpression(t.identifier(RUNTIME_MODULE_CREATE_CACHE_HOOK_NAME), [
           sizeNumber,
         ])
@@ -167,5 +265,9 @@ export class Component {
   // --- DEBUGGING ---
   __debug_getComponentVariables() {
     return this.componentVariables;
+  }
+
+  isBindingInComponentScope(binding: Binding) {
+    return isVariableInScopeOf(binding, this.path.scope);
   }
 }

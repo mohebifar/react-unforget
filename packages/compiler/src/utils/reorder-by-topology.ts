@@ -1,0 +1,57 @@
+import { ComponentMutableSegment } from "~/classes/ComponentMutableSegment";
+import { CircularDependencyError } from "./errors/CircularDependencyError";
+
+type StatementPath = babel.NodePath<babel.types.Statement>;
+
+export function reorderByTopology(
+  statements: StatementPath[] | Set<StatementPath>,
+  map: Map<StatementPath, ComponentMutableSegment>
+) {
+  const stack: StatementPath[] = [];
+  const visited = new Set<StatementPath>();
+  const recursionStack = new Set<StatementPath>();
+
+  function dfs(statement: StatementPath) {
+    if (visited.has(statement)) {
+      return;
+    }
+
+    visited.add(statement);
+    recursionStack.add(statement);
+
+    const dependencies = map.get(statement)?.getDependencies();
+
+    // Visit all the dependent nodes
+    dependencies?.forEach(({ componentVariable }) => {
+      const dependencyStatement = componentVariable.getParentStatement()!;
+      // If the dependent node is in the recursion stack, we have a cycle
+      if (dependencyStatement === statement) {
+        return;
+      }
+
+      if (recursionStack.has(dependencyStatement)) {
+        throw new CircularDependencyError(statement, dependencyStatement);
+      }
+
+      dfs(dependencyStatement);
+    });
+
+    stack.push(statement);
+    recursionStack.delete(statement);
+  }
+
+  statements.forEach((statement) => {
+    if (map.get(statement)?.getDependencies().size === 0) {
+      stack.push(statement);
+      visited.add(statement);
+    }
+  });
+
+  statements.forEach((statement) => {
+    if (!visited.has(statement)) {
+      dfs(statement);
+    }
+  });
+
+  return stack;
+}

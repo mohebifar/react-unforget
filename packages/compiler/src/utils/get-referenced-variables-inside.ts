@@ -5,24 +5,20 @@ import { isReferenceIdentifier } from "./is-reference-identifier";
 export function getReferencedVariablesInside(
   path: babel.NodePath<babel.types.Node>
 ) {
-  const references = new Set<string>();
+  const map = new Map<babel.NodePath<babel.types.Node>, Binding>();
 
   path.traverse({
     Identifier(innerPath) {
       if (isReferenceIdentifier(innerPath)) {
-        references.add(innerPath.node.name);
+        const name = innerPath.node.name;
+
+        const binding = path.scope.getBinding(name);
+        if (binding) {
+          map.set(innerPath, binding);
+        }
       }
     },
   });
 
-  const bindings: Binding[] = [];
-
-  references.forEach((name) => {
-    const binding = path.scope.getBinding(name);
-    if (binding) {
-      bindings.push(binding);
-    }
-  });
-
-  return bindings;
+  return map;
 }

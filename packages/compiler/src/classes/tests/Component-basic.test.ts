@@ -14,7 +14,7 @@ describe.skip("ComponentVariable", () => {
   describe("computeDependencyGraph", () => {
     it("basic example", () => {
       const [component] = parseCodeAndRun("fixture_1");
-      component.computeComponentVariables();
+      component.computeComponentSegments();
 
       const componentVariables = component.__debug_getComponentVariables();
 
@@ -26,37 +26,25 @@ describe.skip("ComponentVariable", () => {
         "setState",
       ]);
 
-      // state has myDerivedVariable as dependent
-      expect([
-        ...componentVariables.get("state")!.__debug_getDependents().keys(),
-      ]).toStrictEqual(["myDerivedVariable"]);
+      // // state depends on nothing
+      // expect([
+      //   ...componentVariables.get("state")!.getDependencies().keys(),
+      // ]).toStrictEqual(["_unwrapped"]);
 
-      // state depends on nothing
-      expect([
-        ...componentVariables.get("state")!.getDependencies().keys(),
-      ]).toStrictEqual(["_unwrapped"]);
+      // // myDerivedVariable depends on state
+      // expect([
+      //   ...componentVariables
+      //     .get("myDerivedVariable")!
+      //     .getDependencies()
+      //     .keys(),
+      // ]).toStrictEqual(["state"]);
 
-      // myDerivedVariable depends on state
-      expect([
-        ...componentVariables
-          .get("myDerivedVariable")!
-          .getDependencies()
-          .keys(),
-      ]).toStrictEqual(["state"]);
-
-      // myDerivedVariable has no dependents
-      expect([
-        ...componentVariables
-          .get("myDerivedVariable")!
-          .__debug_getDependents()
-          .keys(),
-      ]).toStrictEqual([]);
     });
 
     describe("getRootComponentVariables", () => {
       it("returns all root component variables", () => {
         const [component] = parseCodeAndRun("fixture_2");
-        component.computeComponentVariables();
+        component.computeComponentSegments();
 
         const rootComponentVariables = component.getRootComponentVariables();
 

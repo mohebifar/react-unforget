@@ -1,40 +1,34 @@
 import type * as babel from "@babel/core";
 import { Binding } from "@babel/traverse";
 import * as t from "@babel/types";
+import { convertStatementToSegmentCallable } from "~/ast-factories/convert-statement-to-segment-callable";
 import { makeCacheEnqueueCallStatement } from "~/ast-factories/make-cache-enqueue-call-statement";
-import { makeDependencyCondition } from "~/ast-factories/make-dependency-condition";
 import { makeUnwrappedDeclarations } from "~/ast-factories/make-unwrapped-declarations";
-import { variableDeclarationToAssignment } from "~/ast-factories/variable-declaration-to-assignment";
 import {
+  DEFAULT_SEGMENT_CALLABLE_VARIABLE_NAME,
+  DEFAULT_UNWRAPPED_PROPS_VARIABLE_NAME,
   DEFAULT_UNWRAPPED_VARIABLE_NAME,
   RUNTIME_MODULE_CACHE_IS_NOT_SET_PROP_NAME,
   RUNTIME_MODULE_CACHE_VALUE_PROP_NAME,
 } from "~/utils/constants";
 import { getReferencedVariablesInside } from "~/utils/get-referenced-variables-inside";
-import { isHookCall } from "~/utils/is-hook-call";
 import { UnwrappedAssignmentEntry } from "~/utils/unwrap-pattern-assignment";
 import { getDeclaredIdentifiersInLVal } from "../utils/get-declared-identifiers-in-lval";
 import { Component } from "./Component";
+import { ComponentMutableSegment } from "./ComponentMutableSegment";
+import { findMutatingExpression } from "~/utils/find-mutating-expression";
 
-export class ComponentVariable {
-  private appliedModification = false;
-
-  private computedDependencyGraph = false;
-
-  // The side effects of this variable
-  private sideEffects = new Set<babel.NodePath<babel.types.Node>>();
-
-  // ComponentVariables that reference this
-  private dependents = new Map<string, ComponentVariable>();
-
-  // ComponentVariables that this depends on
-  private dependencies = new Map<string, ComponentVariable>();
+export class ComponentVariable extends ComponentMutableSegment {
+  private runnableSegmentsMutatingThis = new Set<ComponentMutableSegment>();
 
   constructor(
+    component: Component,
+    parent: ComponentMutableSegment | null = null,
     public binding: Binding,
-    public component: Component,
     private index: number
-  ) {}
+  ) {
+    super(component, parent, "ComponentVariable");
+  }
 
   get name() {
     return this.binding.identifier.name;
@@ -44,18 +38,10 @@ export class ComponentVariable {
     return this.index;
   }
 
-  addSideEffect(path: babel.NodePath<babel.types.Node>) {
-    this.sideEffects.add(path);
-  }
-
-  addDependency(componentVariable: ComponentVariable) {
-    this.dependencies.set(componentVariable.name, componentVariable);
-  }
-
   unwrapAssignmentPatterns() {
     const { path, scope } = this.binding;
 
-    let newPaths: babel.NodePath<babel.types.Node>[] = [];
+    const newPaths: babel.NodePath<babel.types.Node>[] = [];
     let unwrappedEntries: UnwrappedAssignmentEntry[] = [];
     let unwrapVariableId: t.Identifier | null = null;
 
@@ -64,7 +50,7 @@ export class ComponentVariable {
     if (path.isVariableDeclarator()) {
       const id = path.get("id");
       const parentPath =
-        this.getParentStatement() as babel.NodePath<babel.types.VariableDeclaration>;
+        this.path.getStatementParent() as babel.NodePath<babel.types.VariableDeclaration>;
       const kind = parentPath.node.kind;
 
       if (id.isIdentifier()) {
@@ -91,20 +77,26 @@ export class ComponentVariable {
         tempVariableDeclarator,
       ]);
 
-      const allNewPaths = parentPath.replaceWithMultiple([
-        initDeclaration,
-        ...unwrapResult.unwrappedDeclarations,
-      ]);
+      [initPath] = parentPath.replaceWith(initDeclaration);
 
-      initPath = allNewPaths[0];
-      newPaths = allNewPaths.slice(1);
+      unwrapResult.unwrappedDeclarations.forEach(([newNode, binding]) => {
+        if (!initPath) {
+          return;
+        }
+
+        const [newPath] = initPath.insertAfter(newNode);
+        newPaths.push(newPath);
+        if (binding) {
+          binding.kind = newNode.kind as "const" | "let" | "var";
+          binding.path = newPath;
+        }
+      });
 
       scope.registerDeclaration(initPath);
 
       unwrappedEntries = unwrapResult.unwrappedEntries;
     }
 
-    // TODO: Check if the param is positioned in the first position
     if (this.binding.kind === "param") {
       const componentBlock = this.component.getFunctionBlockStatement();
 
@@ -112,7 +104,9 @@ export class ComponentVariable {
         return;
       }
 
-      unwrapVariableId = scope.generateUidIdentifier("props");
+      unwrapVariableId = scope.generateUidIdentifier(
+        DEFAULT_UNWRAPPED_PROPS_VARIABLE_NAME
+      );
 
       const unwrapResult = makeUnwrappedDeclarations(
         path as babel.NodePath<babel.types.LVal>,
@@ -124,10 +118,14 @@ export class ComponentVariable {
 
       scope.registerBinding("param", initPath);
 
-      newPaths = componentBlock.unshiftContainer(
-        "body",
-        unwrapResult.unwrappedDeclarations
-      );
+      unwrapResult.unwrappedDeclarations.forEach(([newNode, binding]) => {
+        const [newPath] = componentBlock.unshiftContainer("body", newNode);
+        newPaths.push(newPath);
+        if (binding) {
+          binding.kind = newNode.kind as "const" | "let" | "var";
+          binding.path = newPath;
+        }
+      });
 
       this.binding.kind = "let";
 
@@ -146,185 +144,176 @@ export class ComponentVariable {
         if (initPath) {
           // TODO: Refactor this
           const initId = initPath.isVariableDeclaration()
-            ? (initPath.get("declarations.0.id") as any)
+            ? (initPath.get(
+                "declarations.0.id"
+              ) as babel.NodePath<babel.types.Identifier>)
             : initPath.isIdentifier()
               ? initPath
               : null;
 
           const initName = initId?.node.name;
 
-          if (initId) {
-            // TODO: Refactor this
-            scope
-              .getBinding(initName)
-              ?.reference(
-                newPath.isVariableDeclaration()
-                  ? (newPath.get("declarations.0.id") as any)
-                  : newPath
-              );
+          if (initName) {
+            const newRefId = newPath.isVariableDeclaration()
+              ? (newPath.get(
+                  "declarations.0.id"
+                ) as babel.NodePath<babel.types.Identifier>)
+              : newPath;
+
+            scope.getBinding(initName)?.reference(newRefId);
           }
         }
       }
     });
   }
 
-  updateBinding(binding: Binding) {
-    this.binding = binding;
+  getDependencies() {
+    const allDependencies = new Set(super.getDependencies());
 
-    if (this.computedDependencyGraph) {
-      this.computeDependencyGraph();
-    }
+    this.runnableSegmentsMutatingThis.forEach((runnableSegment) => {
+      runnableSegment.getDependencies().forEach((dependency) => {
+        allDependencies.add(dependency);
+      });
+    });
+
+    return allDependencies;
   }
 
   computeDependencyGraph() {
     this.dependencies.clear();
-    this.dependents.clear();
-    this.sideEffects.clear();
 
-    const visitDependencies = (dependencyIds: string[]) => {
-      dependencyIds.forEach((id) => {
-        let dependent = this.component.getComponentVariable(id);
+    this.binding.referencePaths.forEach((mainReferencePath) => {
+      const statementParent = mainReferencePath.getStatementParent();
+      const referencePath = mainReferencePath.isJSXExpressionContainer()
+        ? mainReferencePath.get("expression")
+        : mainReferencePath;
 
-        if (!dependent) {
-          const binding = this.component.path.scope.getBinding(id);
+      let accessorPath =
+        referencePath.find(
+          (path) =>
+            (path.isMemberExpression() || path.isOptionalMemberExpression()) &&
+            path.isDescendant(statementParent!)
+        ) ?? referencePath;
 
-          if (binding) {
-            const newComponentVariable =
-              this.component.addComponentVariable(binding);
-            if (newComponentVariable) {
-              dependent = newComponentVariable;
-            }
-          }
+      if (
+        accessorPath.isOptionalMemberExpression() ||
+        accessorPath.isMemberExpression()
+      ) {
+        if (accessorPath.parentPath.isCallExpression()) {
+          accessorPath = accessorPath.get(
+            "object"
+          ) as babel.NodePath<babel.types.Expression>;
         }
+      }
 
-        if (dependent) {
-          this.dependents.set(id, dependent);
-          dependent.addDependency(this);
-        }
-      });
-    };
+      const accessorNode = accessorPath.node as t.Expression;
 
-    this.binding.referencePaths.forEach((referencePath) => {
-      const parentVariableDeclarator = referencePath.findParent(
-        (p) =>
-          p.isVariableDeclarator() && this.component.isTheFunctionParentOf(p)
-      ) as babel.NodePath<babel.types.VariableDeclarator> | null;
+      if (statementParent?.isVariableDeclaration()) {
+        const parentVariableDeclarator = referencePath.find((p) =>
+          p.isVariableDeclarator()
+        ) as babel.NodePath<babel.types.VariableDeclarator>;
 
-      if (parentVariableDeclarator) {
         const lval = parentVariableDeclarator.get("id");
 
-        const ids = getDeclaredIdentifiersInLVal(lval);
+        const dependentIds = getDeclaredIdentifiersInLVal(lval);
 
-        visitDependencies(ids);
-      } else if (referencePath.isIdentifier()) {
-        const referenceParent = referencePath.parentPath;
+        dependentIds.forEach((id) => {
+          const binding = this.path.scope.getBinding(id);
+          if (!binding) {
+            return;
+          }
 
-        // Handle function parameters
-        if (
-          referenceParent.isFunction() &&
-          referenceParent.get("params").some((param) => param === referencePath)
-        ) {
-          visitDependencies([referencePath.node.name]);
+          const dependent = this.component.addComponentVariable(binding);
+
+          if (dependent) {
+            dependent.addDependency(this, accessorNode);
+          }
+        });
+        return;
+      }
+
+      // TODO: Add assignment pattern support here
+
+      if (statementParent && !statementParent?.isReturnStatement()) {
+        const dependent = this.component.addRunnableSegment(statementParent);
+        dependent.addDependency(this, accessorNode);
+
+        const mutatingExpressions = findMutatingExpression(
+          referencePath,
+          this.name
+        );
+        if (mutatingExpressions) {
+          this.runnableSegmentsMutatingThis.add(dependent);
         }
-      } else {
-        // TODO: Side effect calculation
       }
     });
 
-    const referencedVariablesInDeclaration = getReferencedVariablesInside(
-      this.binding.path
+    const referencedVariablesInDeclaration = Array.from(
+      getReferencedVariablesInside(this.binding.path).values()
     );
 
     referencedVariablesInDeclaration.forEach((binding) => {
       this.component.addComponentVariable(binding);
     });
-
-    this.computedDependencyGraph = true;
   }
 
-  isDerived() {
-    return this.dependencies.size > 0;
-  }
-
-  isHook() {
-    if (this.isDerived()) {
-      return false;
-    }
-
-    const path = this.binding.path;
-
-    const parentVariableDeclarator = path.find(
-      (
-        p: babel.NodePath<babel.types.Node>
-      ): p is babel.NodePath<babel.types.VariableDeclarator> =>
-        p.isVariableDeclarator() && this.component.isTheFunctionParentOf(p)
-    ) as babel.NodePath<babel.types.VariableDeclarator> | null;
-
-    if (!parentVariableDeclarator) {
-      return false;
-    }
-
-    const init = parentVariableDeclarator.get("init");
-
-    if (!init.isCallExpression()) {
-      return false;
-    }
-
-    return isHookCall(init);
-  }
-
-  applyModification() {
-    if (this.appliedModification) {
-      return;
-    }
-
-    const cacheUpdateEnqueueStatement = makeCacheEnqueueCallStatement(
+  getCacheUpdateEnqueueStatement() {
+    return makeCacheEnqueueCallStatement(
       this.getCacheAccessorExpression(),
       this.name
     );
-
-    const valueDeclarationWithCache = t.variableDeclaration("let", [
-      t.variableDeclarator(
-        t.identifier(this.name),
-        this.getCacheValueAccessExpression()
-      ),
-    ]);
-
-    if (
-      this.binding.kind === "const" ||
-      this.binding.kind === "let" ||
-      this.binding.kind === "var"
-    ) {
-      const variableDeclaration =
-        this.getParentStatement() as babel.NodePath<babel.types.VariableDeclaration>;
-
-      if (this.isHook()) {
-        variableDeclaration.insertAfter(cacheUpdateEnqueueStatement);
-        return;
-      }
-
-      const dependencyConditions = this.makeDependencyCondition();
-      variableDeclaration.insertBefore(valueDeclarationWithCache);
-      variableDeclaration.replaceWith(
-        t.ifStatement(
-          dependencyConditions,
-          t.blockStatement([
-            ...variableDeclarationToAssignment(variableDeclaration),
-            cacheUpdateEnqueueStatement,
-          ])
-        )
-      );
-    } else if (this.binding.kind === "param") {
-      this.component
-        .getFunctionBlockStatement()
-        ?.unshiftContainer("body", cacheUpdateEnqueueStatement);
-    }
-
-    this.appliedModification = true;
   }
 
-  private makeDependencyCondition() {
-    return makeDependencyCondition(this);
+  applyTransformation() {
+    if (this.appliedTransformation) {
+      return null;
+    }
+
+    const cacheUpdateEnqueueStatement = this.getCacheUpdateEnqueueStatement();
+
+    switch (this.binding.kind) {
+      case "const":
+      case "let":
+      case "var": {
+        const hasHookCall = this.hasHookCall();
+        const variableDeclaration = this.path.find((p) =>
+          p.isVariableDeclaration()
+        ) as babel.NodePath<babel.types.VariableDeclaration>;
+
+        const cacheValueAccessExpression = this.getCacheValueAccessExpression();
+
+        const dependencyConditions = this.makeDependencyCondition();
+
+        const { prformTransformation, segmentCallableId, replacements } =
+          convertStatementToSegmentCallable(variableDeclaration, {
+            initialValue: cacheValueAccessExpression,
+            segmentCallableId: this.getSegmentCallableId(),
+          });
+
+        this.appliedTransformation = true;
+
+        return {
+          replacements,
+          segmentCallableId,
+          dependencyConditions,
+          prformTransformation,
+          hasHookCall,
+          updateCache: cacheUpdateEnqueueStatement,
+        };
+      }
+
+      case "param": {
+        this.component
+          .getFunctionBlockStatement()
+          ?.unshiftContainer("body", cacheUpdateEnqueueStatement);
+        this.appliedTransformation = true;
+        break;
+      }
+    }
+
+    this.appliedTransformation = true;
+
+    return null;
   }
 
   private getCacheAccessorExpression() {
@@ -349,20 +338,7 @@ export class ComponentVariable {
     );
   }
 
-  getDependencies() {
-    return this.dependencies;
-  }
-
-  private getParentStatement() {
-    return this.binding.path.getStatementParent();
-  }
-
-  // --- DEBUGGING ---
-  __debug_getDependents() {
-    return this.dependents;
-  }
-
-  __debug_getSideEffects() {
-    return this.sideEffects;
+  get path() {
+    return this.binding.path;
   }
 }

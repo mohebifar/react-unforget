@@ -14,6 +14,7 @@ Type: `Feature` - `Bug` - `Enhancement` - `Refactor` - `Unknown`
 - [ ] `Enhancement` Skip memoization of useState setter functions
 - [ ] `Enhancement` When unwrapping array and object patterns, optimize the unwrapping by limiting it to component variables
 - [ ] `Enhancement` Support React.createElement calls
+- [ ] `Enhancement` Hot module reloading improvement utilizing a checksum to invalidate cache
 - [ ] `Feature` Memoize array map items
 
 ## `Feature` ESLint Plugin
@@ -30,3 +31,4 @@ The following are unknowns that need to be researched and tested.
 - [ ] Assignment expressions in JSX `<div>{(a = 1)} {a}</div>` - is the order of execution guaranteed?
 - [ ] Source maps - is it possible to generate source maps for the transformed code?
 - [ ] Hot reloading - how does hot reloading work with the transformed code?
+- [ ] Memoization of values declared after the first return statement

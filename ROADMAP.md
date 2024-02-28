@@ -8,13 +8,17 @@ Type: `Feature` - `Bug` - `Enhancement` - `Refactor` - `Unknown`
 - [x] `Enhancement` Memoize any non-primitive value used in JSX
 - [x] `Enhancement` Support memoization of object destructuring
 - [x] `Enhancement` Unwrap JSX elements into memoizable variables
-- [ ] `Enhancement` Support side-effect for dependencies
-- [ ] `Feature` Support transforming hooks
-- [ ] `Enhancement` Support memoization of callbacks declared using function declarations
+- [x] `Enhancement` Support components with multiple returns
+- [x] `Enhancement` Support side-effect for dependencies
+- [x] `Feature` Support transforming hooks
+- [ ] `Enhancement` Support memoization of callbacks declared using function declarations after
+
+### Low Priority
+
 - [ ] `Enhancement` Skip memoization of useState setter functions
 - [ ] `Enhancement` When unwrapping array and object patterns, optimize the unwrapping by limiting it to component variables
 - [ ] `Enhancement` Support React.createElement calls
-- [ ] `Enhancement` Hot module reloading improvement utilizing a checksum to invalidate cache
+- [x] ~`Enhancement` Hot module reloading improvement utilizing a checksum to invalidate cache~ Not needed
 - [ ] `Feature` Memoize array map items
 
 ## `Feature` ESLint Plugin
@@ -30,5 +34,4 @@ The following are unknowns that need to be researched and tested.
 
 - [ ] Assignment expressions in JSX `<div>{(a = 1)} {a}</div>` - is the order of execution guaranteed?
 - [ ] Source maps - is it possible to generate source maps for the transformed code?
-- [ ] Hot reloading - how does hot reloading work with the transformed code?
-- [ ] Memoization of values declared after the first return statement
+- [x] ~Hot reloading - how does hot reloading work with the transformed code?~ It works!

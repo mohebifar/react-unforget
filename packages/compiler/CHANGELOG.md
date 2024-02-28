@@ -1,5 +1,11 @@
 # @react-unforget/compiler
 
+## 0.1.0-dev.5
+
+### Patch Changes
+
+- 272f9fd: Add babel plugin
+
 ## 0.1.0-dev.4
 
 ### Patch Changes

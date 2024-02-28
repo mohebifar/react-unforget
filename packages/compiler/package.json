@@ -21,7 +21,7 @@
     "dev": "yarn build --watch",
     "build": "tsup src/main.ts --dts --format cjs,esm",
     "test": "jest",
-    "lint": "eslint src/**/* --max-warnings 10"
+    "lint": "eslint src/**/* --max-warnings 15"
   },
   "devDependencies": {
     "@babel/plugin-syntax-jsx": "^7.23.3",

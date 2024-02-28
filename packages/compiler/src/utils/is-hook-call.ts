@@ -2,6 +2,10 @@ import type * as babel from "@babel/core";
 import { getRightmostIdName } from "./get-rightmost-id-name";
 import { isInTheSameFunctionScope } from "./is-in-the-same-function-scope";
 
+export function doesMatchHookName(name: string) {
+  return /^use[A-Z]/.test(name);
+}
+
 export function isHookCall(path: babel.NodePath<babel.types.CallExpression>) {
   path.assertCallExpression();
 
@@ -17,7 +21,7 @@ export function isHookCall(path: babel.NodePath<babel.types.CallExpression>) {
     return true;
   }
 
-  return /^use[A-Z]/.test(rightmostId);
+  return doesMatchHookName(rightmostId);
 }
 
 export function hasHookCall(

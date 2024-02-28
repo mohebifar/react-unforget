@@ -3,12 +3,12 @@ import { Binding } from "@babel/traverse";
 import { convertStatementToSegmentCallable } from "~/ast-factories/convert-statement-to-segment-callable";
 import { getBlockStatementsOfPath } from "~/utils/get-block-statements-of-path";
 import { getReferencedVariablesInside } from "~/utils/get-referenced-variables-inside";
+import { reorderByTopology } from "~/utils/reorder-by-topology";
 import { Component } from "./Component";
 import {
   ComponentMutableSegment,
   SegmentTransformationResult,
 } from "./ComponentMutableSegment";
-import { reorderByTopology } from "~/utils/reorder-by-topology";
 
 export class ComponentRunnableSegment extends ComponentMutableSegment {
   private mapOfReturnStatementToReferencedBindings = new Map<
@@ -94,7 +94,7 @@ export class ComponentRunnableSegment extends ComponentMutableSegment {
 
       const reorderedStatements = reorderByTopology(statements, segmentsMap);
 
-      reorderedStatements.forEach((statement, i) => {
+      reorderedStatements.forEach((statement) => {
         const segment = segmentsMap.get(statement);
 
         const transformation = segment?.applyTransformation();

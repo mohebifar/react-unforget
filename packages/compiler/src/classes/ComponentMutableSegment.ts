@@ -1,12 +1,12 @@
 import type * as babel from "@babel/core";
 import * as t from "@babel/types";
 import { makeDependencyCondition } from "~/ast-factories/make-dependency-condition";
+import { DEFAULT_SEGMENT_CALLABLE_VARIABLE_NAME } from "~/utils/constants";
 import { hasHookCall } from "~/utils/is-hook-call";
 import { Component } from "./Component";
 import type { ComponentRunnableSegment } from "./ComponentRunnableSegment";
-import type { ComponentVariable } from "./ComponentVariable";
-import { DEFAULT_SEGMENT_CALLABLE_VARIABLE_NAME } from "~/utils/constants";
 import { ComponentSegmentDependency } from "./ComponentSegmentDependency";
+import type { ComponentVariable } from "./ComponentVariable";
 
 export const COMPONENT_MUTABLE_SEGMENT_COMPONENT_UNSET_TYPE = "Unset";
 export const COMPONENT_MUTABLE_SEGMENT_COMPONENT_VARIABLE_TYPE =

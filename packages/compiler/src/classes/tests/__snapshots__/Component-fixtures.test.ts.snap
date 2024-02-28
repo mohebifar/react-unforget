@@ -1,7 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Component fixtures applyModification fixture_1 1`] = `
-"export function MyComponent() {
+"import { useCreateCache$unforget } from "@react-unforget/runtime";
+export function MyComponent() {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
   0 => _unwrappedJsxEl
@@ -68,7 +69,8 @@ exports[`Component fixtures applyModification fixture_1 1`] = `
 `;
 
 exports[`Component fixtures applyModification fixture_2 1`] = `
-"function MyComponent(_props) {
+"import { useCreateCache$unforget } from "@react-unforget/runtime";
+function MyComponent(_props) {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
   0 => _unwrappedJsxEl
@@ -139,7 +141,8 @@ export default MyComponent;"
 `;
 
 exports[`Component fixtures applyModification fixture_3 1`] = `
-"const varDefinedOutside = 1;
+"import { useCreateCache$unforget } from "@react-unforget/runtime";
+const varDefinedOutside = 1;
 const generateValue = () => 2;
 function MyComponent(_props) {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
@@ -252,7 +255,8 @@ export { MyComponent };"
 `;
 
 exports[`Component fixtures applyModification fixture_4 1`] = `
-"function double(n) {
+"import { useCreateCache$unforget } from "@react-unforget/runtime";
+function double(n) {
   return n * 2;
 }
 export function MyComponent(_props) {
@@ -379,7 +383,8 @@ export function MyComponent(_props) {
 `;
 
 exports[`Component fixtures applyModification fixture_5 1`] = `
-"const words = ["Shawshank", "Redemption", "Godfather", "Dark", "Knight", "Forest", "Gump", "Private", "Ryan"];
+"import { useCreateCache$unforget } from "@react-unforget/runtime";
+const words = ["Shawshank", "Redemption", "Godfather", "Dark", "Knight", "Forest", "Gump", "Private", "Ryan"];
 const initalMovies = [{
   title: "The Shawshank Redemption",
   year: 1994
@@ -612,7 +617,8 @@ export default MyComponent;"
 `;
 
 exports[`Component fixtures applyModification fixture_6 1`] = `
-"export function SimpleJSX() {
+"import { useCreateCache$unforget } from "@react-unforget/runtime";
+export function SimpleJSX() {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
   0 => _unwrappedJsxEl
@@ -631,7 +637,8 @@ exports[`Component fixtures applyModification fixture_6 1`] = `
 `;
 
 exports[`Component fixtures applyModification fixture_7 1`] = `
-"export function SimpleJSX() {
+"import { useCreateCache$unforget } from "@react-unforget/runtime";
+export function SimpleJSX() {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
   0 => _unwrappedJsxEl3
@@ -678,7 +685,8 @@ exports[`Component fixtures applyModification fixture_7 1`] = `
 `;
 
 exports[`Component fixtures applyModification fixture_8 1`] = `
-"export function SimpleJSX() {
+"import { useCreateCache$unforget } from "@react-unforget/runtime";
+export function SimpleJSX() {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
   0 => _unwrappedJsxEl
@@ -720,7 +728,8 @@ exports[`Component fixtures applyModification fixture_8 1`] = `
 `;
 
 exports[`Component fixtures applyModification fixture_9 1`] = `
-"function useValue() {
+"import { useCreateCache$unforget } from "@react-unforget/runtime";
+function useValue() {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
   0 => value
@@ -858,7 +867,8 @@ export function SimpleJSX() {
 `;
 
 exports[`Component fixtures applyModification fixture_10 1`] = `
-"import React, { useState, useEffect, useMemo, useCallback } from "react";
+"import { useCreateCache$unforget } from "@react-unforget/runtime";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 const fetchUser = () => {
   return fetch("https://api.github.com/users/mohebifar").then(response => {
     if (!response.ok) {
@@ -1225,7 +1235,8 @@ export default UserList;"
 `;
 
 exports[`Component fixtures applyModification fixture_11 1`] = `
-"const useMovies = () => {
+"import { useCreateCache$unforget } from "@react-unforget/runtime";
+const useMovies = () => {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
   
@@ -1350,7 +1361,8 @@ export function MyComponent() {
 `;
 
 exports[`Component fixtures applyModification fixture_12 1`] = `
-"export function MyComponent() {
+"import { useCreateCache$unforget } from "@react-unforget/runtime";
+export function MyComponent() {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
   0 => _unwrappedJsxEl
@@ -1380,7 +1392,8 @@ exports[`Component fixtures applyModification fixture_12 1`] = `
 `;
 
 exports[`Component fixtures applyModification fixture_13 1`] = `
-"const MyComponent = () => {
+"import { useCreateCache$unforget } from "@react-unforget/runtime";
+const MyComponent = () => {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
   0 => _unwrappedJsxEl

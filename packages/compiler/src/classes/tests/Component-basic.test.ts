@@ -1,4 +1,4 @@
-import { findComponents } from "~/utils/find-component";
+import { findComponents } from "~/utils/find-components";
 import { parseFixture } from "~/utils/testing";
 
 const parseCodeAndRun = (fixtureName: string) => {

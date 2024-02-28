@@ -1410,3 +1410,50 @@ const MyComponent = () => {
   return _unwrappedJsxEl;
 };"
 `;
+
+exports[`Component fixtures applyModification fixture_14 1`] = `
+"import { useCreateCache$unforget } from "@react-unforget/runtime";
+export function MyComponent() {
+  const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
+  /*
+  0 => _unwrappedJsxEl
+  1 => _unwrappedJsxExp
+  2 => a
+  3 => _unwrappedJsxExp2
+  */
+  4);
+  let a = _$unforgetCache[2].v;
+  const _segment = () => {
+    a = useValue();
+  };
+  let _unwrappedJsxExp = _$unforgetCache[1].v;
+  const _segment2 = () => {
+    _unwrappedJsxExp = a.b;
+  };
+  let _unwrappedJsxExp2 = _$unforgetCache[3].v;
+  const _segment3 = () => {
+    _unwrappedJsxExp2 = a.b.c;
+  };
+  let _unwrappedJsxEl = _$unforgetCache[0].v;
+  const _segment4 = () => {
+    _unwrappedJsxEl = <div>
+      {_unwrappedJsxExp} {_unwrappedJsxExp2}
+    </div>;
+  };
+  _segment();
+  _$unforgetCache[2].e(a);
+  if (_$unforgetCache[1].n || a.b !== _$unforgetCache[2].v.b) {
+    _segment2();
+    _$unforgetCache[1].e(_unwrappedJsxExp);
+  }
+  if (_$unforgetCache[3].n || a.b !== _$unforgetCache[2].v.b) {
+    _segment3();
+    _$unforgetCache[3].e(_unwrappedJsxExp2);
+  }
+  if (_$unforgetCache[0].n || _unwrappedJsxExp !== _$unforgetCache[1].v || _unwrappedJsxExp2 !== _$unforgetCache[3].v) {
+    _segment4();
+    _$unforgetCache[0].e(_unwrappedJsxEl);
+  }
+  return _unwrappedJsxEl;
+}"
+`;

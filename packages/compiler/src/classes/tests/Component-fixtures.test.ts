@@ -10,7 +10,7 @@ const parseCodeAndRun = (fixtureName: string) => {
 
 describe("Component fixtures", () => {
   describe("applyModification", () => {
-    it.each(Array.from({ length: 13 }, (_, i) => `fixture_${i + 1}`))(
+    it.each(Array.from({ length: 14 }, (_, i) => `fixture_${i + 1}`))(
       "%s",
       (fixtureName) => {
         const [, program] = parseCodeAndRun(fixtureName);

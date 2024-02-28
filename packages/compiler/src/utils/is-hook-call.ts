@@ -10,7 +10,7 @@ export function isHookCall(path: babel.NodePath<babel.types.CallExpression>) {
   let rightmostId = "";
 
   try {
-    rightmostId = getRightmostIdName(callee);
+    rightmostId = getRightmostIdName(callee.node);
   } catch {
     // We pessimistically assume that it's a hook if we can't identify the rightmost id
     // TODO: Make this configurable / throw an error / or log a warning

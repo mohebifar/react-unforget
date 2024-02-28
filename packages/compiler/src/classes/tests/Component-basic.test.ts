@@ -26,18 +26,18 @@ describe.skip("ComponentVariable", () => {
         "setState",
       ]);
 
-      // state depends on nothing
-      expect([
-        ...componentVariables.get("state")!.getDependencies().keys(),
-      ]).toStrictEqual(["_unwrapped"]);
+      // // state depends on nothing
+      // expect([
+      //   ...componentVariables.get("state")!.getDependencies().keys(),
+      // ]).toStrictEqual(["_unwrapped"]);
 
-      // myDerivedVariable depends on state
-      expect([
-        ...componentVariables
-          .get("myDerivedVariable")!
-          .getDependencies()
-          .keys(),
-      ]).toStrictEqual(["state"]);
+      // // myDerivedVariable depends on state
+      // expect([
+      //   ...componentVariables
+      //     .get("myDerivedVariable")!
+      //     .getDependencies()
+      //     .keys(),
+      // ]).toStrictEqual(["state"]);
 
     });
 

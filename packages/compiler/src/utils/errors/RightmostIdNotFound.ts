@@ -1,7 +1,7 @@
-import type * as babel from "@babel/core";
+import * as t from "@babel/types";
 
 export class RightmostIdNotFound extends Error {
-  constructor(path: babel.NodePath) {
+  constructor(path: t.Node) {
     super("Could not find rightmost identifier name for" + path.toString());
   }
 }

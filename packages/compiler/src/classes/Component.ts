@@ -1,22 +1,17 @@
 import type * as babel from "@babel/core";
 import { Binding } from "@babel/traverse";
 import * as t from "@babel/types";
-import { convertStatementToSegmentCallable } from "~/ast-factories/convert-statement-to-segment-callable";
 import {
   DEFAULT_CACHE_COMMIT_VARIABLE_NAME,
   DEFAULT_CACHE_NULL_VARIABLE_NAME,
   DEFAULT_CACHE_VARIABLE_NAME,
   RUNTIME_MODULE_CREATE_CACHE_HOOK_NAME,
 } from "~/utils/constants";
-import { hasHookCall } from "~/utils/is-hook-call";
 import { isVariableInScopeOf } from "~/utils/is-variable-in-scope-of";
 import { unwrapJsxElements } from "~/utils/unwrap-jsx-elements";
 import { unwrapJsxExpressions } from "~/utils/unwrap-jsx-expressions";
 import { getFunctionParent } from "../utils/get-function-parent";
-import {
-  ComponentMutableSegment,
-  SegmentTransformationResult,
-} from "./ComponentMutableSegment";
+import { ComponentMutableSegment } from "./ComponentMutableSegment";
 import { ComponentRunnableSegment } from "./ComponentRunnableSegment";
 import { ComponentVariable } from "./ComponentVariable";
 
@@ -25,7 +20,7 @@ export class Component {
     babel.NodePath<babel.types.Statement>,
     ComponentRunnableSegment
   >();
-  private componentVariables = new Map<string, ComponentVariable>();
+  private componentVariables = new Map<Binding, ComponentVariable>();
   private cacheValueIdentifier: t.Identifier;
   private cacheCommitIdentifier: t.Identifier;
   private cacheNullIdentifier: t.Identifier;
@@ -70,12 +65,12 @@ export class Component {
     unwrapJsxElements(this.path);
   }
 
-  hasComponentVariable(name: string) {
-    return this.componentVariables.has(name);
+  hasComponentVariable(binding: Binding) {
+    return this.componentVariables.has(binding);
   }
 
-  getComponentVariable(name: string) {
-    return this.componentVariables.get(name);
+  getComponentVariable(binding: Binding) {
+    return this.componentVariables.get(binding);
   }
 
   private findBlockStatementOfPath(path: babel.NodePath<babel.types.Node>) {
@@ -91,17 +86,16 @@ export class Component {
       return null;
     }
 
-    const name = binding.identifier.name;
+    const { path } = binding;
 
-    const path = binding.path;
     const blockStatement = this.findBlockStatementOfPath(path);
     const parent = blockStatement
       ? this.mapBlockStatementToComponentRunnableSegment.get(blockStatement) ??
         null
       : null;
 
-    if (this.hasComponentVariable(name)) {
-      const componentVariable = this.getComponentVariable(name)!;
+    if (this.hasComponentVariable(binding)) {
+      const componentVariable = this.getComponentVariable(binding)!;
       componentVariable.setParent(parent);
       return componentVariable;
     }
@@ -113,7 +107,7 @@ export class Component {
       this.componentVariables.size
     );
 
-    this.componentVariables.set(name, componentVariable);
+    this.componentVariables.set(binding, componentVariable);
 
     componentVariable.unwrapAssignmentPatterns();
     componentVariable.computeDependencyGraph();
@@ -216,175 +210,6 @@ export class Component {
     }
 
     this.rootSegment.applyTransformation();
-
-    // const statementsToMutableSegmentMap = new Map<
-    //   babel.NodePath<babel.types.Statement>,
-    //   ComponentMutableSegment
-    // >();
-
-    // const statementsMapSet = (segment: ComponentMutableSegment) => {
-    //   const parent = segment.getParentStatement();
-    //   if (parent) {
-    //     statementsToMutableSegmentMap.set(parent, segment);
-    //   }
-    // };
-
-    // this.componentVariables.forEach(statementsMapSet);
-    // this.runnableSegments.forEach(statementsMapSet);
-
-    // const statements = body.get("body");
-
-    // let lastStatementWithHookCallIdx = -1;
-
-    // for (let i = statements.length - 1; i >= 0; i--) {
-    //   const currentStatement = statements[i]!;
-    //   if (hasHookCall(currentStatement, this.path)) {
-    //     lastStatementWithHookCallIdx = i;
-    //     break;
-    //   }
-    // }
-
-    // const clonedStatements = statements.slice();
-
-    // const getLastComponentVariableStatementIdx = (bindings: Binding[]) => {
-    //   return bindings.reduce((lastStatement, binding) => {
-    //     const componentVariable = this.getComponentVariable(
-    //       binding.identifier.name
-    //     );
-    //     if (componentVariable) {
-    //       const statement = componentVariable.getParentStatement();
-    //       if (statement) {
-    //         const index = clonedStatements.indexOf(statement);
-    //         if (index > lastStatement) {
-    //           return index;
-    //         }
-    //       }
-    //     }
-
-    //     return lastStatement;
-    //   }, -1);
-    // };
-
-    // const transformStatement = (
-    //   statement: babel.NodePath<babel.types.Statement>
-    // ) => {
-    //   if (statement.isReturnStatement()) {
-    //     return null;
-    //   }
-
-    //   const returnDescendant = Array.from(
-    //     this.mapOfReturnStatementToReferencedBindings.keys()
-    //   ).find((returnStatement) => returnStatement.isDescendant(statement));
-    //   const shouldPerformReplacement = !returnDescendant;
-
-    //   const segment = shouldPerformReplacement
-    //     ? statementsToMutableSegmentMap.get(statement)
-    //     : null;
-
-    //   if (segment) {
-    //     const transformationResult = segment.applyTransformation(
-    //       shouldPerformReplacement
-    //     );
-    //     if (transformationResult) {
-    //       return { ...transformationResult, returnDescendant };
-    //     } else {
-    //       return null;
-    //     }
-    //   }
-
-    //   const hadHookCall = hasHookCall(statement, this.path);
-
-    //   this.componentVariables.forEach((componentVariable) => {
-    //     if (
-    //       componentVariable.path.isDescendant(statement) &&
-    //       statement !== componentVariable.path
-    //     ) {
-    //       const transformation = componentVariable.applyTransformation();
-    //       const callStatement = this.makeSegmentCallStatement(transformation);
-    //       if (callStatement && transformation) {
-    //         const lastPath = transformation.newPaths?.pop();
-    //         lastPath?.insertAfter(callStatement);
-    //       }
-    //     }
-    //   });
-
-    //   const { segmentCallableId, newPaths, replacements } =
-    //     convertStatementToSegmentCallable(statement, {
-    //       cacheNullValue: returnDescendant
-    //         ? this.cacheNullIdentifier
-    //         : undefined,
-    //     });
-
-    //   return {
-    //     dependencyConditions: null,
-    //     replacements,
-    //     segmentCallableId,
-    //     newPaths,
-    //     hasHookCall: hadHookCall,
-    //     returnDescendant,
-    //   };
-    // };
-
-    // let currentIndex = -1;
-    // let currentScanIndex = 0;
-
-    // const returnsSize = this.mapOfReturnStatementToReferencedBindings.size;
-    // this.mapOfReturnStatementToReferencedBindings.forEach(
-    //   (bindings, returnPath) => {
-    //     currentIndex++;
-    //     let maxIndex = -1;
-
-    //     if (currentIndex === 0) {
-    //       maxIndex = Math.max(lastStatementWithHookCallIdx, maxIndex);
-    //     }
-
-    //     maxIndex = Math.max(
-    //       getLastComponentVariableStatementIdx(bindings),
-    //       maxIndex
-    //     );
-
-    //     const statementsToTransform: babel.NodePath<babel.types.Statement>[] =
-    //       [];
-
-    //     if (currentIndex === returnsSize - 1) {
-    //       statementsToTransform.push(...statements);
-    //     } else {
-    //       for (; currentScanIndex <= maxIndex; currentScanIndex++) {
-    //         const statement = statements.shift();
-    //         if (statement) {
-    //           statementsToTransform.push(statement);
-    //         }
-    //       }
-    //     }
-
-    //     const returnStatement = returnPath.find(
-    //       (p) => p.isStatement() && p.parentPath === body
-    //     );
-
-    //     statementsToTransform.forEach((statement) => {
-    //       const transformation = transformStatement(statement);
-    //       const callStatement = this.makeSegmentCallStatement(transformation);
-
-    //       if (transformation && callStatement) {
-    //         if (transformation.returnDescendant) {
-    //           transformation.newPaths?.[0]?.insertAfter(callStatement);
-    //         } else {
-    //           returnStatement?.insertBefore(callStatement);
-    //         }
-    //       }
-    //     });
-    //   }
-    // );
-
-    // this.componentVariables.forEach((componentVariable) => {
-    //   const transformation = componentVariable.applyTransformation();
-    //   const callStatement = this.makeSegmentCallStatement(transformation);
-
-    //   if (callStatement && transformation) {
-    //     const lastNewPath = transformation.newPaths?.pop();
-    //     lastNewPath?.insertAfter(callStatement);
-    //   }
-    // });
 
     body.unshiftContainer("body", cacheVariableDeclaration);
   }

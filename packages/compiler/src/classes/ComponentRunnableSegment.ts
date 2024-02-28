@@ -8,6 +8,7 @@ import {
   ComponentMutableSegment,
   SegmentTransformationResult,
 } from "./ComponentMutableSegment";
+import { reorderByTopology } from "~/utils/reorder-by-topology";
 
 export class ComponentRunnableSegment extends ComponentMutableSegment {
   private mapOfReturnStatementToReferencedBindings = new Map<
@@ -58,26 +59,24 @@ export class ComponentRunnableSegment extends ComponentMutableSegment {
           if (returnStatement.isReturnStatement()) {
             this.blockReturnStatement = returnStatement;
 
-            const bindings = Array.from(
-              getReferencedVariablesInside(returnStatement).values()
-            ).filter((binding) =>
-              this.component.isBindingInComponentScope(binding)
-            );
+            const bindings: Binding[] = [];
+            getReferencedVariablesInside(returnStatement).forEach((binding) => {
+              bindings.push(binding);
+
+              this.component.addComponentVariable(binding);
+            });
 
             this.mapOfReturnStatementToReferencedBindings.set(
               returnStatement,
               bindings
             );
-
-            bindings.forEach((binding) => {
-              this.component.addComponentVariable(binding);
-            });
           } else {
             this.component.addRunnableSegment(statement);
           }
         });
       } else {
-        this.component.addRunnableSegment(currentPath);
+        const child = this.component.addRunnableSegment(currentPath);
+        this.children.add(child);
       }
     });
   }
@@ -85,31 +84,32 @@ export class ComponentRunnableSegment extends ComponentMutableSegment {
   applyTransformation(performReplacement = true) {
     const path = this.path;
 
-    const transformationsToPerform: (() => void)[] = [];
+    const transformationsToPerform: (() => babel.NodePath[] | null)[] = [];
+    const callables: babel.types.Statement[] = [];
 
     if (path.isBlockStatement()) {
       const statements = path.get("body");
 
       const segmentsMap = this.component.getStatementsToMutableSegmentMap();
 
-      statements.forEach((statement) => {
+      const reorderedStatements = reorderByTopology(statements, segmentsMap);
+
+      reorderedStatements.forEach((statement) => {
         const segment = segmentsMap.get(statement);
 
         const transformation = segment?.applyTransformation();
         if (transformation) {
           const callStatement = this.makeSegmentCallStatement(transformation);
 
-          transformationsToPerform.push(() => {
-            transformation.prformTransformation();
-          });
+          transformationsToPerform.push(() =>
+            transformation.prformTransformation()
+          );
 
           if (callStatement) {
-            if (this.blockReturnStatement) {
-              this.blockReturnStatement.insertBefore(callStatement);
-            } else {
-              path.pushContainer("body", callStatement);
-            }
+            callables.push(...callStatement);
           }
+        } else {
+          callables.push(statement.node);
         }
       });
 
@@ -117,9 +117,12 @@ export class ComponentRunnableSegment extends ComponentMutableSegment {
         child.applyTransformation();
       });
 
-      transformationsToPerform.forEach((transformation) => {
-        transformation();
-      });
+      const newNodes = transformationsToPerform
+        .flatMap((transformation) => transformation()?.map(({ node }) => node))
+        .filter((v): v is babel.types.Statement => v !== null)
+        .concat(callables);
+
+      path.node.body = newNodes;
 
       return null;
     }

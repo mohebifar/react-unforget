@@ -6,6 +6,7 @@ import { Component } from "./Component";
 import type { ComponentRunnableSegment } from "./ComponentRunnableSegment";
 import type { ComponentVariable } from "./ComponentVariable";
 import { DEFAULT_SEGMENT_CALLABLE_VARIABLE_NAME } from "~/utils/constants";
+import { ComponentSegmentDependency } from "./ComponentSegmentDependency";
 
 export const COMPONENT_MUTABLE_SEGMENT_COMPONENT_UNSET_TYPE = "Unset";
 export const COMPONENT_MUTABLE_SEGMENT_COMPONENT_VARIABLE_TYPE =
@@ -33,7 +34,7 @@ export abstract class ComponentMutableSegment {
   protected appliedTransformation = false;
 
   // Mutable code segments that this depends on this
-  protected dependencies = new Map<string, ComponentMutableSegment>();
+  protected dependencies = new Set<ComponentSegmentDependency>();
 
   // Mutable code segments that are children of this
   protected children = new Set<ComponentMutableSegment>();
@@ -64,8 +65,26 @@ export abstract class ComponentMutableSegment {
     this.children.add(child);
   }
 
-  addDependency(componentVariable: ComponentVariable) {
-    this.dependencies.set(componentVariable.name, componentVariable);
+  addDependency(componentVariable: ComponentVariable, accessorNode: t.Node) {
+    if (this.isComponentVariable() && componentVariable === this) {
+      return;
+    }
+    const componentSegmentDependency = new ComponentSegmentDependency(
+      componentVariable,
+      accessorNode as any
+    );
+
+    let alreadyHasDependency = false;
+    for (const dependency of this.dependencies) {
+      if (dependency.equals(componentSegmentDependency)) {
+        alreadyHasDependency = true;
+        break;
+      }
+    }
+
+    if (!alreadyHasDependency) {
+      this.dependencies.add(componentSegmentDependency);
+    }
   }
 
   hasDependencies() {
@@ -87,14 +106,6 @@ export abstract class ComponentMutableSegment {
   protected makeDependencyCondition() {
     return makeDependencyCondition(this);
   }
-
-  // getSideEffectDependencies() {
-  //   const result = Array.from(this.runnableSegments.values()).flatMap((runnableSegment) =>
-  //     Array.from(runnableSegment.getDependencies().values())
-  //   );
-
-  //   return result;
-  // }
 
   hasHookCall() {
     return hasHookCall(this.path, this.component.path);

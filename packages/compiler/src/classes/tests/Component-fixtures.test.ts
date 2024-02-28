@@ -18,7 +18,8 @@ describe("Component fixtures", () => {
     it.each([
       // "fixture_1", "fixture_2", "fixture_4", "fixture_3",
       // "fixture_10",
-      "fixture_5",
+      "fixture_1",
+      // "fixture_5",
       // "fixture_7",
       // "fixture_8",
       // "fixture_9",

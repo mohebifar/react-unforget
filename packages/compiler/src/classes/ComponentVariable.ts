@@ -19,8 +19,7 @@ import { ComponentMutableSegment } from "./ComponentMutableSegment";
 import { findMutatingExpression } from "~/utils/find-mutating-expression";
 
 export class ComponentVariable extends ComponentMutableSegment {
-  private variableSideEffects = new Set<ComponentVariable>();
-
+  private runnableSegmentsMutatingThis = new Set<ComponentMutableSegment>();
 
   constructor(
     component: Component,
@@ -145,85 +144,107 @@ export class ComponentVariable extends ComponentMutableSegment {
         if (initPath) {
           // TODO: Refactor this
           const initId = initPath.isVariableDeclaration()
-            ? (initPath.get("declarations.0.id") as any)
+            ? (initPath.get(
+                "declarations.0.id"
+              ) as babel.NodePath<babel.types.Identifier>)
             : initPath.isIdentifier()
               ? initPath
               : null;
 
           const initName = initId?.node.name;
 
-          if (initId) {
-            // TODO: Refactor this
-            scope
-              .getBinding(initName)
-              ?.reference(
-                newPath.isVariableDeclaration()
-                  ? (newPath.get("declarations.0.id") as any)
-                  : newPath
-              );
+          if (initName) {
+            const newRefId = newPath.isVariableDeclaration()
+              ? (newPath.get(
+                  "declarations.0.id"
+                ) as babel.NodePath<babel.types.Identifier>)
+              : newPath;
+
+            scope.getBinding(initName)?.reference(newRefId);
           }
         }
       }
     });
   }
 
+  getDependencies() {
+    const allDependencies = new Set(super.getDependencies());
+
+    this.runnableSegmentsMutatingThis.forEach((runnableSegment) => {
+      runnableSegment.getDependencies().forEach((dependency) => {
+        allDependencies.add(dependency);
+      });
+    });
+
+    return allDependencies;
+  }
+
   computeDependencyGraph() {
     this.dependencies.clear();
 
-    const visitDependencies = (dependencyIds: string[]) => {
-      dependencyIds.forEach((id) => {
-        let dependent = this.component.getComponentVariable(id);
+    this.binding.referencePaths.forEach((mainReferencePath) => {
+      const statementParent = mainReferencePath.getStatementParent();
+      const referencePath = mainReferencePath.isJSXExpressionContainer()
+        ? mainReferencePath.get("expression")
+        : mainReferencePath;
 
-        if (!dependent) {
-          const binding = this.component.path.scope.getBinding(id);
+      let accessorPath =
+        referencePath.find(
+          (path) =>
+            (path.isMemberExpression() || path.isOptionalMemberExpression()) &&
+            path.isDescendant(statementParent!)
+        ) ?? referencePath;
 
-          if (binding) {
-            const newComponentVariable =
-              this.component.addComponentVariable(binding);
-            if (newComponentVariable) {
-              dependent = newComponentVariable;
-            }
-          }
+      if (
+        accessorPath.isOptionalMemberExpression() ||
+        accessorPath.isMemberExpression()
+      ) {
+        if (accessorPath.parentPath.isCallExpression()) {
+          accessorPath = accessorPath.get(
+            "object"
+          ) as babel.NodePath<babel.types.Expression>;
         }
+      }
 
-        if (dependent) {
-          dependent.addDependency(this);
-        }
-      });
-    };
+      const accessorNode = accessorPath.node as t.Expression;
 
-    this.binding.referencePaths.forEach((referencePath) => {
-      const parentVariableDeclarator = referencePath.findParent(
-        (p) =>
-          p.isVariableDeclarator() && this.component.isTheFunctionParentOf(p)
-      ) as babel.NodePath<babel.types.VariableDeclarator> | null;
+      if (statementParent?.isVariableDeclaration()) {
+        const parentVariableDeclarator = referencePath.find((p) =>
+          p.isVariableDeclarator()
+        ) as babel.NodePath<babel.types.VariableDeclarator>;
 
-      if (parentVariableDeclarator) {
         const lval = parentVariableDeclarator.get("id");
 
-        const ids = getDeclaredIdentifiersInLVal(lval);
+        const dependentIds = getDeclaredIdentifiersInLVal(lval);
 
-        visitDependencies(ids);
-      } else {
-        const immediateParentStatement =
-          referencePath.getStatementParent() as babel.NodePath<babel.types.Statement>;
-        const parentUntilBody = referencePath.find(
-          (p) => p.parentPath === this.component.path.get("body")
-        );
-
-        getReferencedVariablesInside(immediateParentStatement).forEach(
-          (binding, innerRefPath) => {
-            if (!this.component.isBindingInComponentScope(binding)) {
-              return;
-            }
-
-            const mutatingExpression = findMutatingExpression(innerRefPath);
-
-            if (!mutatingExpression) {
-              return;
-            }
+        dependentIds.forEach((id) => {
+          const binding = this.path.scope.getBinding(id);
+          if (!binding) {
+            return;
           }
+
+          const dependent = this.component.addComponentVariable(binding);
+
+          if (dependent) {
+            dependent.addDependency(this, accessorNode);
+          }
+        });
+        return;
+      }
+
+      // TODO: Add assignment pattern support here
+
+      if (statementParent && !statementParent?.isReturnStatement()) {
+        const dependent = this.component.addRunnableSegment(statementParent);
+        dependent.addDependency(this, accessorNode);
+
+        const mutatingExpressions = findMutatingExpression(
+          referencePath,
+          this.name
         );
+        if (mutatingExpressions) {
+          this.runnableSegmentsMutatingThis.add(dependent);
+        }
       }
     });
 
@@ -243,7 +264,7 @@ export class ComponentVariable extends ComponentMutableSegment {
     );
   }
 
-  applyTransformation(performReplacement = true) {
+  applyTransformation() {
     if (this.appliedTransformation) {
       return null;
     }
@@ -266,12 +287,10 @@ export class ComponentVariable extends ComponentMutableSegment {
         const { prformTransformation, segmentCallableId, replacements } =
           convertStatementToSegmentCallable(variableDeclaration, {
             initialValue: cacheValueAccessExpression,
-            performReplacement,
             segmentCallableId: this.getSegmentCallableId(),
           });
 
         this.appliedTransformation = true;
-
 
         return {
           replacements,
@@ -317,14 +336,6 @@ export class ComponentVariable extends ComponentMutableSegment {
       this.getCacheAccessorExpression(),
       t.identifier(RUNTIME_MODULE_CACHE_IS_NOT_SET_PROP_NAME)
     );
-  }
-
-  addVariableSideEffect(componentVariable: ComponentVariable) {
-    this.variableSideEffects.add(componentVariable);
-  }
-
-  getVariableSideEffects() {
-    return this.variableSideEffects;
   }
 
   get path() {

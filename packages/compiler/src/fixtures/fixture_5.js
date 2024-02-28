@@ -71,6 +71,8 @@ export function MyComponent() {
     console.log("Movies after 2000: ", filteredMovies);
   }
 
+  console.log("Total number of movies: ", movies.length);
+
   return (
     <div>
       <button onClick={addRandomMovie}>Add random movie</button>

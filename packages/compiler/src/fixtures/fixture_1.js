@@ -1,9 +1,16 @@
 export function MyComponent() {
-  const [state, setState] = useState(0);
+  const value = [];
 
-  const myDerivedVariable = state + 1;
+  let i = 2;
+  const k = "hi";
 
-  const unusedVariable = 1;
+  value.push(...["Hello", "World", i]);
 
-  return <div>{myDerivedVariable}</div>;
+  const m = i;
+
+  if (m === 2) {
+    return null;
+  }
+
+  return <div>{value[0]}</div>;
 }

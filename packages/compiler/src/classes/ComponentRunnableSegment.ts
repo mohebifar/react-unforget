@@ -94,7 +94,7 @@ export class ComponentRunnableSegment extends ComponentMutableSegment {
 
       const reorderedStatements = reorderByTopology(statements, segmentsMap);
 
-      reorderedStatements.forEach((statement) => {
+      reorderedStatements.forEach((statement, i) => {
         const segment = segmentsMap.get(statement);
 
         const transformation = segment?.applyTransformation();
@@ -108,7 +108,7 @@ export class ComponentRunnableSegment extends ComponentMutableSegment {
           if (callStatement) {
             callables.push(...callStatement);
           }
-        } else {
+        } else if (statement) {
           callables.push(statement.node);
         }
       });

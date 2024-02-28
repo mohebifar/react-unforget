@@ -6,9 +6,11 @@ import { parse } from "../testing";
 const parseCodeAndRun = (code: string) => {
   const path = parse(code);
   return getRightmostIdName(
-    path.get(
-      "body.0.declarations.0.init"
-    ) as babel.NodePath<babel.types.Expression>
+    (
+      path.get(
+        "body.0.declarations.0.init"
+      ) as babel.NodePath<babel.types.Expression>
+    ).node
   );
 };
 

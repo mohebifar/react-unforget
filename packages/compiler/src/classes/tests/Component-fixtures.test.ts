@@ -14,23 +14,16 @@ const parseCodeAndRun = (fixtureName: string) => {
 };
 
 describe("Component fixtures", () => {
-  describe.only("applyModification", () => {
-    it.each([
-      // "fixture_1", "fixture_2", "fixture_4", "fixture_3",
-      // "fixture_10",
-      "fixture_1",
-      // "fixture_5",
-      // "fixture_7",
-      // "fixture_8",
-      // "fixture_9",
-    ])("%s", (fixtureName) => {
-      const [, program] = parseCodeAndRun(fixtureName);
+  describe("applyModification", () => {
+    it.each(Array.from({ length: 12 }, (_, i) => `fixture_${i + 1}`))(
+      "%s",
+      (fixtureName) => {
+        const [, program] = parseCodeAndRun(fixtureName);
 
-      const codeAfter = program.toString();
+        const codeAfter = program.toString();
 
-      console.log(codeAfter);
-
-      expect(codeAfter).toMatchSnapshot();
-    });
+        expect(codeAfter).toMatchSnapshot();
+      }
+    );
   });
 });

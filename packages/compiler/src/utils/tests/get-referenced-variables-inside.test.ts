@@ -38,7 +38,8 @@ describe("getReferencedVariablesInside", () => {
 
     const fn = getFunctionFromBodyPath(body);
     const returnStatement = getReturnStatement(fn)!;
-    const bindings = getReferencedVariablesInside(returnStatement);
+    const variables = getReferencedVariablesInside(returnStatement);
+    const bindings = Array.from(variables.values());
 
     expect(bindings).toHaveLength(1);
     expect(bindings[0]?.path).toEqual(body.at(0)?.get("declarations.0"));
@@ -55,7 +56,8 @@ describe("getReferencedVariablesInside", () => {
 
     const fn = getFunctionFromBodyPath(body);
     const returnStatement = getReturnStatement(fn)!;
-    const bindings = getReferencedVariablesInside(returnStatement);
+    const variables = getReferencedVariablesInside(returnStatement);
+    const bindings = Array.from(variables.values());
 
     expect(bindings).toHaveLength(1);
     expect(bindings[0]?.identifier.name).toStrictEqual("derivedValue");
@@ -75,7 +77,8 @@ describe("getReferencedVariablesInside", () => {
 
     const fn = getFunctionFromBodyPath(body);
     const returnStatement = getReturnStatement(fn)!;
-    const bindings = getReferencedVariablesInside(returnStatement);
+    const variables = getReferencedVariablesInside(returnStatement);
+    const bindings = Array.from(variables.values());
 
     expect(bindings).toHaveLength(2);
     expect(bindings[0]?.identifier.name).toStrictEqual("derivedValue");
@@ -97,9 +100,9 @@ function MyComponent() {
   `);
     const fn = getFunctionFromBodyPath(body);
     const returnStatement = getReturnStatement(fn)!;
-    const bindings = getReferencedVariablesInside(returnStatement);
+    const variables = getReferencedVariablesInside(returnStatement);
+    const bindings = Array.from(variables.values());
 
-    // expect(bindings).toHaveLength(3);
     expect(bindings.map((b) => b.identifier.name)).toStrictEqual([
       "obj",
       "key",
@@ -118,7 +121,8 @@ function MyComponent() {
   `);
     const fn = getFunctionFromBodyPath(body);
     const returnStatement = getReturnStatement(fn)!;
-    const bindings = getReferencedVariablesInside(returnStatement);
+    const variables = getReferencedVariablesInside(returnStatement);
+    const bindings = Array.from(variables.values());
 
     expect(bindings).toHaveLength(3);
     expect(bindings.map((b) => b.identifier.name)).toStrictEqual([
@@ -139,7 +143,8 @@ function MyComponent() {
   `);
     const fn = getFunctionFromBodyPath(body);
     const returnStatement = getReturnStatement(fn)!;
-    const bindings = getReferencedVariablesInside(returnStatement);
+    const variables = getReferencedVariablesInside(returnStatement);
+    const bindings = Array.from(variables.values());
 
     expect(bindings).toHaveLength(3);
     expect(bindings.map((b) => b.identifier.name)).toStrictEqual([
@@ -158,7 +163,8 @@ function MyComponent() {
     `);
 
       const fn = getFunctionFromBodyPath(body);
-      const bindings = getReferencedVariablesInside(fn);
+      const variables = getReferencedVariablesInside(fn);
+      const bindings = Array.from(variables.values());
 
       expect(bindings).toHaveLength(0);
     });
@@ -173,7 +179,8 @@ function MyComponent() {
     `);
 
       const fn = getFunctionFromBodyPath(body);
-      const bindings = getReferencedVariablesInside(fn);
+      const variables = getReferencedVariablesInside(fn);
+      const bindings = Array.from(variables.values());
 
       expect(bindings).toHaveLength(0);
     });
@@ -196,7 +203,8 @@ function MyComponent() {
     `);
 
       const fn = getFunctionFromBodyPath(body);
-      const bindings = getReferencedVariablesInside(fn);
+      const variables = getReferencedVariablesInside(fn);
+      const bindings = Array.from(variables.values());
 
       expect(bindings.map((b) => b.identifier.name)).toStrictEqual([
         "computedProperty",
@@ -224,7 +232,8 @@ function MyComponent() {
     `);
 
       const fn = getFunctionFromBodyPath(body);
-      const bindings = getReferencedVariablesInside(fn);
+      const variables = getReferencedVariablesInside(fn);
+      const bindings = Array.from(variables.values());
 
       expect(bindings.map((b) => b.identifier.name)).toStrictEqual([
         "computedProperty",

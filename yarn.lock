@@ -1082,6 +1082,15 @@
   resolved "https://registry.yarnpkg.com/@pkgr/core/-/core-0.1.1.tgz#1ec17e2edbec25c8306d424ecfbf13c7de1aaa31"
   integrity sha512-cq8o4cWH0ibXh9VGi5P20Tu9XF/0fFXl9EUinr9QfTM7a7p0oTA4iJRCQWppXR1Pg8dSM0UCItCkPwsk9qWWYA==
 
+"@react-unforget/compiler@latest":
+  version "0.1.0-dev.4"
+  resolved "https://registry.yarnpkg.com/@react-unforget/compiler/-/compiler-0.1.0-dev.4.tgz#9152ae9e09b9aeda3c5d1938fc5a6daeb81bbae2"
+  integrity sha512-zRamc1ESnLRprTBsBN51zV9jOqgWisgDNCxCGze6XaYpwdj3QbTC6zZy64eAIh/fyryEhuG2jspqKWOzQ4N5ow==
+  dependencies:
+    "@babel/core" "^7.23.9"
+    "@babel/parser" "^7.23.9"
+    "@babel/traverse" "^7.23.9"
+
 "@rollup/rollup-android-arm-eabi@4.12.0":
   version "4.12.0"
   resolved "https://registry.yarnpkg.com/@rollup/rollup-android-arm-eabi/-/rollup-android-arm-eabi-4.12.0.tgz#38c3abd1955a3c21d492af6b1a1dca4bb1d894d6"

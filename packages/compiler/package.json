@@ -7,13 +7,13 @@
     "dist",
     "README.md"
   ],
-  "main": "dist/main.js",
-  "module": "dist/main.mjs",
+  "main": "dist/main.cjs",
+  "module": "dist/main.js",
   "types": "dist/main.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/main.mjs",
-      "require": "./dist/main.js",
+      "import": "./dist/main.js",
+      "require": "./dist/main.cjs",
       "types": "./dist/main.d.ts"
     }
   },

@@ -1,0 +1,38 @@
+{
+  "name": "@react-unforget/babel-plugin",
+  "version": "0.1.0-dev.3",
+  "license": "MIT",
+  "type": "module",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    "require": "./dist/index.js",
+    "import": "./dist/index.mjs",
+    "types": "./dist/index.d.ts"
+  },
+  "scripts": {
+    "dev": "yarn build --watch",
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "test": "echo 'No checks yet'",
+    "lint": "echo 'No checks yet'"
+  },
+  "dependencies": {
+    "@react-unforget/compiler": "latest"
+  },
+  "devDependencies": {
+    "@react-unforget/eslint-config": "*",
+    "@react-unforget/jest-config": "*",
+    "@react-unforget/typescript-config": "*",
+    "@types/react": "^18.2.58",
+    "react": "^18.2.0",
+    "tsup": "^8.0.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

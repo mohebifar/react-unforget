@@ -1,3 +1,3 @@
 # React Unforget
 
-WIP
+A compiler to automatically optimize React applications.

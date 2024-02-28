@@ -5,18 +5,17 @@ import { convertStatementToSegmentCallable } from "~/ast-factories/convert-state
 import { makeCacheEnqueueCallStatement } from "~/ast-factories/make-cache-enqueue-call-statement";
 import { makeUnwrappedDeclarations } from "~/ast-factories/make-unwrapped-declarations";
 import {
-  DEFAULT_SEGMENT_CALLABLE_VARIABLE_NAME,
   DEFAULT_UNWRAPPED_PROPS_VARIABLE_NAME,
   DEFAULT_UNWRAPPED_VARIABLE_NAME,
   RUNTIME_MODULE_CACHE_IS_NOT_SET_PROP_NAME,
   RUNTIME_MODULE_CACHE_VALUE_PROP_NAME,
 } from "~/utils/constants";
+import { findMutatingExpression } from "~/utils/find-mutating-expression";
 import { getReferencedVariablesInside } from "~/utils/get-referenced-variables-inside";
 import { UnwrappedAssignmentEntry } from "~/utils/unwrap-pattern-assignment";
 import { getDeclaredIdentifiersInLVal } from "../utils/get-declared-identifiers-in-lval";
 import { Component } from "./Component";
 import { ComponentMutableSegment } from "./ComponentMutableSegment";
-import { findMutatingExpression } from "~/utils/find-mutating-expression";
 
 export class ComponentVariable extends ComponentMutableSegment {
   private runnableSegmentsMutatingThis = new Set<ComponentMutableSegment>();

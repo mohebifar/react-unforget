@@ -391,27 +391,70 @@ const initalMovies = [{
   year: 2008
 }];
 const useMovies = () => {
-  const [movies, setMovies] = useState(initalMovies);
-  const addRandomMovie = () => {
-    setMovies(p => [...p, {
-      title: "The " + words[Math.floor(Math.random() * words.length)] + " " + words[Math.floor(Math.random() * words.length)],
-      year: 1990 + Math.floor(Math.random() * 20)
-    }]);
+  const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
+  /*
+  0 => movies
+  1 => _unwrapped
+  2 => setMovies
+  3 => addRandomMovie
+  */
+  4);
+  let _unwrapped = _$unforgetCache[1].v;
+  const _segment = () => {
+    _unwrapped = useState(initalMovies);
   };
+  let addRandomMovie = _$unforgetCache[3].v;
+  const _segment2 = () => {
+    addRandomMovie = () => {
+      setMovies(p => [...p, {
+        title: "The " + words[Math.floor(Math.random() * words.length)] + " " + words[Math.floor(Math.random() * words.length)],
+        year: 1990 + Math.floor(Math.random() * 20)
+      }]);
+    };
+  };
+  let setMovies = _$unforgetCache[2].v;
+  const _segment3 = () => {
+    setMovies = _unwrapped[1];
+  };
+  let movies = _$unforgetCache[0].v;
+  const _segment4 = () => {
+    movies = _unwrapped[0];
+  };
+  _segment();
+  _$unforgetCache[1].e(_unwrapped);
+  if (_$unforgetCache[3].n) {
+    _segment2();
+    _$unforgetCache[3].e(addRandomMovie);
+  }
+  if (_$unforgetCache[2].n || _unwrapped !== _$unforgetCache[1].v) {
+    _segment3();
+    _$unforgetCache[2].e(setMovies);
+  }
+  if (_$unforgetCache[0].n || _unwrapped !== _$unforgetCache[1].v) {
+    _segment4();
+    _$unforgetCache[0].e(movies);
+  }
   return [movies, addRandomMovie];
 };
-const useKey = () => "key1";
+const useKey = () => {
+  const [_$unforgetCache2, _$unforgetCommit2, _$unforgetNull2] = useCreateCache$unforget(
+  /*
+  
+  */
+  0);
+  return "key1";
+};
 const object = {
   key1: "value1",
   key2: "value2"
 };
 export function MyComponent() {
-  const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
+  const [_$unforgetCache3, _$unforgetCommit3, _$unforgetNull3] = useCreateCache$unforget(
   /*
   0 => _unwrappedJsxEl3
   1 => _unwrappedJsxEl
   2 => addRandomMovie
-  3 => _unwrapped
+  3 => _unwrapped2
   4 => movies
   5 => _unwrappedJsxEl2
   6 => _unwrappedJsxExp
@@ -421,147 +464,147 @@ export function MyComponent() {
   10 => key
   */
   11);
-  let _unwrapped = _$unforgetCache[3].v;
-  const _segment = () => {
-    _unwrapped = useMovies();
+  let _unwrapped2 = _$unforgetCache3[3].v;
+  const _segment7 = () => {
+    _unwrapped2 = useMovies();
   };
-  let key = _$unforgetCache[10].v;
-  const _segment2 = () => {
+  let key = _$unforgetCache3[10].v;
+  const _segment8 = () => {
     key = useKey();
   };
   let i;
-  const _segment3 = () => {
+  const _segment9 = () => {
     i = 5;
   };
-  let _unwrappedJsxExp = _$unforgetCache[6].v;
-  const _segment4 = () => {
+  let _unwrappedJsxExp = _$unforgetCache3[6].v;
+  const _segment10 = () => {
     _unwrappedJsxExp = movies.length;
   };
-  let addRandomMovie = _$unforgetCache[2].v;
-  const _segment5 = () => {
-    addRandomMovie = _unwrapped[1];
+  let addRandomMovie = _$unforgetCache3[2].v;
+  const _segment11 = () => {
+    addRandomMovie = _unwrapped2[1];
   };
-  let movies = _$unforgetCache[4].v;
-  const _segment6 = () => {
-    movies = _unwrapped[0];
+  let movies = _$unforgetCache3[4].v;
+  const _segment12 = () => {
+    movies = _unwrapped2[0];
   };
-  let value = _$unforgetCache[9].v;
-  const _segment7 = () => {
+  let value = _$unforgetCache3[9].v;
+  const _segment13 = () => {
     value = object[key];
   };
-  let filteredMovies = _$unforgetCache[8].v;
-  const _segment8 = () => {
+  let filteredMovies = _$unforgetCache3[8].v;
+  const _segment14 = () => {
     filteredMovies = [];
   };
-  const _segment9 = () => {
+  const _segment15 = () => {
     for (let i = 0; i < movies.length; i++) {
-      const _segment20 = () => {
+      const _segment26 = () => {
         if (movies[i].year > 2000) {
-          const _segment21 = () => {
+          const _segment27 = () => {
             filteredMovies.push(movies[i]);
           };
-          const _unwrapped = useMovies();
-          const movies = _unwrapped[0];
+          const _unwrapped2 = useMovies();
+          const movies = _unwrapped2[0];
           const filteredMovies = [];
-          if (movies !== _$unforgetCache[4].v || filteredMovies !== _$unforgetCache[8].v) {
-            _segment21();
+          if (movies !== _$unforgetCache3[4].v || filteredMovies !== _$unforgetCache3[8].v) {
+            _segment27();
           }
         }
       };
-      const _unwrapped = useMovies();
-      const movies = _unwrapped[0];
-      if (movies[i] !== _$unforgetCache[4].v[i]) {
-        _segment20();
+      const _unwrapped2 = useMovies();
+      const movies = _unwrapped2[0];
+      if (movies[i] !== _$unforgetCache3[4].v[i]) {
+        _segment26();
       }
     }
   };
-  const _segment10 = () => {
+  const _segment16 = () => {
     if (filteredMovies.length > 0) {
       // Just some side effect
-      const _segment22 = () => {
+      const _segment28 = () => {
         console.log("Movies after 2000: ", filteredMovies);
       };
       const filteredMovies = [];
-      if (filteredMovies !== _$unforgetCache[8].v) {
-        _segment22();
+      if (filteredMovies !== _$unforgetCache3[8].v) {
+        _segment28();
       }
     }
   };
-  const _segment11 = () => {
+  const _segment17 = () => {
     console.log("Total number of movies: ", movies.length);
   };
-  let _unwrappedJsxExp2 = _$unforgetCache[7].v;
-  const _segment12 = () => {
+  let _unwrappedJsxExp2 = _$unforgetCache3[7].v;
+  const _segment18 = () => {
     _unwrappedJsxExp2 = filteredMovies.map(movie => <div key={movie.title}>
           {movie.title}
           {value}
         </div>);
   };
-  let _unwrappedJsxEl = _$unforgetCache[1].v;
-  const _segment13 = () => {
+  let _unwrappedJsxEl = _$unforgetCache3[1].v;
+  const _segment19 = () => {
     _unwrappedJsxEl = <button onClick={addRandomMovie}>Add random movie</button>;
   };
-  let _unwrappedJsxEl2 = _$unforgetCache[5].v;
-  const _segment14 = () => {
+  let _unwrappedJsxEl2 = _$unforgetCache3[5].v;
+  const _segment20 = () => {
     _unwrappedJsxEl2 = <div>total number of movies: {_unwrappedJsxExp}</div>;
   };
-  let _unwrappedJsxEl3 = _$unforgetCache[0].v;
-  const _segment15 = () => {
+  let _unwrappedJsxEl3 = _$unforgetCache3[0].v;
+  const _segment21 = () => {
     _unwrappedJsxEl3 = <div>
       {_unwrappedJsxEl}
       {_unwrappedJsxEl2}
       {_unwrappedJsxExp2}
     </div>;
   };
-  _segment();
-  _$unforgetCache[3].e(_unwrapped);
-  _segment2();
-  _$unforgetCache[10].e(key);
-  _segment3();
-  if (_$unforgetCache[6].n) {
-    _segment4();
-    _$unforgetCache[6].e(_unwrappedJsxExp);
-  }
-  if (_$unforgetCache[2].n || _unwrapped !== _$unforgetCache[3].v) {
-    _segment5();
-    _$unforgetCache[2].e(addRandomMovie);
-  }
-  if (_$unforgetCache[4].n || _unwrapped !== _$unforgetCache[3].v) {
-    _segment6();
-    _$unforgetCache[4].e(movies);
-  }
-  if (_$unforgetCache[9].n || key[key] !== _$unforgetCache[10].v[key]) {
-    _segment7();
-    _$unforgetCache[9].e(value);
-  }
-  if (_$unforgetCache[8].n || movies !== _$unforgetCache[4].v || filteredMovies !== _$unforgetCache[8].v) {
-    _segment8();
-    _$unforgetCache[8].e(filteredMovies);
-  }
-  if (movies.length !== _$unforgetCache[4].v.length) {
-    _segment9();
-  }
-  if (filteredMovies.length !== _$unforgetCache[8].v.length) {
+  _segment7();
+  _$unforgetCache3[3].e(_unwrapped2);
+  _segment8();
+  _$unforgetCache3[10].e(key);
+  _segment9();
+  if (_$unforgetCache3[6].n) {
     _segment10();
+    _$unforgetCache3[6].e(_unwrappedJsxExp);
   }
-  if (movies !== _$unforgetCache[4].v) {
+  if (_$unforgetCache3[2].n || _unwrapped2 !== _$unforgetCache3[3].v) {
     _segment11();
+    _$unforgetCache3[2].e(addRandomMovie);
   }
-  if (_$unforgetCache[7].n || filteredMovies !== _$unforgetCache[8].v || value !== _$unforgetCache[9].v) {
+  if (_$unforgetCache3[4].n || _unwrapped2 !== _$unforgetCache3[3].v) {
     _segment12();
-    _$unforgetCache[7].e(_unwrappedJsxExp2);
+    _$unforgetCache3[4].e(movies);
   }
-  if (_$unforgetCache[1].n || addRandomMovie !== _$unforgetCache[2].v) {
+  if (_$unforgetCache3[9].n || key[key] !== _$unforgetCache3[10].v[key]) {
     _segment13();
-    _$unforgetCache[1].e(_unwrappedJsxEl);
+    _$unforgetCache3[9].e(value);
   }
-  if (_$unforgetCache[5].n || _unwrappedJsxExp !== _$unforgetCache[6].v) {
+  if (_$unforgetCache3[8].n || movies !== _$unforgetCache3[4].v || filteredMovies !== _$unforgetCache3[8].v) {
     _segment14();
-    _$unforgetCache[5].e(_unwrappedJsxEl2);
+    _$unforgetCache3[8].e(filteredMovies);
   }
-  if (_$unforgetCache[0].n || _unwrappedJsxEl !== _$unforgetCache[1].v || movies !== _$unforgetCache[4].v || _unwrappedJsxEl2 !== _$unforgetCache[5].v || _unwrappedJsxExp2 !== _$unforgetCache[7].v) {
+  if (movies.length !== _$unforgetCache3[4].v.length) {
     _segment15();
-    _$unforgetCache[0].e(_unwrappedJsxEl3);
+  }
+  if (filteredMovies.length !== _$unforgetCache3[8].v.length) {
+    _segment16();
+  }
+  if (movies !== _$unforgetCache3[4].v) {
+    _segment17();
+  }
+  if (_$unforgetCache3[7].n || filteredMovies !== _$unforgetCache3[8].v || value !== _$unforgetCache3[9].v) {
+    _segment18();
+    _$unforgetCache3[7].e(_unwrappedJsxExp2);
+  }
+  if (_$unforgetCache3[1].n || addRandomMovie !== _$unforgetCache3[2].v) {
+    _segment19();
+    _$unforgetCache3[1].e(_unwrappedJsxEl);
+  }
+  if (_$unforgetCache3[5].n || _unwrappedJsxExp !== _$unforgetCache3[6].v) {
+    _segment20();
+    _$unforgetCache3[5].e(_unwrappedJsxEl2);
+  }
+  if (_$unforgetCache3[0].n || _unwrappedJsxEl !== _$unforgetCache3[1].v || movies !== _$unforgetCache3[4].v || _unwrappedJsxEl2 !== _$unforgetCache3[5].v || _unwrappedJsxExp2 !== _$unforgetCache3[7].v) {
+    _segment21();
+    _$unforgetCache3[0].e(_unwrappedJsxEl3);
   }
   return _unwrappedJsxEl3;
 }
@@ -678,17 +721,48 @@ exports[`Component fixtures applyModification fixture_8 1`] = `
 
 exports[`Component fixtures applyModification fixture_9 1`] = `
 "function useValue() {
-  const [value, setValue] = useState(Math.random());
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setValue(Math.random());
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
+  const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
+  /*
+  0 => value
+  1 => _unwrapped
+  2 => setValue
+  */
+  3);
+  let _unwrapped = _$unforgetCache[1].v;
+  const _segment = () => {
+    _unwrapped = useState(Math.random());
+  };
+  const _segment2 = () => {
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setValue(Math.random());
+      }, 1000);
+      return () => clearInterval(interval);
+    }, []);
+  };
+  let setValue = _$unforgetCache[2].v;
+  const _segment3 = () => {
+    setValue = _unwrapped[1];
+  };
+  let value = _$unforgetCache[0].v;
+  const _segment4 = () => {
+    value = _unwrapped[0];
+  };
+  _segment();
+  _$unforgetCache[1].e(_unwrapped);
+  _segment2();
+  if (_$unforgetCache[2].n || _unwrapped !== _$unforgetCache[1].v) {
+    _segment3();
+    _$unforgetCache[2].e(setValue);
+  }
+  if (_$unforgetCache[0].n || _unwrapped !== _$unforgetCache[1].v) {
+    _segment4();
+    _$unforgetCache[0].e(value);
+  }
   return value;
 }
 export function SimpleJSX() {
-  const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
+  const [_$unforgetCache2, _$unforgetCommit2, _$unforgetNull2] = useCreateCache$unforget(
   /*
   0 => _unwrappedJsxEl
   1 => valueWith2Decimal
@@ -700,84 +774,84 @@ export function SimpleJSX() {
   7 => _unwrappedJsxEl4
   */
   8);
-  let value = _$unforgetCache[3].v;
-  const _segment = () => {
+  let value = _$unforgetCache2[3].v;
+  const _segment6 = () => {
     value = useValue();
   };
-  let _unwrappedJsxEl2 = _$unforgetCache[5].v;
-  const _segment2 = () => {
+  let _unwrappedJsxEl2 = _$unforgetCache2[5].v;
+  const _segment7 = () => {
     _unwrappedJsxEl2 = <button>Hello</button>;
   };
-  let _unwrappedJsxEl3 = _$unforgetCache[6].v;
-  const _segment3 = () => {
+  let _unwrappedJsxEl3 = _$unforgetCache2[6].v;
+  const _segment8 = () => {
     _unwrappedJsxEl3 = <div>{value}</div>;
   };
-  let _unwrappedJsxEl4 = _$unforgetCache[7].v;
-  const _segment4 = () => {
+  let _unwrappedJsxEl4 = _$unforgetCache2[7].v;
+  const _segment9 = () => {
     _unwrappedJsxEl4 = <div>{derivedValue}</div>;
   };
-  let valueWith2Decimal = _$unforgetCache[1].v;
-  const _segment5 = () => {
+  let valueWith2Decimal = _$unforgetCache2[1].v;
+  const _segment10 = () => {
     valueWith2Decimal = value.toFixed(2);
   };
-  const _segment6 = () => {
+  const _segment11 = () => {
     if (value > 0.8) {
-      let _unwrappedJsxEl = _$unforgetCache[0].v;
-      const _segment11 = () => {
+      let _unwrappedJsxEl = _$unforgetCache2[0].v;
+      const _segment16 = () => {
         _unwrappedJsxEl = <div>Loading because value is {valueWith2Decimal}...</div>;
       };
       const value = useValue();
       const valueWith2Decimal = value.toFixed(2);
-      if (_$unforgetCache[0].n || valueWith2Decimal !== _$unforgetCache[1].v) {
-        _segment11();
-        _$unforgetCache[0].e(_unwrappedJsxEl);
+      if (_$unforgetCache2[0].n || valueWith2Decimal !== _$unforgetCache2[1].v) {
+        _segment16();
+        _$unforgetCache2[0].e(_unwrappedJsxEl);
       }
       return _unwrappedJsxEl;
     }
   };
-  let derivedValue = _$unforgetCache[2].v;
-  const _segment7 = () => {
+  let derivedValue = _$unforgetCache2[2].v;
+  const _segment12 = () => {
     derivedValue = "state updated to: " + valueWith2Decimal;
   };
-  let _unwrappedJsxEl5 = _$unforgetCache[4].v;
-  const _segment8 = () => {
+  let _unwrappedJsxEl5 = _$unforgetCache2[4].v;
+  const _segment13 = () => {
     _unwrappedJsxEl5 = <div>
       {_unwrappedJsxEl2}
       {_unwrappedJsxEl3}
       {_unwrappedJsxEl4}
     </div>;
   };
-  _segment();
-  _$unforgetCache[3].e(value);
-  if (_$unforgetCache[5].n) {
-    _segment2();
-    _$unforgetCache[5].e(_unwrappedJsxEl2);
+  _segment6();
+  _$unforgetCache2[3].e(value);
+  if (_$unforgetCache2[5].n) {
+    _segment7();
+    _$unforgetCache2[5].e(_unwrappedJsxEl2);
   }
-  if (_$unforgetCache[6].n) {
-    _segment3();
-    _$unforgetCache[6].e(_unwrappedJsxEl3);
+  if (_$unforgetCache2[6].n) {
+    _segment8();
+    _$unforgetCache2[6].e(_unwrappedJsxEl3);
   }
-  if (_$unforgetCache[7].n) {
-    _segment4();
-    _$unforgetCache[7].e(_unwrappedJsxEl4);
+  if (_$unforgetCache2[7].n) {
+    _segment9();
+    _$unforgetCache2[7].e(_unwrappedJsxEl4);
   }
-  if (_$unforgetCache[1].n || value !== _$unforgetCache[3].v) {
-    _segment5();
-    _$unforgetCache[1].e(valueWith2Decimal);
+  if (_$unforgetCache2[1].n || value !== _$unforgetCache2[3].v) {
+    _segment10();
+    _$unforgetCache2[1].e(valueWith2Decimal);
   }
-  if (value !== _$unforgetCache[3].v) {
-    const _temp = _segment6();
-    if (_temp !== _$unforgetNull) {
+  if (value !== _$unforgetCache2[3].v) {
+    const _temp = _segment11();
+    if (_temp !== _$unforgetNull2) {
       return _temp;
     }
   }
-  if (_$unforgetCache[2].n || valueWith2Decimal !== _$unforgetCache[1].v) {
-    _segment7();
-    _$unforgetCache[2].e(derivedValue);
+  if (_$unforgetCache2[2].n || valueWith2Decimal !== _$unforgetCache2[1].v) {
+    _segment12();
+    _$unforgetCache2[2].e(derivedValue);
   }
-  if (_$unforgetCache[4].n || _unwrappedJsxEl2 !== _$unforgetCache[5].v || _unwrappedJsxEl3 !== _$unforgetCache[6].v || _unwrappedJsxEl4 !== _$unforgetCache[7].v) {
-    _segment8();
-    _$unforgetCache[4].e(_unwrappedJsxEl5);
+  if (_$unforgetCache2[4].n || _unwrappedJsxEl2 !== _$unforgetCache2[5].v || _unwrappedJsxEl3 !== _$unforgetCache2[6].v || _unwrappedJsxEl4 !== _$unforgetCache2[7].v) {
+    _segment13();
+    _$unforgetCache2[4].e(_unwrappedJsxEl5);
   }
   return _unwrappedJsxEl5;
 }"
@@ -1152,6 +1226,11 @@ export default UserList;"
 
 exports[`Component fixtures applyModification fixture_11 1`] = `
 "const useMovies = () => {
+  const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
+  /*
+  
+  */
+  0);
   return {
     data: [{
       title: "The Shawshank Redemption",
@@ -1167,7 +1246,7 @@ exports[`Component fixtures applyModification fixture_11 1`] = `
   };
 };
 export function MyComponent() {
-  const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
+  const [_$unforgetCache2, _$unforgetCommit2, _$unforgetNull2] = useCreateCache$unforget(
   /*
   0 => _unwrappedJsxEl
   1 => _unwrappedJsxEl2
@@ -1176,7 +1255,7 @@ export function MyComponent() {
   4 => i
   */
   5);
-  let i = _$unforgetCache[4].v;
+  let i = _$unforgetCache2[4].v;
   const _segment = () => {
     i = [];
   };
@@ -1198,13 +1277,13 @@ export function MyComponent() {
   };
   const _segment4 = () => {
     if (loading) {
-      let _unwrappedJsxEl = _$unforgetCache[0].v;
+      let _unwrappedJsxEl = _$unforgetCache2[0].v;
       const _segment11 = () => {
         _unwrappedJsxEl = <div>Loading...</div>;
       };
-      if (_$unforgetCache[0].n) {
+      if (_$unforgetCache2[0].n) {
         _segment11();
-        _$unforgetCache[0].e(_unwrappedJsxEl);
+        _$unforgetCache2[0].e(_unwrappedJsxEl);
       }
       return _unwrappedJsxEl;
     }
@@ -1218,7 +1297,7 @@ export function MyComponent() {
           };
           let i = [];
           const filteredMovies = i.concat([]);
-          if (filteredMovies !== _$unforgetCache[3].v) {
+          if (filteredMovies !== _$unforgetCache2[3].v) {
             _segment14();
           }
         }
@@ -1226,45 +1305,45 @@ export function MyComponent() {
       _segment13();
     }
   };
-  let filteredMovies = _$unforgetCache[3].v;
+  let filteredMovies = _$unforgetCache2[3].v;
   const _segment6 = () => {
     filteredMovies = i.concat([]);
   };
-  let _unwrappedJsxExp = _$unforgetCache[2].v;
+  let _unwrappedJsxExp = _$unforgetCache2[2].v;
   const _segment7 = () => {
     _unwrappedJsxExp = filteredMovies.map(movie => <div key={movie.title}>
           {movie.title}
           {/* {value} */}
         </div>);
   };
-  let _unwrappedJsxEl2 = _$unforgetCache[1].v;
+  let _unwrappedJsxEl2 = _$unforgetCache2[1].v;
   const _segment8 = () => {
     _unwrappedJsxEl2 = <div>
       {_unwrappedJsxExp}
     </div>;
   };
-  if (_$unforgetCache[4].n) {
+  if (_$unforgetCache2[4].n) {
     _segment();
-    _$unforgetCache[4].e(i);
+    _$unforgetCache2[4].e(i);
   }
   _segment2();
   _segment3();
   const _temp = _segment4();
-  if (_temp !== _$unforgetNull) {
+  if (_temp !== _$unforgetNull2) {
     return _temp;
   }
   _segment5();
-  if (_$unforgetCache[3].n || i !== _$unforgetCache[4].v || filteredMovies !== _$unforgetCache[3].v) {
+  if (_$unforgetCache2[3].n || i !== _$unforgetCache2[4].v || filteredMovies !== _$unforgetCache2[3].v) {
     _segment6();
-    _$unforgetCache[3].e(filteredMovies);
+    _$unforgetCache2[3].e(filteredMovies);
   }
-  if (_$unforgetCache[2].n || filteredMovies !== _$unforgetCache[3].v) {
+  if (_$unforgetCache2[2].n || filteredMovies !== _$unforgetCache2[3].v) {
     _segment7();
-    _$unforgetCache[2].e(_unwrappedJsxExp);
+    _$unforgetCache2[2].e(_unwrappedJsxExp);
   }
-  if (_$unforgetCache[1].n || _unwrappedJsxExp !== _$unforgetCache[2].v) {
+  if (_$unforgetCache2[1].n || _unwrappedJsxExp !== _$unforgetCache2[2].v) {
     _segment8();
-    _$unforgetCache[1].e(_unwrappedJsxEl2);
+    _$unforgetCache2[1].e(_unwrappedJsxEl2);
   }
   return _unwrappedJsxEl2;
 }"
@@ -1298,4 +1377,23 @@ exports[`Component fixtures applyModification fixture_12 1`] = `
   console.log("unreachable");
   return null;
 }"
+`;
+
+exports[`Component fixtures applyModification fixture_13 1`] = `
+"const MyComponent = () => {
+  const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
+  /*
+  0 => _unwrappedJsxEl
+  */
+  1);
+  let _unwrappedJsxEl = _$unforgetCache[0].v;
+  const _segment = () => {
+    _unwrappedJsxEl = <div />;
+  };
+  if (_$unforgetCache[0].n) {
+    _segment();
+    _$unforgetCache[0].e(_unwrappedJsxEl);
+  }
+  return _unwrappedJsxEl;
+};"
 `;

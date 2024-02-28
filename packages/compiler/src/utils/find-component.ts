@@ -1,6 +1,9 @@
 import type * as babel from "@babel/core";
+import * as t from "@babel/types";
 import { getReturnsOfFunction } from "./get-returns-of-function";
 import { Component } from "../classes/Component";
+import { doesMatchHookName } from "./is-hook-call";
+import { expandArrowFunctionToBlockStatement } from "./expand-arrow-function-to-block-statement";
 
 function doesIdMatchComponentName(name: string) {
   return /^_?[A-Z]/.test(name);
@@ -18,7 +21,7 @@ export function findComponents(program: babel.NodePath<babel.types.Program>) {
       }
 
       if (
-        path.isFunctionExpression() &&
+        (path.isFunctionExpression() || path.isArrowFunctionExpression()) &&
         path.parentPath.isVariableDeclarator()
       ) {
         const varIdPath = path.parentPath.get("id");
@@ -27,9 +30,14 @@ export function findComponents(program: babel.NodePath<babel.types.Program>) {
         }
       }
 
-      if (!id || !doesIdMatchComponentName(id.name)) {
+      const nameMatchesComponentName = id && doesIdMatchComponentName(id.name);
+      const nameMatchesHook = id && doesMatchHookName(id.name);
+
+      if (!nameMatchesComponentName && !nameMatchesHook) {
         return;
       }
+
+      expandArrowFunctionToBlockStatement(path);
 
       const returns = getReturnsOfFunction(path);
 
@@ -37,12 +45,31 @@ export function findComponents(program: babel.NodePath<babel.types.Program>) {
         return;
       }
 
-      const allReturnsMatch = returns.every((ret) => {
-        return (
-          ret.get("argument").isNullLiteral() ||
-          ret.get("argument").isJSXElement() ||
-          ret.get("argument").isJSXFragment()
+      if (nameMatchesHook) {
+        components.push(
+          new Component(path as babel.NodePath<babel.types.Function>)
         );
+      }
+
+      const allReturnsMatch = returns.every((ret) => {
+        const argument = ret.get("argument");
+        if (isComponentReturnType(argument.node)) {
+          return true;
+        }
+
+        if (argument.isIdentifier()) {
+          const binding = argument.scope.getBinding(argument.node.name);
+          const variableDeclarator = binding?.path.find((bindingPath) =>
+            bindingPath.isVariableDeclarator()
+          ) as babel.NodePath<babel.types.VariableDeclarator> | undefined;
+
+          if (variableDeclarator) {
+            const init = variableDeclarator.node;
+            if (init && isComponentReturnType(init)) {
+              return true;
+            }
+          }
+        }
       });
 
       if (allReturnsMatch) {
@@ -54,4 +81,8 @@ export function findComponents(program: babel.NodePath<babel.types.Program>) {
   });
 
   return components;
+}
+
+function isComponentReturnType(node: babel.types.Node | null | undefined) {
+  return t.isJSXElement(node) || t.isJSXFragment(node) || t.isNullLiteral(node);
 }

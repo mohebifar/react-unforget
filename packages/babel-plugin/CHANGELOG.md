@@ -1,5 +1,16 @@
 # @react-unforget/babel-plugin
 
+## 0.1.0-dev.5
+
+### Minor Changes
+
+- add8219: Support for edge cases requiring scan of block statements
+
+### Patch Changes
+
+- Updated dependencies [add8219]
+  - @react-unforget/compiler@0.1.0-dev.6
+
 ## 0.1.0-dev.4
 
 ### Patch Changes

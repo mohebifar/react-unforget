@@ -1,5 +1,11 @@
 # @react-unforget/compiler
 
+## 0.1.0-dev.6
+
+### Minor Changes
+
+- add8219: Support for edge cases requiring scan of block statements
+
 ## 0.1.0-dev.5
 
 ### Patch Changes

@@ -1,0 +1,17 @@
+import { Raleway } from "next/font/google";
+import "../style.css";
+
+export const quickSand = Raleway({
+  weight: ["500", "600", "700", "800"],
+  display: "swap",
+  fallback: ["Helvetica", "Arial", "sans-serif"],
+  subsets: ["latin"],
+});
+
+export default function App({ Component, pageProps }) {
+  return (
+    <div className={quickSand.className} data-theme="sunset">
+      <Component {...pageProps} />
+    </div>
+  );
+}

@@ -5,14 +5,20 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "paths": {
+      "@components/*": ["./components/*"]
+    }
   },
   "include": [
     "next-env.d.ts",
     "next.config.js",
+    "theme.config.jsx",
+    "tailwind.config.js",
+    "postcss.config.js",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-  ],
+, "pages/_app.js"  ],
   "exclude": ["node_modules"]
 }

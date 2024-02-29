@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .rtl {
+    direction: rtl !important;
+    text-align: right !important;
+  }
+
+  .overlay {
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+  }
+
+  .overlay-darker {
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.8);
+  }
+
+  .bg-gradient {
+    @apply from-rose-400 via-fuchsia-500 to-indigo-500 bg-gradient-to-r;
+  }
+
+  .bg-animate {
+    background-size: 200%;
+    -webkit-animation: bgPosition 6s ease infinite;
+    -moz-animation: bgPosition 6s ease infinite;
+    animation: bgPosition 6s ease infinite;
+  }
+}
+
+@keyframes bgPosition {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+[role^="graphics"] {
+  font-size: 15px !important;
+}

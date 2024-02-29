@@ -1,0 +1,14 @@
+import { DynamicLiveCodeSandPack } from "@components/DynamicLiveCodeSandPack";
+
+### Simple JSX
+
+React Unforget can cache the JSX elements and reuse them in the next render. This is useful when you have a large JSX tree and you want to avoid the overhead of creating the same tree again and again. **This eliminates the need to use `React.memo` or `React.PureComponent` to optimize the rendering of the component.**
+
+<DynamicLiveCodeSandPack previewClassName="h-40">
+{`export default function SimpleJSX() {
+  return <div>Hello world!</div>;
+}
+
+`}
+
+</DynamicLiveCodeSandPack>

@@ -1,0 +1,15 @@
+# Limitations
+
+It is worth noting that React Unforget is currently experimental and might fail to work in some cases. It is also not recommended to use it in production. There might be more limitations that are not listed here.
+
+### Strict Mode
+
+The React Unforget library faces compatibility issues with React's strict mode, primarily due to its reliance on the useRef hook for caching. In strict mode, React intentionally double-invokes certain lifecycle methods (including render) for class components and hooks for function components. This behavior is designed to help identify side effects and non-deterministic behavior in the render phase, aiding developers in writing more robust code.
+
+However, this feature of strict mode interacts unfavorably with useRef in the context of React Unforget. The useRef hook is intended to persist a mutable object across renders without causing additional re-renders. It's commonly used for accessing DOM elements or storing the previous value of props or state.
+
+In the case of React Unforget, useRef is utilized to maintain a cache of data or computations across renders. But due to strict mode's double-rendering mechanism, useRef may initialize a new reference during one of the renders. This new reference, created during the doubled invocation, will not persist in subsequent renders as it's replaced or discarded, leading to inconsistencies and the potential loss of cached data. This behavior undermines the caching mechanism of React Unforget, rendering it ineffective or unreliable in strict mode environments.
+
+### Transforming `useMemo` and `useCallback`
+
+React Unforget intentionally skips the transformation of `useMemo` and `useCallback` hooks. We may create a one-time code transformer to remove these hooks from the codebase, but it is not a priority at the moment.

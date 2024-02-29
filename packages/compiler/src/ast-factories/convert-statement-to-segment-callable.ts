@@ -1,5 +1,6 @@
 import * as t from "@babel/types";
 import { DEFAULT_SEGMENT_CALLABLE_VARIABLE_NAME } from "~/utils/constants";
+import { unwrapPatternAssignment } from "~/utils/unwrap-pattern-assignment";
 
 export function convertStatementToSegmentCallable(
   statement: babel.NodePath<babel.types.Statement>,
@@ -11,7 +12,6 @@ export function convertStatementToSegmentCallable(
     ),
   }: {
     initialValue?: t.Expression;
-    performReplacement?: boolean;
     cacheNullValue?: t.Expression;
     segmentCallableId?: t.Identifier;
   }
@@ -37,14 +37,9 @@ export function convertStatementToSegmentCallable(
   };
 
   let replacements: t.Node[] | null = null;
+
   if (parentDeclaration) {
     const newKind = parentDeclaration.node.kind === "var" ? "var" : "let";
-    const newDeclaration = t.variableDeclaration(
-      newKind,
-      parentDeclaration.node.declarations.map((declaration) => {
-        return t.variableDeclarator(declaration.id, initialValue);
-      })
-    );
 
     const assignmentExpressionStatements = parentDeclaration.node.declarations
       .map((declarator) => {
@@ -56,20 +51,48 @@ export function convertStatementToSegmentCallable(
       })
       .filter((v): v is t.ExpressionStatement => Boolean(v));
 
-    replacements = [
-      newDeclaration,
-      makeSegmentCallable(assignmentExpressionStatements),
-    ];
+    return {
+      segmentCallableId,
+      replacements,
+      performTransformation: () => {
+        parentDeclaration.node.kind = newKind;
+        parentDeclaration.node.declarations = parentDeclaration
+          .get("declarations")
+          .flatMap((declaration) => {
+            if (declaration.get("id").isIdentifier()) {
+              declaration.node.init = initialValue;
+              return declaration.node;
+            }
+
+            return unwrapPatternAssignment(declaration.get("id")).map(
+              (entry) => {
+                return t.variableDeclarator(entry.id, initialValue);
+              }
+            );
+          });
+
+        return [
+          parentDeclaration,
+          parentDeclaration.insertAfter(
+            makeSegmentCallable(assignmentExpressionStatements)
+          ) as babel.NodePath<t.Statement>[],
+        ].flat();
+      },
+    };
   } else {
-    replacements = [makeSegmentCallable([statement.node])];
+    return {
+      segmentCallableId,
+      replacements,
+      performTransformation: () => {
+        replacements = [makeSegmentCallable([statement.node])];
+        if (!replacements) {
+          return null;
+        }
+
+        return statement.replaceWithMultiple(
+          replacements
+        ) as babel.NodePath<t.Statement>[];
+      },
+    };
   }
-
-  const prformTransformation = () =>
-    replacements ? statement.replaceWithMultiple(replacements) : null;
-
-  return {
-    segmentCallableId,
-    replacements,
-    prformTransformation,
-  };
 }

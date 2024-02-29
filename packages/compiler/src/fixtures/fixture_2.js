@@ -1,15 +1,5 @@
-function MyComponent({ someProp }) {
-  const [state, setState] = useState(0);
+const SimpleJSXWithArrowFunction = () => {
+  return <div>Hello world!</div>;
+};
 
-  const myDerivedVariable = state + 1;
-
-  const unusedVariable = 1;
-
-  return (
-    <div>
-      {myDerivedVariable} {someProp}
-    </div>
-  );
-}
-
-export default MyComponent;
+export default SimpleJSXWithArrowFunction;

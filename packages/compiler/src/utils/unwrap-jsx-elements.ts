@@ -1,32 +1,30 @@
 import * as babel from "@babel/core";
 import * as t from "@babel/types";
+import { Component } from "~/classes/Component";
+import { getParentBlockStatement } from "./ast-tools";
 import { DEFAULT_UNWRAPPED_JSX_ELEMENT_VARIABLE_NAME } from "./constants";
 import { isInTheSameFunctionScope } from "./is-in-the-same-function-scope";
 import { unwrapGenericExpression } from "./unwrap-generic-expression";
 
 type JSXChild = t.JSXElement["children"][number];
 
-export function unwrapJsxElements(fn: babel.NodePath<t.Function>) {
-  const createdDeclarationPaths = new Set<
-    babel.NodePath<t.VariableDeclaration>
-  >();
+export function unwrapJsxElements(
+  statement: babel.NodePath<t.Statement>,
+  component: Component,
+  blockStatement: babel.NodePath<t.BlockStatement>
+) {
+  const performTransformation: ((() => void) | null)[] = [];
 
   function traverseJSXElement(path: babel.NodePath<JSXChild>, nested = false) {
-    let alreadyUnwrapped = false;
-    createdDeclarationPaths.forEach((createdDeclarationPath) => {
-      if (!alreadyUnwrapped && path.isDescendant(createdDeclarationPath)) {
-        alreadyUnwrapped = true;
-      }
-    });
+    if (getParentBlockStatement(path) !== blockStatement) {
+      return;
+    }
 
-    if (alreadyUnwrapped) {
+    if (!isInTheSameFunctionScope(path, component.path)) {
       return;
     }
 
     if (path.isJSXElement() || path.isJSXFragment()) {
-      if (!isInTheSameFunctionScope(path, fn)) {
-        return;
-      }
       const childrenPath = path.get("children") as babel.NodePath<
         t.JSXElement["children"][number]
       >[];
@@ -35,22 +33,18 @@ export function unwrapJsxElements(fn: babel.NodePath<t.Function>) {
         traverseJSXElement(childPath, true);
       });
 
-      const result = unwrapGenericExpression(
-        fn,
+      const transform = unwrapGenericExpression(
         path as babel.NodePath<t.Expression>,
         DEFAULT_UNWRAPPED_JSX_ELEMENT_VARIABLE_NAME,
         (replacement) =>
           nested ? t.jsxExpressionContainer(replacement) : replacement
       );
 
-      if (result) {
-        const [createdDeclarationPath] = result;
-        createdDeclarationPaths.add(createdDeclarationPath);
-      }
+      performTransformation.push(transform);
     }
   }
 
-  fn.traverse({
+  statement.traverse({
     JSXElement(path) {
       traverseJSXElement(path);
       path.skip();
@@ -60,4 +54,7 @@ export function unwrapJsxElements(fn: babel.NodePath<t.Function>) {
       path.skip();
     },
   });
+
+  return () =>
+    performTransformation.forEach((transformation) => transformation?.());
 }

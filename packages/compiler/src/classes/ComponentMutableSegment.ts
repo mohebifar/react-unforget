@@ -20,7 +20,7 @@ type ComponentMutableSegmentType =
   | typeof COMPONENT_MUTABLE_SEGMENT_COMPONENT_RUNNABLE_SEGMENT_TYPE;
 
 export type SegmentTransformationResult = {
-  prformTransformation: () => babel.NodePath<babel.types.Node>[] | null;
+  performTransformation: () => babel.NodePath<babel.types.Statement>[] | null;
   segmentCallableId: babel.types.Identifier;
   dependencyConditions: babel.types.Expression | null;
   hasHookCall: boolean;
@@ -69,6 +69,7 @@ export abstract class ComponentMutableSegment {
     if (this.isComponentVariable() && componentVariable === this) {
       return;
     }
+
     const componentSegmentDependency = new ComponentSegmentDependency(
       componentVariable,
       accessorNode as any
@@ -76,7 +77,8 @@ export abstract class ComponentMutableSegment {
 
     let alreadyHasDependency = false;
     for (const dependency of this.dependencies) {
-      if (dependency.equals(componentSegmentDependency)) {
+      const dependenciesEqual = componentSegmentDependency.equals(dependency);
+      if (dependenciesEqual) {
         alreadyHasDependency = true;
         break;
       }
@@ -99,9 +101,9 @@ export abstract class ComponentMutableSegment {
 
   abstract get path(): babel.NodePath<babel.types.Node>;
 
-  abstract applyTransformation(
-    performReplacement?: boolean
-  ): SegmentTransformationResult;
+  abstract applyTransformation(params?: {
+    parent?: ComponentRunnableSegment | null;
+  }): SegmentTransformationResult;
 
   protected makeDependencyCondition() {
     return makeDependencyCondition(this);
@@ -188,7 +190,7 @@ export abstract class ComponentMutableSegment {
     return callStatementWithCondition;
   }
 
-  protected getSegmentCallableId() {
+  getSegmentCallableId() {
     if (!this.segmentCallableId) {
       this.segmentCallableId = this.component.path.scope.generateUidIdentifier(
         DEFAULT_SEGMENT_CALLABLE_VARIABLE_NAME
@@ -196,5 +198,19 @@ export abstract class ComponentMutableSegment {
     }
 
     return this.segmentCallableId;
+  }
+
+  _debug(depth = 0): string {
+    const space = "  ".repeat(depth);
+    const addedSpace = "  ".repeat(depth + 1);
+    return (
+      space +
+      "(" +
+      this.path.type +
+      ") ->\n" +
+      [...this.children]
+        .map((child) => addedSpace + child._debug(depth + 1))
+        .join("\n")
+    );
   }
 }

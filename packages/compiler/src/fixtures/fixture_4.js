@@ -1,20 +1,14 @@
-function double(n) {
-  return n * 2;
-}
+import { useState } from "react";
 
-export function MyComponent({ someProp }) {
-  const [count, setCount] = useState(0);
-
-  const doubleCount = double(count);
+export default function Counter() {
+  const [state, setState] = useState(0);
 
   return (
     <div>
-      Hello! Current count is {count} and its double is {doubleCount}
-      <br />
-      The prop is {someProp}
-      <br />
-      <button onClick={() => setCount(count + 1)}>Increment</button>
-      <button onClick={() => setCount(count - 1)}>Decrement</button>
+      <button onClick={() => setState(state + 1)}>Increment</button>
+      <div>
+        <span>Count: {state}</span>
+      </div>
     </div>
   );
 }

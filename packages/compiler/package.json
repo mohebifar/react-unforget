@@ -19,22 +19,26 @@
   },
   "scripts": {
     "dev": "yarn build --watch",
-    "build": "tsup src/main.ts --dts --format cjs,esm",
+    "build": "tsup src/main.ts --dts --format cjs,esm --external @babel/parser,@babel/standalone,@babel/traverse,@babel/core",
     "test": "jest",
     "lint": "eslint src/**/* --max-warnings 15"
   },
   "devDependencies": {
     "@babel/plugin-syntax-jsx": "^7.23.3",
+    "@babel/standalone": "^7.24.0",
     "@react-unforget/eslint-config": "*",
     "@react-unforget/jest-config": "*",
     "@react-unforget/typescript-config": "*",
+    "@types/babel__standalone": "^7.1.7",
     "@types/babel__traverse": "^7.20.5",
     "tsup": "^8.0.2"
   },
   "dependencies": {
-    "@babel/core": "^7.23.9",
+    "@babel/helper-validator-identifier": "^7.22.20",
     "@babel/parser": "^7.23.9",
-    "@babel/traverse": "^7.23.9"
+    "@babel/standalone": "^7.23.10",
+    "@babel/traverse": "^7.23.9",
+    "@babel/types": "^7.24.0"
   },
   "publishConfig": {
     "access": "public"

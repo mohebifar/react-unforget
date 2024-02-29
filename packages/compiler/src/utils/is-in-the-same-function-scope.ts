@@ -13,7 +13,7 @@ export function isInTheSameFunctionScope(
       return currentScope.block === fn.node;
     }
     currentScope = currentScope?.parent ?? null;
-} while (currentScope);
+  } while (currentScope);
 
   return false;
 }

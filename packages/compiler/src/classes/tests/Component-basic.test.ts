@@ -38,7 +38,6 @@ describe.skip("ComponentVariable", () => {
       //     .getDependencies()
       //     .keys(),
       // ]).toStrictEqual(["state"]);
-
     });
 
     describe("getRootComponentVariables", () => {

@@ -11,10 +11,7 @@ export class AccessChainItem {
   public nextComputed = false;
   public right?: AccessChainItem = undefined;
 
-  constructor(
-    public id: string,
-    public idExpression: t.Expression
-  ) {}
+  constructor(public id: string, public idExpression: t.Expression) {}
 
   toString() {
     let currentString = this.id;

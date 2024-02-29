@@ -1,15 +1,13 @@
 import type * as babel from "@babel/core";
 import { Binding } from "@babel/traverse";
 import * as t from "@babel/types";
+import { isChildOfScope } from "~/utils/ast-tools";
 import {
   DEFAULT_CACHE_COMMIT_VARIABLE_NAME,
   DEFAULT_CACHE_NULL_VARIABLE_NAME,
   DEFAULT_CACHE_VARIABLE_NAME,
   RUNTIME_MODULE_CREATE_CACHE_HOOK_NAME,
 } from "~/utils/constants";
-import { isVariableInScopeOf } from "~/utils/is-variable-in-scope-of";
-import { unwrapJsxElements } from "~/utils/unwrap-jsx-elements";
-import { unwrapJsxExpressions } from "~/utils/unwrap-jsx-expressions";
 import { getFunctionParent } from "../utils/get-function-parent";
 import { ComponentMutableSegment } from "./ComponentMutableSegment";
 import { ComponentRunnableSegment } from "./ComponentRunnableSegment";
@@ -57,13 +55,9 @@ export class Component {
     }
 
     this.rootSegment = this.addRunnableSegment(body);
-    this.rootSegment.computeDependencyGraph();
   }
 
-  prepareComponentBody() {
-    unwrapJsxExpressions(this.path);
-    unwrapJsxElements(this.path);
-  }
+  prepareComponentBody() {}
 
   hasComponentVariable(binding: Binding) {
     return this.componentVariables.has(binding);
@@ -82,8 +76,12 @@ export class Component {
 
   addComponentVariable(binding: Binding) {
     // If the binding is not in the same function, ignore it i.e. it can't be a component variable
-    if (binding.scope !== this.path.scope) {
-      return null;
+    // if (binding.scope !== this.path.scope) {
+    //   return null;
+    // }
+
+    if (!this.isBindingInComponentScope(binding)) {
+      return;
     }
 
     const { path } = binding;
@@ -112,10 +110,15 @@ export class Component {
     componentVariable.unwrapAssignmentPatterns();
     componentVariable.computeDependencyGraph();
 
+    this.statementsToMutableSegmentMapCache = null;
     return componentVariable;
   }
 
   addRunnableSegment(path: babel.NodePath<babel.types.Statement>) {
+    if (path === this.rootSegment?.path) {
+      return this.rootSegment;
+    }
+
     const blockStatement = this.findBlockStatementOfPath(path);
     const parent = blockStatement
       ? this.mapBlockStatementToComponentRunnableSegment.get(blockStatement) ??
@@ -140,6 +143,7 @@ export class Component {
     this.runnableSegments.set(path, runnableSegment);
 
     runnableSegment.computeDependencyGraph();
+    this.statementsToMutableSegmentMapCache = null;
 
     return runnableSegment;
   }
@@ -183,7 +187,7 @@ export class Component {
 
     const statementsMapSet = (segment: ComponentMutableSegment) => {
       const parent = segment.getParentStatement();
-      if (parent) {
+      if (parent && !parent.isBlockStatement()) {
         statementsToMutableSegmentMap.set(parent, segment);
       }
     };
@@ -253,7 +257,9 @@ export class Component {
       "\n" +
         Array.from(this.componentVariables.values())
           .map((componentVariable) => {
-            return `${componentVariable.getIndex()} => ${componentVariable.name}`;
+            return `${componentVariable.getIndex()} => ${
+              componentVariable.name
+            }`;
           })
           .join("\n") +
         "\n"
@@ -268,6 +274,24 @@ export class Component {
   }
 
   isBindingInComponentScope(binding: Binding) {
-    return isVariableInScopeOf(binding, this.path.scope);
+    return isChildOfScope(this.path.scope, binding.scope);
+  }
+
+  __debug_dependencies() {
+    return [
+      ...[
+        ...this.runnableSegments.values(),
+        ...this.componentVariables.values(),
+      ].map((segment) => {
+        return (
+          String(segment.path) +
+          "depends on (" +
+          [...segment.getDependencies().values()]
+            .map((d) => d.componentVariable.name)
+            .join(" , ") +
+          ")"
+        );
+      }),
+    ].join("\n");
   }
 }

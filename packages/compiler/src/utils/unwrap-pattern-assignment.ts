@@ -4,20 +4,20 @@ import { DEFAULT_UNUSED_VARIABLE_NAME } from "./constants";
 
 export type UnwrappedAssignmentEntry = {
   id: babel.types.LVal;
-  value: babel.types.Expression;
+  value?: babel.types.Expression;
   name: string;
 };
 
 // Unwraps a pattern assignment, e.g. `const { a = 1 } = temp` => `const a = temp.a === void 0 ? 1 : temp.a;`
 export function unwrapPatternAssignment(
   lval: babel.NodePath<babel.types.LVal>,
-  rval: babel.types.Expression
+  rval?: babel.types.Expression
 ): UnwrappedAssignmentEntry[] {
   if (lval.isIdentifier()) {
     return [
       {
         id: t.cloneNode(lval.node),
-        value: t.cloneNode(rval),
+        value: rval && t.cloneNode(rval),
         name: lval.node.name,
       },
     ];
@@ -41,7 +41,7 @@ export function unwrapPatternAssignment(
                     ) as babel.types.Identifier | babel.types.RestElement
                 ).concat([element.node as babel.types.RestElement])
               ),
-              value: t.cloneNode(rval),
+              value: rval && t.cloneNode(rval),
               name: arg.node.name,
             },
           ];
@@ -50,7 +50,7 @@ export function unwrapPatternAssignment(
 
       return unwrapPatternAssignment(
         element as babel.NodePath<babel.types.LVal>,
-        t.memberExpression(rval, t.numericLiteral(index), true)
+        rval && t.memberExpression(rval, t.numericLiteral(index), true)
       );
     });
   }
@@ -66,18 +66,20 @@ export function unwrapPatternAssignment(
         if (key.isIdentifier()) {
           return unwrapPatternAssignment(
             value as babel.NodePath<babel.types.LVal>,
-            t.memberExpression(
-              rval,
-              t.cloneNode(key.node),
-              property.node.computed
-            )
+            rval &&
+              t.memberExpression(
+                rval,
+                t.cloneNode(key.node),
+                property.node.computed
+              )
           );
         }
 
         if (key.isStringLiteral()) {
           return unwrapPatternAssignment(
             value as babel.NodePath<babel.types.LVal>,
-            t.memberExpression(rval, t.stringLiteral(key.node.value), true)
+            rval &&
+              t.memberExpression(rval, t.stringLiteral(key.node.value), true)
           );
         }
       }
@@ -106,7 +108,7 @@ export function unwrapPatternAssignment(
                   )
                   .concat([property.node as babel.types.RestElement])
               ),
-              value: t.cloneNode(rval),
+              value: rval && t.cloneNode(rval),
               name: arg.node.name,
             },
           ];
@@ -120,11 +122,12 @@ export function unwrapPatternAssignment(
   if (lval.isAssignmentPattern()) {
     return unwrapPatternAssignment(
       lval.get("left") as babel.NodePath<babel.types.LVal>,
-      t.conditionalExpression(
-        t.binaryExpression("===", rval, t.identifier("void 0")),
-        lval.get("right").node,
-        rval
-      )
+      rval &&
+        t.conditionalExpression(
+          t.binaryExpression("===", rval, t.identifier("void 0")),
+          lval.get("right").node,
+          rval
+        )
     );
   }
 

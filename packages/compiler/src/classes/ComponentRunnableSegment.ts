@@ -1,9 +1,16 @@
 import * as babel from "@babel/core";
-import { Binding } from "@babel/traverse";
+import * as t from "@babel/types";
 import { convertStatementToSegmentCallable } from "~/ast-factories/convert-statement-to-segment-callable";
-import { getBlockStatementsOfPath } from "~/utils/get-block-statements-of-path";
+import {
+  getArgumentOfControlFlowStatement,
+  getBlockStatementsOfPath,
+  getControlFlowBodies,
+  isControlFlowStatement,
+} from "~/utils/ast-tools";
 import { getReferencedVariablesInside } from "~/utils/get-referenced-variables-inside";
 import { reorderByTopology } from "~/utils/reorder-by-topology";
+import { unwrapJsxElements } from "~/utils/unwrap-jsx-elements";
+import { unwrapJsxExpressions } from "~/utils/unwrap-jsx-expressions";
 import { Component } from "./Component";
 import {
   ComponentMutableSegment,
@@ -11,11 +18,6 @@ import {
 } from "./ComponentMutableSegment";
 
 export class ComponentRunnableSegment extends ComponentMutableSegment {
-  private mapOfReturnStatementToReferencedBindings = new Map<
-    babel.NodePath<babel.types.ReturnStatement>,
-    Binding[]
-  >();
-
   private blockReturnStatement: babel.NodePath<babel.types.ReturnStatement> | null =
     null;
 
@@ -31,8 +33,28 @@ export class ComponentRunnableSegment extends ComponentMutableSegment {
     return this.parent === null;
   }
 
-  get hasReturnStatement() {
-    return !!this.blockReturnStatement;
+  get hasReturnStatement(): boolean {
+    return Boolean(
+      this.blockReturnStatement ||
+        Array.from(this.children).some(
+          (child) =>
+            child.isComponentRunnableSegment() && child.hasReturnStatement
+        )
+    );
+  }
+
+  getDependencies() {
+    const allDependencies = new Set(super.getDependencies());
+
+    this.children.forEach((child) => {
+      child.getDependencies().forEach((dependency) => {
+        if (dependency.componentVariable.isDefinedInRunnableSegment(this)) {
+          allDependencies.add(dependency);
+        }
+      });
+    });
+
+    return allDependencies;
   }
 
   computeDependencyGraph() {
@@ -42,8 +64,68 @@ export class ComponentRunnableSegment extends ComponentMutableSegment {
 
     const blockStatementChildren = getBlockStatementsOfPath(path);
 
+    if (blockStatementChildren.length === 0) {
+      const isParentRoot =
+        this.parent?.isComponentRunnableSegment() && this.parent.isRoot();
+      const componentScope = this.component.path.scope;
+
+      if (isParentRoot && this.hasHookCall()) {
+        const allBindingsOfComponent = Object.values(
+          componentScope.getAllBindings()
+        ).filter((binding) => binding.scope === componentScope);
+
+        const referencedVariables = getReferencedVariablesInside(path);
+        referencedVariables.forEach((binding) => {
+          if (allBindingsOfComponent.includes(binding)) {
+            const dependency = this.component.addComponentVariable(binding);
+            if (dependency) {
+              this.addDependency(
+                dependency,
+                t.identifier(binding.identifier.name)
+              );
+            }
+          }
+        });
+      }
+    }
+
+    const jsxTransormations: (() => void)[] = [];
+
     blockStatementChildren.forEach((blockStatement) => {
-      this.component.addRunnableSegment(blockStatement);
+      if (blockStatement !== path) {
+        return;
+      }
+      const body = blockStatement.get("body");
+      for (const child of body) {
+        jsxTransormations.push(
+          unwrapJsxExpressions(child, this.component, blockStatement)
+        );
+        jsxTransormations.push(
+          unwrapJsxElements(child, this.component, blockStatement)
+        );
+      }
+    });
+
+    jsxTransormations.forEach((apply) => apply());
+
+    blockStatementChildren.forEach((blockStatement) => {
+      const body = blockStatement.get("body");
+      for (const child of body) {
+        const controlFlowBodies = getControlFlowBodies(child);
+        const controlFlowReturnWithoutBlock = controlFlowBodies.find(
+          (body) => body && body.isReturnStatement()
+        ) as babel.NodePath<babel.types.ReturnStatement> | null;
+
+        controlFlowReturnWithoutBlock?.replaceWith(
+          t.blockStatement([controlFlowReturnWithoutBlock.node])
+        );
+      }
+    });
+
+    blockStatementChildren.forEach((blockStatement) => {
+      if (blockStatement !== path) {
+        this.component.addRunnableSegment(blockStatement);
+      }
     });
 
     blockStatementChildren.forEach((currentPath) => {
@@ -52,26 +134,30 @@ export class ComponentRunnableSegment extends ComponentMutableSegment {
       if (path.isBlockStatement() && currentPath === path) {
         statements.forEach((statement) => {
           const returnStatement = statement;
-          if (this.hasReturnStatement) {
+          if (this.blockReturnStatement) {
             return;
           }
 
           if (returnStatement.isReturnStatement()) {
             this.blockReturnStatement = returnStatement;
 
-            const bindings: Binding[] = [];
             getReferencedVariablesInside(returnStatement).forEach((binding) => {
-              bindings.push(binding);
-
               this.component.addComponentVariable(binding);
             });
-
-            this.mapOfReturnStatementToReferencedBindings.set(
-              returnStatement,
-              bindings
-            );
           } else {
-            this.component.addRunnableSegment(statement);
+            if (isControlFlowStatement(statement)) {
+              const argument = getArgumentOfControlFlowStatement(statement);
+
+              if (argument) {
+                getReferencedVariablesInside(argument).forEach((binding) => {
+                  this.component.addComponentVariable(binding);
+                });
+              }
+            }
+            const child = this.component.addRunnableSegment(statement);
+            if (child !== this) {
+              this.children.add(child);
+            }
           }
         });
       } else {
@@ -81,10 +167,12 @@ export class ComponentRunnableSegment extends ComponentMutableSegment {
     });
   }
 
-  applyTransformation(performReplacement = true) {
+  applyTransformation() {
     const path = this.path;
 
-    const transformationsToPerform: (() => babel.NodePath[] | null)[] = [];
+    const transformationsToPerform: (() =>
+      | babel.NodePath<t.Statement>[]
+      | null)[] = [];
     const callables: babel.types.Statement[] = [];
 
     if (path.isBlockStatement()) {
@@ -97,29 +185,35 @@ export class ComponentRunnableSegment extends ComponentMutableSegment {
       reorderedStatements.forEach((statement) => {
         const segment = segmentsMap.get(statement);
 
-        const transformation = segment?.applyTransformation();
+        const transformation = segment?.applyTransformation({ parent: this });
         if (transformation) {
           const callStatement = this.makeSegmentCallStatement(transformation);
 
           transformationsToPerform.push(() =>
-            transformation.prformTransformation()
+            transformation.performTransformation()
           );
 
           if (callStatement) {
             callables.push(...callStatement);
           }
-        } else if (statement) {
+        } else if (statement && t.isReturnStatement(statement.node)) {
+          const callCommit = t.expressionStatement(
+            t.callExpression(this.component.getCacheCommitIdentifier(), [])
+          );
+
+          callables.push(callCommit);
           callables.push(statement.node);
         }
       });
 
       this.children.forEach((child) => {
-        child.applyTransformation();
+        child.applyTransformation({ parent: this });
       });
 
       const newNodes = transformationsToPerform
-        .flatMap((transformation) => transformation()?.map(({ node }) => node))
-        .filter((v): v is babel.types.Statement => v !== null)
+        .flatMap(
+          (transformation) => transformation()?.map(({ node }) => node) ?? []
+        )
         .concat(callables);
 
       path.node.body = newNodes;
@@ -127,27 +221,25 @@ export class ComponentRunnableSegment extends ComponentMutableSegment {
       return null;
     }
 
-    const anyChildrenHasReturnStatement = Array.from(this.children).some(
-      (child) => child.isComponentRunnableSegment() && child.hasReturnStatement
-    );
-
     const hasHookCall = this.hasHookCall();
 
     const dependencyConditions = this.makeDependencyCondition();
 
-    const { prformTransformation, segmentCallableId, replacements } =
+    const { performTransformation, segmentCallableId, replacements } =
       convertStatementToSegmentCallable(path, {
-        performReplacement,
         segmentCallableId: this.getSegmentCallableId(),
+        cacheNullValue: this.hasReturnStatement
+          ? this.component.getCacheNullIdentifier()
+          : undefined,
       });
 
     return {
       dependencyConditions,
       hasHookCall,
-      prformTransformation,
+      performTransformation,
       segmentCallableId,
       replacements,
-      hasReturnStatement: anyChildrenHasReturnStatement,
+      hasReturnStatement: this.hasReturnStatement,
     } satisfies SegmentTransformationResult;
   }
 

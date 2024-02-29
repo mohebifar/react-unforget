@@ -15,7 +15,11 @@ import { getReferencedVariablesInside } from "~/utils/get-referenced-variables-i
 import { UnwrappedAssignmentEntry } from "~/utils/unwrap-pattern-assignment";
 import { getDeclaredIdentifiersInLVal } from "../utils/get-declared-identifiers-in-lval";
 import { Component } from "./Component";
-import { ComponentMutableSegment } from "./ComponentMutableSegment";
+import {
+  ComponentMutableSegment,
+  SegmentTransformationResult,
+} from "./ComponentMutableSegment";
+import type { ComponentRunnableSegment } from "./ComponentRunnableSegment";
 
 export class ComponentVariable extends ComponentMutableSegment {
   private runnableSegmentsMutatingThis = new Set<ComponentMutableSegment>();
@@ -77,6 +81,9 @@ export class ComponentVariable extends ComponentMutableSegment {
       ]);
 
       [initPath] = parentPath.replaceWith(initDeclaration);
+      scope.registerDeclaration(initPath);
+
+      const initBinding = scope.getBinding(unwrapVariableId.name);
 
       unwrapResult.unwrappedDeclarations.forEach(([newNode, binding]) => {
         if (!initPath) {
@@ -89,9 +96,11 @@ export class ComponentVariable extends ComponentMutableSegment {
           binding.kind = newNode.kind as "const" | "let" | "var";
           binding.path = newPath;
         }
-      });
 
-      scope.registerDeclaration(initPath);
+        initBinding?.reference(
+          newPath.get("declarations.0.id") as babel.NodePath
+        );
+      });
 
       unwrappedEntries = unwrapResult.unwrappedEntries;
     }
@@ -123,6 +132,11 @@ export class ComponentVariable extends ComponentMutableSegment {
         if (binding) {
           binding.kind = newNode.kind as "const" | "let" | "var";
           binding.path = newPath;
+          binding.identifier = (
+            binding.path.get(
+              "declarations.0.id"
+            ) as babel.NodePath<babel.types.Identifier>
+          ).node;
         }
       });
 
@@ -147,8 +161,8 @@ export class ComponentVariable extends ComponentMutableSegment {
                 "declarations.0.id"
               ) as babel.NodePath<babel.types.Identifier>)
             : initPath.isIdentifier()
-              ? initPath
-              : null;
+            ? initPath
+            : null;
 
           const initName = initId?.node.name;
 
@@ -166,6 +180,23 @@ export class ComponentVariable extends ComponentMutableSegment {
     });
   }
 
+  isDefinedInRunnableSegment(runnableSegment: ComponentRunnableSegment) {
+    let path: babel.NodePath | null = this.path;
+
+    do {
+      // const parentBlockStatement = path.find((p) => p.isBlockStatement());
+      const parentBlockStatement = path.find((p) =>
+        p.isBlockStatement()
+      ) as babel.NodePath<babel.types.BlockStatement>;
+
+      if (parentBlockStatement === runnableSegment.path) {
+        return true;
+      }
+
+      path = parentBlockStatement?.parentPath ?? null;
+    } while (path);
+  }
+
   getDependencies() {
     const allDependencies = new Set(super.getDependencies());
 
@@ -181,11 +212,8 @@ export class ComponentVariable extends ComponentMutableSegment {
   computeDependencyGraph() {
     this.dependencies.clear();
 
-    this.binding.referencePaths.forEach((mainReferencePath) => {
-      const statementParent = mainReferencePath.getStatementParent();
-      const referencePath = mainReferencePath.isJSXExpressionContainer()
-        ? mainReferencePath.get("expression")
-        : mainReferencePath;
+    const getAccessorPath = (referencePath: babel.NodePath) => {
+      const statementParent = referencePath.getStatementParent();
 
       let accessorPath =
         referencePath.find(
@@ -204,6 +232,17 @@ export class ComponentVariable extends ComponentMutableSegment {
           ) as babel.NodePath<babel.types.Expression>;
         }
       }
+
+      return accessorPath;
+    };
+
+    this.binding.referencePaths.forEach((mainReferencePath) => {
+      const statementParent = mainReferencePath.getStatementParent();
+      const referencePath = mainReferencePath.isJSXExpressionContainer()
+        ? mainReferencePath.get("expression")
+        : mainReferencePath;
+
+      const accessorPath = getAccessorPath(referencePath);
 
       const accessorNode = accessorPath.node as t.Expression;
 
@@ -231,7 +270,7 @@ export class ComponentVariable extends ComponentMutableSegment {
         return;
       }
 
-      // TODO: Add assignment pattern support here
+      // TODO: Add assignment pattern support here - an edge case
 
       if (statementParent && !statementParent?.isReturnStatement()) {
         const dependent = this.component.addRunnableSegment(statementParent);
@@ -247,13 +286,29 @@ export class ComponentVariable extends ComponentMutableSegment {
       }
     });
 
-    const referencedVariablesInDeclaration = Array.from(
-      getReferencedVariablesInside(this.binding.path).values()
-    );
+    const variableDeclarator = this.path.find((p) =>
+      p.isVariableDeclarator()
+    ) as babel.NodePath<babel.types.VariableDeclarator> | null;
 
-    referencedVariablesInDeclaration.forEach((binding) => {
-      this.component.addComponentVariable(binding);
-    });
+    if (variableDeclarator) {
+      const initPath = variableDeclarator.get("init");
+
+      if (initPath.isExpression()) {
+        const referencedVariablesInInit =
+          getReferencedVariablesInside(initPath);
+
+        referencedVariablesInInit.forEach((binding, innerPath) => {
+          const newComponentVariable =
+            this.component.addComponentVariable(binding);
+
+          if (newComponentVariable) {
+            const accessorPath = getAccessorPath(innerPath);
+            const accessorNode = accessorPath.node as t.Expression;
+            this.addDependency(newComponentVariable, accessorNode);
+          }
+        });
+      }
+    }
   }
 
   getCacheUpdateEnqueueStatement() {
@@ -263,7 +318,9 @@ export class ComponentVariable extends ComponentMutableSegment {
     );
   }
 
-  applyTransformation() {
+  applyTransformation({
+    parent = null,
+  }: { parent?: ComponentRunnableSegment | null } = {}) {
     if (this.appliedTransformation) {
       return null;
     }
@@ -283,7 +340,20 @@ export class ComponentVariable extends ComponentMutableSegment {
 
         const dependencyConditions = this.makeDependencyCondition();
 
-        const { prformTransformation, segmentCallableId, replacements } =
+        // If the variable is declared in the parent block, we don't need to convert it to a segment callable
+        // Only add callable
+        if (parent && !this.isDefinedInRunnableSegment(parent)) {
+          return {
+            replacements: [],
+            segmentCallableId: this.getSegmentCallableId(),
+            dependencyConditions,
+            performTransformation: () => [],
+            hasHookCall,
+            updateCache: cacheUpdateEnqueueStatement,
+          } satisfies SegmentTransformationResult;
+        }
+
+        const { performTransformation, segmentCallableId, replacements } =
           convertStatementToSegmentCallable(variableDeclaration, {
             initialValue: cacheValueAccessExpression,
             segmentCallableId: this.getSegmentCallableId(),
@@ -295,7 +365,7 @@ export class ComponentVariable extends ComponentMutableSegment {
           replacements,
           segmentCallableId,
           dependencyConditions,
-          prformTransformation,
+          performTransformation,
           hasHookCall,
           updateCache: cacheUpdateEnqueueStatement,
         };

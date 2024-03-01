@@ -2,7 +2,7 @@
   "name": "react-unforget",
   "private": true,
   "scripts": {
-    "build": "turbo run --scope=@react-unforget/* --no-deps build",
+    "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
     "test": "turbo test",

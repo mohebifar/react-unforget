@@ -1,8 +1,9 @@
 import { transform } from "@babel/standalone";
 import { SandpackProvider } from "@codesandbox/sandpack-react";
+// @ts-ignore
 import reactUnforgetBabelPlugin from "@react-unforget/babel-plugin";
 import { MoveRight } from "lucide-react";
-// @ts-expect-error
+// @ts-ignore
 import jsxBabelPlugin from "@babel/plugin-syntax-jsx";
 import { useTheme } from "nextra-theme-docs";
 import { useCallback, useEffect, useMemo, useState } from "react";

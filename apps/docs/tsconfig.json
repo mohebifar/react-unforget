@@ -1,24 +1,31 @@
 {
-  "extends": "@react-unforget/typescript-config/nextjs.json",
   "compilerOptions": {
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
+    "baseUrl": ".",
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "incremental": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "moduleResolution": "node",
+    "jsx": "preserve",
+    "module": "esnext",
+    "resolveJsonModule": true,
     "paths": {
-      "@components/*": ["./components/*"]
+      "@components/*": ["components/*"]
     }
   },
   "include": [
     "next-env.d.ts",
-    "next.config.js",
-    "theme.config.jsx",
-    "tailwind.config.js",
-    "postcss.config.js",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
-  ],
+    "**/*.js",
+    "**/*.jsx",
+    "**/*.mdx"
+, "next.config.mjs"  ],
   "exclude": ["node_modules"]
 }

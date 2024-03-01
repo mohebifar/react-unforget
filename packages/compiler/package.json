@@ -35,9 +35,8 @@
   },
   "dependencies": {
     "@babel/helper-validator-identifier": "^7.22.20",
-    "@babel/parser": "^7.23.9",
-    "@babel/standalone": "^7.23.10",
-    "@babel/traverse": "^7.23.9",
+    "@babel/parser": "^7.24.0",
+    "@babel/traverse": "^7.24.0",
     "@babel/types": "^7.24.0"
   },
   "publishConfig": {

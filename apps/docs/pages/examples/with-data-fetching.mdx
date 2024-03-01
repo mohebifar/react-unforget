@@ -1,10 +1,10 @@
-import { DynamicLiveCodeSandPack } from "@components/DynamicLiveCodeSandPack";
+import { DynamicLiveCodeSandpack } from "@components/DynamicLiveCodeSandpack";
 
 ### With Data Fetching
 
 This is just a complex example to show how React Unforget can handle complex logic and data fetching.
 
-<DynamicLiveCodeSandPack>
+<DynamicLiveCodeSandpack>
 {`import React, { useState, useEffect, useMemo, useCallback } from "react";
 
 const fetchUser = () => {
@@ -32,7 +32,7 @@ function UserList() {
   const [followers, setFollowers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [setFilterUsers, setShouldFilterUsers] = useState(false);
+  const [shouldFilterUsers, setShouldFilterUsers] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -72,7 +72,7 @@ function UserList() {
     }
   }
 
-  const usersForUI = setFilterUsers ? filteredUsers : memoizedFollowers;
+  const usersForUI = shouldFilterUsers ? filteredUsers : memoizedFollowers;
 
   // Early return for loading state
   if (loading) return <div>Loading...</div>;
@@ -89,7 +89,7 @@ function UserList() {
       <h1>Follwers of {user.name}</h1>
       <h1>User List</h1>
       <button onClick={toggleEvenOnes}>
-        {setFilterUsers ? "Show Odd" : "Show Even"}
+        {shouldFilterUsers ? "Show Odd" : "Show Even"}
       </button>
       <ul onClick={() => handleUserClick(user.id)}>{userListElement}</ul>
     </div>
@@ -125,41 +125,4 @@ export default UserList;
 
 `}
 
-</DynamicLiveCodeSandPack>
-
-{/* <DynamicLiveCodeSandPack>
-{`import {useState} from "react";
-
-const numbers1 = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-const numbers2 = numbers1.filter((number) => number % 2 === 0);
-
-export default function UserList() {
-  const [numbers, setNumbers] = useState(numbers1);
-
-  const filteredNumbers = [];
-  for (let i = 0; i < numbers.length; i++) {
-    const currentN = numbers[i];
-    if (i % 2 === 0) {
-      filteredNumbers.push(currentN);
-    }
-  }
-
-  const handleUserClick = () => {
-    setNumbers((p) => (numbers1 === p ? numbers2 : numbers1));
-  };
-
-  return (
-    <div>
-      <button onClick={handleUserClick}>Toggle even ones</button>
-      <ul>
-        {filteredNumbers.map((n) => (
-          <div>{n}</div>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-`}
-
-</DynamicLiveCodeSandPack> */}
+</DynamicLiveCodeSandpack>

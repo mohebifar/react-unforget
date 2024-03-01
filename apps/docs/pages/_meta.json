@@ -1,0 +1,18 @@
+{
+  "index": {
+    "title": "Home",
+    "theme": {
+      "layout": "full"
+    }
+  },
+  "usage": "Usage",
+  "examples": {
+    "title": "Examples",
+    "theme": {
+      "layout": "full"
+    }
+  },
+  "how-it-works": "How it works",
+  "limitations": "Limitations",
+  "comparisons": "Comparisons"
+}

@@ -1,0 +1,46 @@
+import { Callout } from "nextra/components";
+
+<Callout type="warning" emoji="⚠️">
+  React Unforget is experimental and not ready for production use.
+</Callout>
+
+React Unforget is a Babel plugin. To use it, you need to install it and add it to your Babel configuration.
+
+```sh npm2yarn
+npm install --save-dev @react-unforget/babel-plugin
+```
+
+You also need to install `@react-unforget/runtime` as a dependency:
+
+```sh npm2yarn
+npm install @react-unforget/runtime
+```
+
+Then, add it to your Babel configuration. For example, in your `.babelrc`:
+
+```json
+{
+  "plugins": ["@react-unforget/babel-plugin"]
+}
+```
+
+If you are using webpack, you can add it to your `babel-loader` configuration:
+
+```js
+module.exports = {
+  // ...
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            plugins: ["@react-unforget/babel-plugin"],
+          },
+        },
+      },
+    ],
+  },
+};
+```

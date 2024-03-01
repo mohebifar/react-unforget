@@ -1,0 +1,22 @@
+import { DynamicLiveCodeSandPack } from "@components/DynamicLiveCodeSandPack";
+
+### Simple Counter App
+
+React Unforget automatically finds any variables referenced in the JSX and allocates a space form them in the cache. Then adds proper code in place to use and update the cache and minimizes the re-renders.
+
+<DynamicLiveCodeSandPack previewClassName="h-40">
+{`import { useState } from "react";
+
+export default function Counter() {
+  const [state, setState] = useState(0);
+
+  return (
+    <div>
+      <button onClick={() => setState(state + 1)}>Increment</button>
+      <div>
+        <span>Count: {state}</span>
+      </div>
+    </div>
+  );
+}`}
+</DynamicLiveCodeSandPack>

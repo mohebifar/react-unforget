@@ -1,0 +1,37 @@
+import { DynamicLiveCodeSandPack } from "@components/DynamicLiveCodeSandPack";
+
+### Component with Early Return
+
+React Unforget offers a safe solution for managing early returns within components, a pattern in React development aimed at reducing deep nesting and enhancing code readability. This pattern involves conditionally rendering parts of a component or returning null early in the component function to prevent further execution or rendering of the component under certain conditions.
+
+Beyond handling early returns, React Unforget memoizes beyond the capabilities of React's built-in `useMemo` and `useCallback` hooks. These hooks must adhere to the Rules of Hooks, which dictate that hooks must be called in the exact same order and frequency across renders. This requirement precludes the use of `useMemo` and `useCallback` after an early return, as it would disrupt the consistent execution order of hooks. However, React Unforget's memoization capabilities are not subject to these limitations, allowing for more flexible and powerful memoization.
+
+<DynamicLiveCodeSandPack>
+{`import { useState } from "react";
+
+export default function CounterWithEarlyReturn() {
+  const [state, setState] = useState(0);
+
+  if (state % 2 === 0) {
+    return (
+      <div>
+        We're inside the early return
+        <button onClick={() => setState(state + 1)}>Increment</button>
+      </div>
+    );
+  }
+
+  const double = state * 2;
+
+  return (
+    <div>
+      <button onClick={() => setState(state + 1)}>Increment</button>
+      <div>
+        <span>Double: {double}</span>
+      </div>
+    </div>
+  );
+}
+`}
+
+</DynamicLiveCodeSandPack>

@@ -1,0 +1,52 @@
+---
+title: "Home"
+---
+
+import { DynamicLiveCodeSandPack } from "@components/DynamicLiveCodeSandPack";
+
+# React Unforget
+
+React, despite its dominance, has shown signs of lagging in raw performance and bundle size when compared to efficient frameworks like Svelte. **React Unforget** aims to bridge this gap with intelligent memoization and optimization strategies.
+
+<DynamicLiveCodeSandPack previewClassName="h-44">
+{`import { useState } from "react";
+
+export default function CounterWithMutationTracking() {
+  const [state, setState] = useState(0);
+
+let text = "The number is: ";
+
+if (state % 2 === 0) {
+text += "even";
+} else {
+text += "odd";
+}
+
+return (
+
+<div>
+  <button onClick={() => setState(state + 1)}>Increment</button>
+  <div>
+    <span>Count: {state}</span> {text}
+  </div>
+</div>
+); } `}
+
+</DynamicLiveCodeSandPack>
+
+Dive into the [collection of examples](./examples.mdx) and documentation to see React Unforget in action.
+
+## Why React Unforget?
+
+1. Intelligent Component and Hook Memoization: Automatically identifies and memoizes React components and hooks, ensuring that only necessary re-renders occur. This leads to a more performant yet with more readable code.
+1. Granular JSX Element Unwrapping: Unwraps JSX elements and memoizes each element and expression separately for more effective optimization. Eliminiating the need to use `React.memo`.
+1. Memoization Beyond Early Returns: React Unforget uniquely enables the memoization of values even after early returns in component functions, eliminating the need to restructure your code to comply with the Rules of Hooks. This ensures optimization without altering the logical flow of your components.
+1. Segmented Transformation Approach: Transforms code segments based on dependency analysis, ensuring efficient execution and minimizing unnecessary computations.
+
+Ensures segment execution is conditional based on dependency changes, reducing redundant computations and improving performance.
+
+### How about React Compiler (Forget)?
+
+As of today, React Compiler is not yet released. It's been in the works for a while and it's not clear when it will be released.
+
+Having an alternative like React Unforget to the React Compiler is akin to what Preact is to React. It serves not just as a backup plan but as a boundary-pusher, challenging the status quo and driving innovation within the React ecosystem. By offering a different approach to optimization and performance enhancements, React Unforget encourages diversity in solutions and approaches, fostering a healthy competitive environment where the ultimate winner is the developer and, by extension, the end-user.

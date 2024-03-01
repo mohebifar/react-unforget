@@ -36,8 +36,6 @@ export function convertStatementToSegmentCallable(
     ]);
   };
 
-  let replacements: t.Node[] | null = null;
-
   if (parentDeclaration) {
     const newKind = parentDeclaration.node.kind === "var" ? "var" : "let";
 
@@ -53,7 +51,6 @@ export function convertStatementToSegmentCallable(
 
     return {
       segmentCallableId,
-      replacements,
       performTransformation: () => {
         parentDeclaration.node.kind = newKind;
         parentDeclaration.node.declarations = parentDeclaration
@@ -82,15 +79,9 @@ export function convertStatementToSegmentCallable(
   } else {
     return {
       segmentCallableId,
-      replacements,
       performTransformation: () => {
-        replacements = [makeSegmentCallable([statement.node])];
-        if (!replacements) {
-          return null;
-        }
-
-        return statement.replaceWithMultiple(
-          replacements
+        return statement.replaceWith(
+          makeSegmentCallable([statement.node])
         ) as babel.NodePath<t.Statement>[];
       },
     };

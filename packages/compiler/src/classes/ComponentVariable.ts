@@ -20,6 +20,8 @@ import {
   SegmentTransformationResult,
 } from "./ComponentMutableSegment";
 import type { ComponentRunnableSegment } from "./ComponentRunnableSegment";
+import { ComponentSegmentDependency } from "./ComponentSegmentDependency";
+import { isForStatementInit } from "~/utils/ast-tools";
 
 export class ComponentVariable extends ComponentMutableSegment {
   private runnableSegmentsMutatingThis = new Set<ComponentMutableSegment>();
@@ -161,8 +163,8 @@ export class ComponentVariable extends ComponentMutableSegment {
                 "declarations.0.id"
               ) as babel.NodePath<babel.types.Identifier>)
             : initPath.isIdentifier()
-            ? initPath
-            : null;
+              ? initPath
+              : null;
 
           const initName = initId?.node.name;
 
@@ -195,18 +197,32 @@ export class ComponentVariable extends ComponentMutableSegment {
 
       path = parentBlockStatement?.parentPath ?? null;
     } while (path);
+    return false;
   }
 
-  getDependencies() {
-    const allDependencies = new Set(super.getDependencies());
+  getDependencies(visited = new Set<ComponentSegmentDependency>()) {
+    const allDependencies = new Set(super.getDependencies(visited));
 
+    this.getMutationDependencies(visited).forEach((dependency) => {
+      allDependencies.add(dependency);
+    });
+
+    return this.filterDependenciesByScope(allDependencies);
+  }
+
+  isForLoopArgumentVariable() {
+    return isForStatementInit(this.path);
+  }
+
+  getMutationDependencies(visited = new Set<ComponentSegmentDependency>()) {
+    const mutatingDependencies = new Set<ComponentSegmentDependency>();
     this.runnableSegmentsMutatingThis.forEach((runnableSegment) => {
-      runnableSegment.getDependencies().forEach((dependency) => {
-        allDependencies.add(dependency);
+      runnableSegment.getDependencies(visited).forEach((dependency) => {
+        mutatingDependencies.add(dependency);
       });
     });
 
-    return allDependencies;
+    return mutatingDependencies;
   }
 
   computeDependencyGraph() {
@@ -274,14 +290,19 @@ export class ComponentVariable extends ComponentMutableSegment {
 
       if (statementParent && !statementParent?.isReturnStatement()) {
         const dependent = this.component.addRunnableSegment(statementParent);
-        dependent.addDependency(this, accessorNode);
 
-        const mutatingExpressions = findMutatingExpression(
-          referencePath,
-          this.name
-        );
-        if (mutatingExpressions) {
-          this.runnableSegmentsMutatingThis.add(dependent);
+        if (dependent) {
+          dependent.addDependency(this, accessorNode);
+          dependent.markAsMutating(this);
+
+          const mutatingExpressions = findMutatingExpression(
+            referencePath,
+            this.name
+          );
+
+          if (mutatingExpressions) {
+            this.runnableSegmentsMutatingThis.add(dependent);
+          }
         }
       }
     });
@@ -325,6 +346,10 @@ export class ComponentVariable extends ComponentMutableSegment {
       return null;
     }
 
+    if (this.isForLoopArgumentVariable()) {
+      return null;
+    }
+
     const cacheUpdateEnqueueStatement = this.getCacheUpdateEnqueueStatement();
 
     switch (this.binding.kind) {
@@ -344,7 +369,6 @@ export class ComponentVariable extends ComponentMutableSegment {
         // Only add callable
         if (parent && !this.isDefinedInRunnableSegment(parent)) {
           return {
-            replacements: [],
             segmentCallableId: this.getSegmentCallableId(),
             dependencyConditions,
             performTransformation: () => [],
@@ -353,7 +377,7 @@ export class ComponentVariable extends ComponentMutableSegment {
           } satisfies SegmentTransformationResult;
         }
 
-        const { performTransformation, segmentCallableId, replacements } =
+        const { performTransformation, segmentCallableId } =
           convertStatementToSegmentCallable(variableDeclaration, {
             initialValue: cacheValueAccessExpression,
             segmentCallableId: this.getSegmentCallableId(),
@@ -362,7 +386,6 @@ export class ComponentVariable extends ComponentMutableSegment {
         this.appliedTransformation = true;
 
         return {
-          replacements,
           segmentCallableId,
           dependencyConditions,
           performTransformation,

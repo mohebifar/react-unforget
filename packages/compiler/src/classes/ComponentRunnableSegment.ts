@@ -1,9 +1,9 @@
 import * as babel from "@babel/core";
 import * as t from "@babel/types";
 import { convertStatementToSegmentCallable } from "~/ast-factories/convert-statement-to-segment-callable";
+import { declarationToAssignments } from "~/ast-factories/declaration-to-assignments";
 import {
   getArgumentOfControlFlowStatement,
-  getBlockStatementsOfPath,
   getControlFlowBodies,
   isControlFlowStatement,
 } from "~/utils/ast-tools";
@@ -16,6 +16,8 @@ import {
   ComponentMutableSegment,
   SegmentTransformationResult,
 } from "./ComponentMutableSegment";
+import { ComponentSegmentDependency } from "./ComponentSegmentDependency";
+import { ComponentVariable } from "./ComponentVariable";
 
 export class ComponentRunnableSegment extends ComponentMutableSegment {
   private blockReturnStatement: babel.NodePath<babel.types.ReturnStatement> | null =
@@ -43,18 +45,23 @@ export class ComponentRunnableSegment extends ComponentMutableSegment {
     );
   }
 
-  getDependencies() {
-    const allDependencies = new Set(super.getDependencies());
+  getDependencies(visited = new Set<ComponentSegmentDependency>()) {
+    const allDependencies = new Set(super.getDependencies(visited));
 
-    this.children.forEach((child) => {
-      child.getDependencies().forEach((dependency) => {
-        if (dependency.componentVariable.isDefinedInRunnableSegment(this)) {
-          allDependencies.add(dependency);
-        }
-      });
+    return this.filterDependenciesByScope(allDependencies);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  markAsMutating(_mutater: ComponentVariable) {
+    const path = this.path;
+
+    const referencedVariables = getReferencedVariablesInside(path);
+    referencedVariables.forEach((binding) => {
+      const dependency = this.component.addComponentVariable(binding);
+      if (dependency) {
+        this.addDependency(dependency, t.identifier(binding.identifier.name));
+      }
     });
-
-    return allDependencies;
   }
 
   computeDependencyGraph() {
@@ -62,9 +69,114 @@ export class ComponentRunnableSegment extends ComponentMutableSegment {
 
     const path = this.path;
 
-    const blockStatementChildren = getBlockStatementsOfPath(path);
+    if (path.isBlockStatement()) {
+      // Step 1: Unwrap JSX elements and expressions
+      {
+        const jsxTransormations: (() => void)[] = [];
 
-    if (blockStatementChildren.length === 0) {
+        const body = path.get("body");
+        for (const child of body) {
+          jsxTransormations.push(
+            unwrapJsxExpressions(child, this.component, path)
+          );
+          jsxTransormations.push(
+            unwrapJsxElements(child, this.component, path)
+          );
+        }
+        jsxTransormations.forEach((apply) => apply());
+      }
+
+      // Step 2: Convert control flow bodies to blocks
+      const body = path.get("body");
+      for (const child of body) {
+        const controlFlowBodies = getControlFlowBodies(child);
+        const controlFlowReturnWithoutBlock = controlFlowBodies.find(
+          (body) => body && body.isReturnStatement()
+        ) as babel.NodePath<babel.types.ReturnStatement> | null;
+
+        controlFlowReturnWithoutBlock?.replaceWith(
+          t.blockStatement([controlFlowReturnWithoutBlock.node])
+        );
+
+        // Convert the for init variable to a scope variable
+        if (child.isForStatement()) {
+          const init = child.get("init");
+          const loopBody = child.get("body");
+
+          const pathScope = path.scope;
+          const loopScope = loopBody.scope;
+
+          if (init.isVariableDeclaration()) {
+            const result = declarationToAssignments(init, "let", pathScope);
+
+            const oldBindings = result.declarations.map((declaration) =>
+              loopScope.getBinding(
+                (declaration.declarations[0]!.id as t.Identifier).name
+              )
+            );
+
+            const newPaths = child.insertBefore(result.declarations);
+            init.replaceWith(
+              result.assignmentExpressions.length > 1
+                ? t.sequenceExpression(result.assignmentExpressions)
+                : result.assignmentExpressions[0]!
+            );
+
+            newPaths.forEach((newPath, index) => {
+              const oldBinding = oldBindings[index];
+              if (oldBinding) {
+                oldBinding.path = newPath;
+                oldBinding.scope = pathScope;
+              }
+            });
+          }
+        }
+      }
+
+      // Final Step: Compute dependencies
+      {
+        const body = path.get("body");
+        for (const statement of body) {
+          if (this.blockReturnStatement) {
+            return;
+          }
+
+          if (statement.isReturnStatement()) {
+            this.blockReturnStatement = statement;
+
+            getReferencedVariablesInside(statement).forEach((binding) => {
+              this.component.addComponentVariable(binding);
+            });
+          } else {
+            // Create segment for each statement
+            this.component.addRunnableSegment(statement);
+          }
+        }
+      }
+    }
+
+    // Step 4: Create segment for inner blocks of control flow statements
+    else if (isControlFlowStatement(path)) {
+      const argument = getArgumentOfControlFlowStatement(path);
+
+      const controlFlowBodies = getControlFlowBodies(path);
+      controlFlowBodies.forEach((body) => {
+        this.component.addRunnableSegment(body);
+      });
+
+      if (argument) {
+        getReferencedVariablesInside(argument).forEach((binding, innerPath) => {
+          const variable = this.component.addComponentVariable(binding);
+
+          if (variable) {
+            this.addDependency(variable, innerPath.node);
+          }
+        });
+      }
+    }
+
+    // Step 5: If the statement is not a block, or control flow, and references a hook, add the compute dependencies
+    else {
       const isParentRoot =
         this.parent?.isComponentRunnableSegment() && this.parent.isRoot();
       const componentScope = this.component.path.scope;
@@ -88,92 +200,25 @@ export class ComponentRunnableSegment extends ComponentMutableSegment {
         });
       }
     }
-
-    const jsxTransormations: (() => void)[] = [];
-
-    blockStatementChildren.forEach((blockStatement) => {
-      if (blockStatement !== path) {
-        return;
-      }
-      const body = blockStatement.get("body");
-      for (const child of body) {
-        jsxTransormations.push(
-          unwrapJsxExpressions(child, this.component, blockStatement)
-        );
-        jsxTransormations.push(
-          unwrapJsxElements(child, this.component, blockStatement)
-        );
-      }
-    });
-
-    jsxTransormations.forEach((apply) => apply());
-
-    blockStatementChildren.forEach((blockStatement) => {
-      const body = blockStatement.get("body");
-      for (const child of body) {
-        const controlFlowBodies = getControlFlowBodies(child);
-        const controlFlowReturnWithoutBlock = controlFlowBodies.find(
-          (body) => body && body.isReturnStatement()
-        ) as babel.NodePath<babel.types.ReturnStatement> | null;
-
-        controlFlowReturnWithoutBlock?.replaceWith(
-          t.blockStatement([controlFlowReturnWithoutBlock.node])
-        );
-      }
-    });
-
-    blockStatementChildren.forEach((blockStatement) => {
-      if (blockStatement !== path) {
-        this.component.addRunnableSegment(blockStatement);
-      }
-    });
-
-    blockStatementChildren.forEach((currentPath) => {
-      const statements = currentPath.get("body");
-
-      if (path.isBlockStatement() && currentPath === path) {
-        statements.forEach((statement) => {
-          const returnStatement = statement;
-          if (this.blockReturnStatement) {
-            return;
-          }
-
-          if (returnStatement.isReturnStatement()) {
-            this.blockReturnStatement = returnStatement;
-
-            getReferencedVariablesInside(returnStatement).forEach((binding) => {
-              this.component.addComponentVariable(binding);
-            });
-          } else {
-            if (isControlFlowStatement(statement)) {
-              const argument = getArgumentOfControlFlowStatement(statement);
-
-              if (argument) {
-                getReferencedVariablesInside(argument).forEach((binding) => {
-                  this.component.addComponentVariable(binding);
-                });
-              }
-            }
-            const child = this.component.addRunnableSegment(statement);
-            if (child !== this) {
-              this.children.add(child);
-            }
-          }
-        });
-      } else {
-        const child = this.component.addRunnableSegment(currentPath);
-        this.children.add(child);
-      }
-    });
   }
 
   applyTransformation() {
     const path = this.path;
 
+    const visited = new Set<ComponentMutableSegment>();
+
     const transformationsToPerform: (() =>
       | babel.NodePath<t.Statement>[]
       | null)[] = [];
     const callables: babel.types.Statement[] = [];
+
+    const visitChildren = () => {
+      this.children.forEach((child) => {
+        if (!visited.has(child)) {
+          child.applyTransformation({ parent: this });
+        }
+      });
+    };
 
     if (path.isBlockStatement()) {
       const statements = path.get("body");
@@ -184,6 +229,10 @@ export class ComponentRunnableSegment extends ComponentMutableSegment {
 
       reorderedStatements.forEach((statement) => {
         const segment = segmentsMap.get(statement);
+
+        if (segment) {
+          visited.add(segment);
+        }
 
         const transformation = segment?.applyTransformation({ parent: this });
         if (transformation) {
@@ -206,9 +255,7 @@ export class ComponentRunnableSegment extends ComponentMutableSegment {
         }
       });
 
-      this.children.forEach((child) => {
-        child.applyTransformation({ parent: this });
-      });
+      visitChildren();
 
       const newNodes = transformationsToPerform
         .flatMap(
@@ -221,11 +268,13 @@ export class ComponentRunnableSegment extends ComponentMutableSegment {
       return null;
     }
 
+    visitChildren();
+
     const hasHookCall = this.hasHookCall();
 
     const dependencyConditions = this.makeDependencyCondition();
 
-    const { performTransformation, segmentCallableId, replacements } =
+    const { performTransformation, segmentCallableId } =
       convertStatementToSegmentCallable(path, {
         segmentCallableId: this.getSegmentCallableId(),
         cacheNullValue: this.hasReturnStatement
@@ -238,17 +287,12 @@ export class ComponentRunnableSegment extends ComponentMutableSegment {
       hasHookCall,
       performTransformation,
       segmentCallableId,
-      replacements,
       hasReturnStatement: this.hasReturnStatement,
     } satisfies SegmentTransformationResult;
   }
 
   getParentStatement() {
     return this.path;
-  }
-
-  getBlockStatements() {
-    return getBlockStatementsOfPath(this.path);
   }
 
   get path() {

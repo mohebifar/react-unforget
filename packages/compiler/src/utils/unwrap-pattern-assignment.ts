@@ -4,14 +4,14 @@ import { DEFAULT_UNUSED_VARIABLE_NAME } from "./constants";
 
 export type UnwrappedAssignmentEntry = {
   id: babel.types.LVal;
-  value?: babel.types.Expression;
+  value?: babel.types.Expression | null;
   name: string;
 };
 
 // Unwraps a pattern assignment, e.g. `const { a = 1 } = temp` => `const a = temp.a === void 0 ? 1 : temp.a;`
 export function unwrapPatternAssignment(
   lval: babel.NodePath<babel.types.LVal>,
-  rval?: babel.types.Expression
+  rval?: babel.types.Expression | null
 ): UnwrappedAssignmentEntry[] {
   if (lval.isIdentifier()) {
     return [

@@ -89,7 +89,7 @@ function UserList() {
       <h1>Follwers of {user.name}</h1>
       <h1>User List</h1>
       <button onClick={toggleEvenOnes}>
-        {shouldFilterUsers ? "Show Odd" : "Show Even"}
+        {shouldFilterUsers ? "Show all" : "Filter users"}
       </button>
       <ul onClick={() => handleUserClick(user.id)}>{userListElement}</ul>
     </div>

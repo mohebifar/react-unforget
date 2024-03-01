@@ -1,4 +1,4 @@
-import { DynamicLiveCodeSandPack } from "@components/DynamicLiveCodeSandPack";
+import { DynamicLiveCodeSandpack } from "@components/DynamicLiveCodeSandpack";
 
 ### Component with Early Return
 
@@ -6,7 +6,7 @@ React Unforget offers a safe solution for managing early returns within componen
 
 Beyond handling early returns, React Unforget memoizes beyond the capabilities of React's built-in `useMemo` and `useCallback` hooks. These hooks must adhere to the Rules of Hooks, which dictate that hooks must be called in the exact same order and frequency across renders. This requirement precludes the use of `useMemo` and `useCallback` after an early return, as it would disrupt the consistent execution order of hooks. However, React Unforget's memoization capabilities are not subject to these limitations, allowing for more flexible and powerful memoization.
 
-<DynamicLiveCodeSandPack>
+<DynamicLiveCodeSandpack>
 {`import { useState } from "react";
 
 export default function CounterWithEarlyReturn() {
@@ -34,4 +34,4 @@ export default function CounterWithEarlyReturn() {
 }
 `}
 
-</DynamicLiveCodeSandPack>
+</DynamicLiveCodeSandpack>

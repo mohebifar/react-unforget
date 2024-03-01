@@ -1,3 +1,11 @@
 # Forgetti
 
-[Forgetti](https://github.com/lxsmnsyc/forgetti) is also another alternative tool made to help React apps run faster. But, when it comes to more complicated parts of an app, it doesn't really do the job and generates failing code. Unlike React Unforget, which uses a clever trick with a single saved spot to keep important data handy, Forgetti sticks to the usual React tricks like useMemo and useCallback. This makes Forgetti a bit harder to use and not as good at speeding things up, especially when you compare it to the smarter ways React Unforget works.
+[Forgetti](https://github.com/lxsmnsyc/forgetti) is also another alternative tool made to optimize React components at build time to make it run faster at runtime. But, when it comes to more complicated patterns, it generates failing code. For example, loops and mutations can lead to generating code that does not work.
+
+| **Feature** | React Unforget | Forgetti |
+| :----- | :----: | ----: |
+| Basic components with no dependencies | ✅  |  ✅ |
+| Basic components with dependencies | ✅  |  ✅ |
+| Breaking down JSX |  ✅   |   ✖️ |
+| Basic mutation detection | ✅  |  ✖️ |
+| Control flows | ✅  |  Fails with while/for loops |

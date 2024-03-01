@@ -1,5 +1,16 @@
 # @react-unforget/babel-plugin
 
+## 0.1.0-dev.6
+
+### Minor Changes
+
+- 6afb01b: Fix the issues with segments using the init of for statement
+
+### Patch Changes
+
+- Updated dependencies [6afb01b]
+  - @react-unforget/compiler@0.1.0-dev.7
+
 ## 0.1.0-dev.5
 
 ### Minor Changes

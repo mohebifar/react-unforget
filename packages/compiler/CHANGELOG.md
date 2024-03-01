@@ -1,5 +1,11 @@
 # @react-unforget/compiler
 
+## 0.1.0-dev.7
+
+### Minor Changes
+
+- 6afb01b: Fix the issues with segments using the init of for statement
+
 ## 0.1.0-dev.6
 
 ### Minor Changes

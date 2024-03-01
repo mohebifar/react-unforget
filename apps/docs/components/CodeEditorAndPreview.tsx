@@ -9,6 +9,7 @@ import cn from "classnames";
 
 type CodeEditorAndPreviewProps = {
   readOnly?: boolean;
+  // eslint-disable-next-line no-unused-vars
   onChange?: (_code: string) => void;
   code?: string;
   previewClassName?: string;

@@ -4,10 +4,6 @@ React Unforget is a compiler designed to enhance the performance of React applic
 
 For demos and more information, visit the [official website](https://react-unforget.vercel.app/).
 
-## Overview
-
-React Unforget begins its process by visiting each function within your React application. It identifies potential React components and hooks based on naming conventions and other heuristics. For components, it further checks the return type to ensure they either return `null` or JSX elements.
-
 ### How It Works
 
 The transformation process involves two main steps:

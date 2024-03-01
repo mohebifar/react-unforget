@@ -23,19 +23,27 @@ text += "odd";
 }
 
 return (
+
 <div>
-<button onClick={() => setState(state + 1)}>Increment</button>
-<div>
-<span>Count: {state}</span> {text}
+  <button onClick={() => setState(state + 1)}>Increment</button>
+  <div>
+    <span>Count: {state}</span> {text}
+  </div>
 </div>
-</div>
-);
-}
-`}
+); } `}
 
 </DynamicLiveCodeSandPack>
 
-To see more examples, checkout the [examples](./examples.mdx) section.
+Dive into the [collection of examples](./examples.mdx) and documentation to see React Unforget in action.
+
+## Why React Unforget?
+
+1. Intelligent Component and Hook Memoization: Automatically identifies and memoizes React components and hooks, ensuring that only necessary re-renders occur. This leads to a more performant yet with more readable code.
+1. Granular JSX Element Unwrapping: Unwraps JSX elements and memoizes each element and expression separately for more effective optimization. Eliminiating the need to use `React.memo`.
+1. Memoization Beyond Early Returns: React Unforget uniquely enables the memoization of values even after early returns in component functions, eliminating the need to restructure your code to comply with the Rules of Hooks. This ensures optimization without altering the logical flow of your components.
+1. Segmented Transformation Approach: Transforms code segments based on dependency analysis, ensuring efficient execution and minimizing unnecessary computations.
+
+Ensures segment execution is conditional based on dependency changes, reducing redundant computations and improving performance.
 
 ### How about React Compiler (Forget)?
 

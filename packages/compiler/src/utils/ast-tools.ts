@@ -1,5 +1,13 @@
 import { Scope } from "@babel/traverse";
 
+type ControlFlowStatement =
+  | babel.NodePath<babel.types.IfStatement>
+  | babel.NodePath<babel.types.WhileStatement>
+  | babel.NodePath<babel.types.DoWhileStatement>
+  | babel.NodePath<babel.types.ForStatement>
+  | babel.NodePath<babel.types.ForXStatement>
+  | babel.NodePath<babel.types.TryStatement>;
+
 export function getArgumentOfControlFlowStatement(
   statement: babel.NodePath<babel.types.Statement>
 ) {
@@ -32,18 +40,14 @@ export function getArgumentOfControlFlowStatement(
 
 export function isControlFlowStatement(
   statement: babel.NodePath
-): statement is
-  | babel.NodePath<babel.types.IfStatement>
-  | babel.NodePath<babel.types.WhileStatement>
-  | babel.NodePath<babel.types.DoWhileStatement>
-  | babel.NodePath<babel.types.ForStatement>
-  | babel.NodePath<babel.types.ForXStatement> {
+): statement is ControlFlowStatement {
   return (
     statement.isIfStatement() ||
     statement.isWhileStatement() ||
     statement.isDoWhileStatement() ||
     statement.isForStatement() ||
-    statement.isForXStatement()
+    statement.isForXStatement() ||
+    statement.isTryStatement()
   );
 }
 
@@ -108,10 +112,6 @@ export function getControlFlowBodies(
 export function getBlockStatementsOfPath(
   path: babel.NodePath<babel.types.Statement>
 ) {
-  if (path.isBlockStatement()) {
-    return [path];
-  }
-
   const bodies = getControlFlowBodies(path);
 
   return bodies.filter(
@@ -138,4 +138,26 @@ export function getParentBlockStatement(path: babel.NodePath) {
   return path.findParent((p) =>
     p.isBlockStatement()
   ) as babel.NodePath<babel.types.BlockStatement> | null;
+}
+
+export function isForStatementInit(
+  potentialInit: babel.NodePath<babel.types.Node>
+) {
+  const forParent = potentialInit.findParent((p) =>
+    p.isForStatement()
+  ) as babel.NodePath<babel.types.ForStatement> | null;
+
+  if (!forParent) {
+    return false;
+  }
+
+  const variableDeclaration = potentialInit.findParent((p) =>
+    p.isVariableDeclaration()
+  ) as babel.NodePath<babel.types.VariableDeclaration> | null;
+
+  if (!variableDeclaration) {
+    return false;
+  }
+
+  return variableDeclaration === forParent.get("init");
 }

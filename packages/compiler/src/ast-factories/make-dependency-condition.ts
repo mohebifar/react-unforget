@@ -4,11 +4,15 @@ import { ComponentMutableSegment } from "~/classes/ComponentMutableSegment";
 export function makeDependencyCondition(
   mutableSegment: ComponentMutableSegment
 ): t.Expression | null {
-  const dependencies = mutableSegment.getDependencies();
-  const isNotSetCondition: t.Expression | null =
-    mutableSegment.isComponentVariable()
-      ? mutableSegment.getCacheIsNotSetAccessExpression()
-      : null;
+  const dependencies = mutableSegment.getDependenciesForTransformation();
+
+  const eligibleForConditionalRun = Array.from(dependencies.values()).every(
+    (dependency) => !dependency.componentVariable.isForLoopArgumentVariable()
+  );
+
+  if (!eligibleForConditionalRun) {
+    return null;
+  }
 
   const comparisonTuples = new Set<
     [left: babel.types.Expression, right: babel.types.Expression]
@@ -34,6 +38,11 @@ export function makeDependencyCondition(
       ),
     ]);
   });
+
+  const isNotSetCondition: t.Expression | null =
+    mutableSegment.isComponentVariable()
+      ? mutableSegment.getCacheIsNotSetAccessExpression()
+      : null;
 
   return Array.from(comparisonTuples.values()).reduce(
     (condition, [left, right]) => {

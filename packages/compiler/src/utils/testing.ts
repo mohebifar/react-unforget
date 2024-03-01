@@ -44,6 +44,14 @@ export function transformWithCore(input: string) {
   return code;
 }
 
+export function transformWithParseAndCast(input: string) {
+  const root = parse(input);
+
+  visitProgram(root);
+
+  return String(root);
+}
+
 export function parse(input: string, extraPlugins: babel.PluginItem[] = []) {
   const ast = babel.parse(input, {
     configFile: false,

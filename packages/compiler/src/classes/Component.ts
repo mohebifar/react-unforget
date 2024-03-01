@@ -1,13 +1,14 @@
 import type * as babel from "@babel/core";
 import { Binding } from "@babel/traverse";
 import * as t from "@babel/types";
-import { isChildOfScope } from "~/utils/ast-tools";
+import { isChildOfScope, isControlFlowStatement } from "~/utils/ast-tools";
 import {
   DEFAULT_CACHE_COMMIT_VARIABLE_NAME,
   DEFAULT_CACHE_NULL_VARIABLE_NAME,
   DEFAULT_CACHE_VARIABLE_NAME,
   RUNTIME_MODULE_CREATE_CACHE_HOOK_NAME,
 } from "~/utils/constants";
+import { isInTheSameFunctionScope } from "~/utils/is-in-the-same-function-scope";
 import { getFunctionParent } from "../utils/get-function-parent";
 import { ComponentMutableSegment } from "./ComponentMutableSegment";
 import { ComponentRunnableSegment } from "./ComponentRunnableSegment";
@@ -67,36 +68,60 @@ export class Component {
     return this.componentVariables.get(binding);
   }
 
-  private findBlockStatementOfPath(path: babel.NodePath<babel.types.Node>) {
-    return path.findParent(
+  findPotentialParentForSegment(
+    path: babel.NodePath<babel.types.Node>
+  ): ComponentRunnableSegment | null {
+    const blockOrControlFlowStatement = path.findParent(
       (innerPath) =>
-        innerPath.isBlockStatement() && innerPath.isDescendant(this.path)
+        (innerPath.isBlockStatement() || isControlFlowStatement(innerPath)) &&
+        innerPath.isDescendant(this.path) &&
+        isInTheSameFunctionScope(innerPath, this.path)
     ) as babel.NodePath<babel.types.BlockStatement> | null;
+
+    if (!blockOrControlFlowStatement) {
+      return null;
+    }
+
+    const parent =
+      this.mapBlockStatementToComponentRunnableSegment.get(
+        blockOrControlFlowStatement
+      ) ?? null;
+
+    const ensuredParent = parent
+      ? parent
+      : this.addRunnableSegment(blockOrControlFlowStatement);
+
+    return ensuredParent;
+  }
+
+  lock() {
+    this.componentVariables.forEach((componentVariable) => {
+      componentVariable.lock();
+    });
+    this.runnableSegments.forEach((runnableSegment) => {
+      runnableSegment.lock();
+    });
   }
 
   addComponentVariable(binding: Binding) {
-    // If the binding is not in the same function, ignore it i.e. it can't be a component variable
-    // if (binding.scope !== this.path.scope) {
-    //   return null;
-    // }
-
     if (!this.isBindingInComponentScope(binding)) {
       return;
     }
 
     const { path } = binding;
 
-    const blockStatement = this.findBlockStatementOfPath(path);
-    const parent = blockStatement
-      ? this.mapBlockStatementToComponentRunnableSegment.get(blockStatement) ??
-        null
-      : null;
+    const parent = this.findPotentialParentForSegment(path);
 
     if (this.hasComponentVariable(binding)) {
       const componentVariable = this.getComponentVariable(binding)!;
       componentVariable.setParent(parent);
       return componentVariable;
     }
+
+    // if (isForStatementInit(path)) {
+    //   // This is for variables defined in the for statement
+    //   // return;
+    // }
 
     const componentVariable = new ComponentVariable(
       this,
@@ -119,15 +144,21 @@ export class Component {
       return this.rootSegment;
     }
 
-    const blockStatement = this.findBlockStatementOfPath(path);
-    const parent = blockStatement
-      ? this.mapBlockStatementToComponentRunnableSegment.get(blockStatement) ??
-        null
-      : null;
+    if (!isInTheSameFunctionScope(path, this.path)) {
+      const parent = this.findPotentialParentForSegment(path);
+      return parent;
+    }
+
+    const parent = this.findPotentialParentForSegment(path);
 
     if (this.runnableSegments.has(path)) {
       const found = this.runnableSegments.get(path)!;
-      found.setParent(parent);
+
+      if (parent !== found.getParent()) {
+        found.getParent()?.removeChild(found);
+        found.setParent(parent);
+      }
+
       return found;
     }
 
@@ -201,11 +232,12 @@ export class Component {
   }
 
   applyTransformation() {
-    const cacheVariableDeclaration = this.makeCacheVariableDeclaration();
-
     if (!this.rootSegment) {
       throw new Error("Root segment not found");
     }
+
+    this.lock();
+    const cacheVariableDeclaration = this.makeCacheVariableDeclaration();
 
     const body = this.path.get("body");
 
@@ -268,13 +300,13 @@ export class Component {
     return declaration;
   }
 
+  isBindingInComponentScope(binding: Binding) {
+    return isChildOfScope(this.path.scope, binding.scope);
+  }
+
   // --- DEBUGGING ---
   __debug_getComponentVariables() {
     return this.componentVariables;
-  }
-
-  isBindingInComponentScope(binding: Binding) {
-    return isChildOfScope(this.path.scope, binding.scope);
   }
 
   __debug_dependencies() {

@@ -26,7 +26,6 @@ export type SegmentTransformationResult = {
   hasHookCall: boolean;
   hasReturnStatement?: boolean;
   updateCache?: babel.types.Statement | null;
-  replacements: babel.types.Node[] | null;
 } | null;
 
 export abstract class ComponentMutableSegment {
@@ -40,6 +39,12 @@ export abstract class ComponentMutableSegment {
   protected children = new Set<ComponentMutableSegment>();
 
   protected parent: ComponentMutableSegment | null = null;
+
+  private cachedDependencies: Set<ComponentSegmentDependency> | null = null;
+
+  getParent() {
+    return this.parent;
+  }
 
   constructor(
     public component: Component,
@@ -66,6 +71,10 @@ export abstract class ComponentMutableSegment {
   }
 
   addDependency(componentVariable: ComponentVariable, accessorNode: t.Node) {
+    if (this.isComponentRunnableSegment() && this.isRoot()) {
+      return;
+    }
+
     if (this.isComponentVariable() && componentVariable === this) {
       return;
     }
@@ -87,14 +96,57 @@ export abstract class ComponentMutableSegment {
     if (!alreadyHasDependency) {
       this.dependencies.add(componentSegmentDependency);
     }
+
+    if (!componentVariable.isForLoopArgumentVariable()) {
+      this.parent?.addDependency(componentVariable, accessorNode);
+    }
   }
 
   hasDependencies() {
     return this.dependencies.size > 0;
   }
 
-  getDependencies() {
-    return this.dependencies;
+  getDependencies(visited = new Set<ComponentSegmentDependency>()) {
+    if (this.cachedDependencies) {
+      return this.cachedDependencies;
+    }
+
+    const allDependencies = new Set(this.dependencies);
+
+    allDependencies.forEach((dependency) => {
+      if (visited.has(dependency)) {
+        return;
+      }
+
+      visited.add(dependency);
+
+      if (dependency.componentVariable.isForLoopArgumentVariable()) {
+        allDependencies.delete(dependency);
+        return;
+      }
+
+      dependency.componentVariable.getDependencies(visited).forEach((d) => {
+        allDependencies.add(d);
+      });
+    });
+
+    return allDependencies;
+  }
+
+  protected filterDependenciesByScope(
+    dependencies: Set<ComponentSegmentDependency>
+  ) {
+    const newDependencies = new Set<ComponentSegmentDependency>(dependencies);
+
+    dependencies.forEach((dependency) => {
+      const isInSameScope = dependency.isInTheScopeOf(this.path);
+
+      if (!isInSameScope) {
+        newDependencies.delete(dependency);
+      }
+    });
+
+    return newDependencies;
   }
 
   abstract computeDependencyGraph(): void;
@@ -104,6 +156,10 @@ export abstract class ComponentMutableSegment {
   abstract applyTransformation(params?: {
     parent?: ComponentRunnableSegment | null;
   }): SegmentTransformationResult;
+
+  lock() {
+    this.cachedDependencies = this.getDependencies();
+  }
 
   protected makeDependencyCondition() {
     return makeDependencyCondition(this);
@@ -213,4 +269,49 @@ export abstract class ComponentMutableSegment {
         .join("\n")
     );
   }
+
+  getDependenciesForTransformation() {
+    const dependencies = new Set(this.getDependencies());
+
+    dependencies.forEach((dependency) => {
+      if (!this.dependencies.has(dependency)) {
+        dependencies.delete(dependency);
+      }
+    });
+
+    if (this.isComponentVariable()) {
+      this.filterDependenciesByScope(
+        this.getMutationDependencies(new Set())
+      ).forEach((dependency) => {
+        dependencies.add(dependency);
+      });
+    }
+
+    return dependencies;
+  }
 }
+
+// This function is used to remove the dependencies of the parent from the dependencies of the current segment
+// We perhaps don't need this function anymore
+/*
+function removeParentDependencies(
+  dependencies: Set<ComponentSegmentDependency>,
+  currentSegment: ComponentMutableSegment
+) {
+  const parent = currentSegment.getParent();
+
+  
+
+  if (!parent) {
+    return;
+  }
+
+  const parentDependencies = parent.getDependencies();
+
+  parentDependencies.forEach((dependency) => {
+    dependencies.delete(dependency);
+  });
+
+  removeParentDependencies(dependencies, parent);
+}
+*/

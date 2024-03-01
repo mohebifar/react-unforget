@@ -11,7 +11,10 @@ export class AccessChainItem {
   public nextComputed = false;
   public right?: AccessChainItem = undefined;
 
-  constructor(public id: string, public idExpression: t.Expression) {}
+  constructor(
+    public id: string,
+    public idExpression: t.Expression
+  ) {}
 
   toString() {
     let currentString = this.id;
@@ -46,36 +49,42 @@ export class ComponentSegmentDependency {
     // Start from the root of member expression
     let currentAccessorNode: AccessorNode | null = accessorNode;
 
+    let nextComputed = false;
+
     do {
       let newAccessChainItem: AccessChainItem | null = null;
+      let currentComputed = false;
 
       if (
         t.isMemberExpression(currentAccessorNode) ||
         t.isOptionalMemberExpression(currentAccessorNode)
       ) {
-        if (currentAccessChainItem) {
-          currentAccessChainItem.nextComputed = currentAccessorNode.computed;
-        }
-
         const property = currentAccessorNode.property;
         let name = "";
+
+        currentComputed = currentAccessorNode.computed;
 
         if (t.isIdentifier(property)) {
           name = property.name;
         } else if (t.isStringLiteral(property)) {
           name = property.value;
+          currentComputed = false;
         } else if (t.isNumericLiteral(property)) {
           name = property.value.toString();
+          currentComputed = false;
         } else if (t.isPrivateName(property)) {
           name = "#" + property.id.name;
+          currentComputed = false;
         } else if (t.isBigIntLiteral(property)) {
           name = property.value + "n";
+          currentComputed = false;
         } else if (
           t.isTemplateLiteral(property) &&
           property.expressions.length === 0 &&
           property.quasis.length === 1
         ) {
           name = property.quasis[0]!.value.raw;
+          currentComputed = false;
         }
 
         if (name) {
@@ -102,7 +111,11 @@ export class ComponentSegmentDependency {
         if (currentAccessChainItem) {
           newAccessChainItem.right = currentAccessChainItem;
         }
+
+        newAccessChainItem.nextComputed = nextComputed;
       }
+
+      nextComputed = currentComputed;
 
       currentAccessChainItem = newAccessChainItem;
     } while (currentAccessorNode);
@@ -126,13 +139,16 @@ export class ComponentSegmentDependency {
   }
 
   getMemberExpression(replacementId: t.Expression) {
-    let endOfChaing: AccessChainItem | null = this.root;
+    let endOfChain: AccessChainItem | null = this.root;
 
-    while (endOfChaing.right) {
-      endOfChaing = endOfChaing.right;
+    while (endOfChain.right) {
+      if (endOfChain.nextComputed) {
+        break;
+      }
+      endOfChain = endOfChain.right;
     }
 
-    const endOfChainExpression = t.cloneNode(endOfChaing.idExpression);
+    const endOfChainExpression = t.cloneNode(endOfChain.idExpression);
 
     if (
       t.isMemberExpression(endOfChainExpression) ||
@@ -143,5 +159,13 @@ export class ComponentSegmentDependency {
     }
 
     return replacementId;
+  }
+
+  isInTheScopeOf(path: babel.NodePath<t.Node>) {
+    const isInSameScope = Object.values(path.scope.getAllBindings()).some(
+      (binding) => binding === this.componentVariable.binding
+    );
+
+    return isInSameScope;
   }
 }

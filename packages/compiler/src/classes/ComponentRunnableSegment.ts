@@ -180,8 +180,15 @@ export class ComponentRunnableSegment extends ComponentMutableSegment {
       const isParentRoot =
         this.parent?.isComponentRunnableSegment() && this.parent.isRoot();
       const componentScope = this.component.path.scope;
+      let shouldScanForDependencies = isParentRoot && this.hasHookCall();
 
-      if (isParentRoot && this.hasHookCall()) {
+      if (!shouldScanForDependencies) {
+        shouldScanForDependencies = [
+          ...this.component.getComponentVariables(),
+        ].some((s) => s.isMutatedBy(this));
+      }
+
+      if (shouldScanForDependencies) {
         const allBindingsOfComponent = Object.values(
           componentScope.getAllBindings()
         ).filter((binding) => binding.scope === componentScope);

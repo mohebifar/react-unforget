@@ -103,6 +103,32 @@ export class Component {
     });
   }
 
+  findDependents(componentVariableToFindDependentsFor: ComponentVariable) {
+    const dependents = new Set<ComponentMutableSegment>();
+
+    const addDepdendentsToSet = (segment: ComponentMutableSegment) => {
+      if (
+        [...segment.getDependencies().values()].some(
+          (dependency) =>
+            dependency.componentVariable ===
+            componentVariableToFindDependentsFor
+        )
+      ) {
+        dependents.add(segment);
+      }
+    };
+
+    for (const [, componentVariable] of this.componentVariables) {
+      addDepdendentsToSet(componentVariable);
+    }
+
+    for (const [, runnableSegment] of this.runnableSegments) {
+      addDepdendentsToSet(runnableSegment);
+    }
+
+    return dependents;
+  }
+
   addComponentVariable(binding: Binding) {
     if (!this.isBindingInComponentScope(binding)) {
       return;
@@ -183,7 +209,7 @@ export class Component {
     return getFunctionParent(path) === this.path;
   }
 
-  getRootComponentVariables() {
+  getComponentVariables() {
     return [...this.componentVariables.values()].filter(
       (componentVariable) => !componentVariable.hasDependencies()
     );

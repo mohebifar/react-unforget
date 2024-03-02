@@ -2,7 +2,7 @@ import { loadFixture, transformWithStandalone } from "~/utils/testing";
 
 describe("Component fixtures", () => {
   describe("applyModification", () => {
-    it.each(Array.from({ length: 10 }, (_, i) => `fixture_${i + 1}`))(
+    it.each(Array.from({ length: 13 }, (_, i) => `fixture_${i + 1}`))(
       "%s",
       (fixtureName) => {
         const code = transformWithStandalone(loadFixture(fixtureName));

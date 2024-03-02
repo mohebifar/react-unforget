@@ -1,0 +1,67 @@
+import { DynamicLiveCodeSandpack } from "@components/DynamicLiveCodeSandpack";
+
+### Alias Analysis Problem
+
+In this great talk about React Forget, [Sathya Gunasekaran](https://twitter.com/_gsathya) talks about the problem of alias analysis in making a compiler for React.
+
+The following examples show how React Unforget can handle such cases that requires alias analysis.
+
+The first example, is the same code snippet that Sathya shows in his keynote:
+
+<DynamicLiveCodeSandpack previewClassName="h-44">
+{`import { useState } from "react";
+
+function Comp({ a, b }) {
+  const x = [];
+
+  x.push(a);
+
+  const y = x;
+
+  y.push(b);
+
+  return <div>n: {x.join(",")}</div>;
+}
+
+export default function App() {
+  const [state, setState] = useState(1);
+
+  return (
+    <div>
+      {/* We use a constant value for a, but change b */}
+      <Comp a={1} b={state} />
+      <button onClick={() => setState((p) => p + 1)}>click</button>
+    </div>
+  );
+}
+`}
+
+</DynamicLiveCodeSandpack>
+
+The second example is based on this example provided by Joe Savona in [this tweet](https://twitter.com/en_JS/status/1763621588791116241):
+
+<DynamicLiveCodeSandpack previewClassName="h-44">
+{`import { useState } from "react";
+
+export default function CounterWithMutationTracking() {
+  const [state, setState] = useState(0);
+
+  let x = [];
+  const z = [];
+  let y = state % 2 === 0 ? x : z;
+  y.push(state);
+
+  return (
+    <div>
+      <button onClick={() => setState(state + 1)}>Increment</button>
+      {y[0]}
+      <br />
+      x: {JSON.stringify(x)}
+      <br />
+      y: {JSON.stringify(y)}
+    </div>
+  );
+} 
+`}
+
+</DynamicLiveCodeSandpack>

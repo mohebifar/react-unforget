@@ -272,6 +272,7 @@ export abstract class ComponentMutableSegment {
 
   getDependenciesForTransformation() {
     const dependencies = new Set(this.getDependencies());
+    const visited = new Set<ComponentSegmentDependency>();
 
     dependencies.forEach((dependency) => {
       if (!this.dependencies.has(dependency)) {
@@ -284,6 +285,22 @@ export abstract class ComponentMutableSegment {
         this.getMutationDependencies(new Set())
       ).forEach((dependency) => {
         dependencies.add(dependency);
+      });
+
+      this.component.findDependents(this).forEach((dependent) => {
+        const mutationDependencies =
+          dependent.isComponentVariable() &&
+          dependent.getMutationDependencies();
+        if (mutationDependencies) {
+          for (const dependencyOfMutation of mutationDependencies) {
+            if (visited.has(dependencyOfMutation)) {
+              continue;
+            }
+            if (dependencyOfMutation.componentVariable !== this) {
+              dependencies.add(dependencyOfMutation);
+            }
+          }
+        }
       });
     }
 

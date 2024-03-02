@@ -45,7 +45,7 @@ describe.skip("ComponentVariable", () => {
         const [component] = parseCodeAndRun("fixture_2");
         component.computeComponentSegments();
 
-        const rootComponentVariables = component.getRootComponentVariables();
+        const rootComponentVariables = component.getComponentVariables();
 
         expect(
           rootComponentVariables.map((v) => v.binding.identifier.name)

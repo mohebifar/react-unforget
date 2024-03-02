@@ -214,6 +214,16 @@ export class ComponentVariable extends ComponentMutableSegment {
     return isForStatementInit(this.path);
   }
 
+  isMutatedBy(runnableSegment: ComponentRunnableSegment) {
+    for (const runnableItem of this.runnableSegmentsMutatingThis) {
+      if (runnableItem === runnableSegment) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   getMutationDependencies(visited = new Set<ComponentSegmentDependency>()) {
     const mutatingDependencies = new Set<ComponentSegmentDependency>();
     this.runnableSegmentsMutatingThis.forEach((runnableSegment) => {
@@ -302,6 +312,7 @@ export class ComponentVariable extends ComponentMutableSegment {
 
           if (mutatingExpressions) {
             this.runnableSegmentsMutatingThis.add(dependent);
+            dependent.computeDependencyGraph();
           }
         }
       }

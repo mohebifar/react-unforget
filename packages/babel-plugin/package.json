@@ -1,6 +1,6 @@
 {
   "name": "@react-unforget/babel-plugin",
-  "version": "0.1.0-dev.6",
+  "version": "0.1.0-dev.7",
   "license": "MIT",
   "type": "module",
   "files": [
@@ -20,7 +20,7 @@
     "lint": "echo 'No checks yet'"
   },
   "dependencies": {
-    "@react-unforget/compiler": "0.1.0-dev.7"
+    "@react-unforget/compiler": "0.1.0-dev.8"
   },
   "devDependencies": {
     "@react-unforget/eslint-config": "*",

@@ -11,6 +11,7 @@
     "@react-unforget/babel-plugin": "0.1.0-dev.3"
   },
   "changesets": [
+    "metal-glasses-argue",
     "nervous-ducks-grow",
     "pink-chicken-look",
     "poor-icons-prove",

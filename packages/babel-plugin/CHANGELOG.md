@@ -1,5 +1,16 @@
 # @react-unforget/babel-plugin
 
+## 0.1.0-dev.7
+
+### Minor Changes
+
+- c22c393: Alias analysis problem
+
+### Patch Changes
+
+- Updated dependencies [c22c393]
+  - @react-unforget/compiler@0.1.0-dev.8
+
 ## 0.1.0-dev.6
 
 ### Minor Changes

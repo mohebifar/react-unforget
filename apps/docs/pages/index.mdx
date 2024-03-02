@@ -14,23 +14,24 @@ React Unforget is a project inspired by the principles of React Forget, designed
 export default function CounterWithMutationTracking() {
   const [state, setState] = useState(0);
 
-let text = "The number is: ";
+  let text = "The number is: ";
 
-if (state % 2 === 0) {
-text += "even";
-} else {
-text += "odd";
+  if (state % 2 === 0) {
+    text += "even";
+  } else {
+    text += "odd";
+  }
+
+  return (
+    <div>
+      <button onClick={() => setState(state + 1)}>Increment</button>
+      <div>
+        <span>Count: {state}</span> {text}
+      </div>
+    </div>
+  );
 }
-
-return (
-
-<div>
-  <button onClick={() => setState(state + 1)}>Increment</button>
-  <div>
-    <span>Count: {state}</span> {text}
-  </div>
-</div>
-); } `}
+`}
 
 </DynamicLiveCodeSandpack>
 

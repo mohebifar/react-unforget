@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 const numbers1 = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 const numbers2 = numbers1.filter((number) => number % 2 === 0);

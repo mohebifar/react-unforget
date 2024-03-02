@@ -5,7 +5,7 @@ import {
   useSandpack,
 } from "@codesandbox/sandpack-react";
 import { memo, useCallback, useEffect, useRef } from "react";
-import cn from "classnames";
+import { twMerge } from "tailwind-merge";
 
 type CodeEditorAndPreviewProps = {
   readOnly?: boolean;
@@ -87,21 +87,19 @@ export const CodeEditorAndPreview = memo(
     }, [code, updateCurrentFileRef]);
 
     return (
-      <div className="mockup-window bg-gray-200 border dark:bg-gray-800 dark:border-gray-700">
-        <div className="w-full">
-          <SandpackCodeEditor
-            showTabs={false}
-            readOnly={readOnly}
-            className="h-96"
-            wrapContent
-            showLineNumbers
-          />
-          <div className="h-3 bg-gray-100" />
-          <SandpackPreview
-            ref={sandboxPreview}
-            className={cn(["bg-base-200 h-96", previewClassName])}
-          />
-        </div>
+      <div className="w-full">
+        <SandpackCodeEditor
+          showTabs={false}
+          readOnly={readOnly}
+          className="h-96"
+          wrapContent
+          showLineNumbers
+        />
+        <div className="h-3 bg-gray-100" />
+        <SandpackPreview
+          ref={sandboxPreview}
+          className={twMerge(["bg-base-200 h-46", previewClassName])}
+        />
       </div>
     );
   }

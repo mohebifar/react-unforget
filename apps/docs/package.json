@@ -16,13 +16,13 @@
     "@react-unforget/compiler": "0.1.0-dev.8",
     "@react-unforget/runtime": "0.1.0-dev.4",
     "@vercel/analytics": "^1.2.2",
-    "classnames": "^2.5.1",
-    "lucide-react": "^0.343.0",
     "next": "^14.0.4",
     "nextra": "^2.13.3",
     "nextra-theme-docs": "^2.13.3",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-icons": "^5.0.1",
+    "tailwind-merge": "^2.2.1"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^14.0.4",

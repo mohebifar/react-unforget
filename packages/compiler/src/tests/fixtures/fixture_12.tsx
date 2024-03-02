@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
-function Comp({ a, b }) {
+function Comp({ a, b }: { a: number; b: number }) {
   const x = [];
 
   x.push(a);

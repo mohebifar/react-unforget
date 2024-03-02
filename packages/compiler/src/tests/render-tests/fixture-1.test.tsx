@@ -1,6 +1,5 @@
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
-// @ts-expect-error No type declaration
 import TestComponent from "../fixtures/fixture_1";
 
 describe("Fixture 1", () => {

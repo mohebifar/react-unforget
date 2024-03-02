@@ -7,13 +7,13 @@ import * as fs from "fs";
 import * as path from "path";
 import { visitProgram } from "~/visit-program";
 // @ts-expect-error The module has no types
-import babelJsxPlugin from "@babel/plugin-syntax-jsx";
+import babelTsPlugin from "@babel/plugin-transform-typescript";
 
 export function transformWithStandalone(input: string) {
   const { code } = standalone.transform(input, {
     configFile: false,
     plugins: [
-      babelJsxPlugin,
+      [babelTsPlugin, { isTSX: true }],
       {
         visitor: {
           Program: (path: babel.NodePath<t.Program>) => {
@@ -31,7 +31,7 @@ export function transformWithCore(input: string) {
   const { code } = babel.transform(input, {
     configFile: false,
     plugins: [
-      babelJsxPlugin,
+      [babelTsPlugin, { isTSX: true }],
       {
         visitor: {
           Program: (path: babel.NodePath<t.Program>) => {
@@ -70,7 +70,11 @@ export function parse(input: string, extraPlugins: babel.PluginItem[] = []) {
 }
 
 export function loadFixture(fixturePath: string) {
-  const fixture = path.resolve(__dirname, "../tests/fixtures", fixturePath + ".jsx");
+  const fixture = path.resolve(
+    __dirname,
+    "../tests/fixtures",
+    fixturePath + ".tsx"
+  );
 
   const fileContent = fs.readFileSync(fixture, "utf-8");
 

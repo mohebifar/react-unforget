@@ -4,7 +4,7 @@ import { DynamicLiveCodeSandpack } from "@components/DynamicLiveCodeSandpack";
 
 This is just a complex example to show how React Unforget can handle complex logic and data fetching.
 
-<DynamicLiveCodeSandpack>
+<DynamicLiveCodeSandpack previewClassName="h-[700px]">
 {`import React, { useState, useEffect, useMemo, useCallback } from "react";
 
 const fetchUser = () => {
@@ -28,7 +28,7 @@ const fetchUserFollowers = () => {
 };
 
 function UserList() {
-  const [user, setUser] = useState([]);
+  const [user, setUser] = useState(null);
   const [followers, setFollowers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -86,12 +86,11 @@ function UserList() {
 
   return (
     <div>
-      <h1>Follwers of {user.name}</h1>
-      <h1>User List</h1>
+      <h4>Follwers of {user.name}</h4>
       <button onClick={toggleEvenOnes}>
         {shouldFilterUsers ? "Show all" : "Filter users"}
       </button>
-      <ul onClick={() => handleUserClick(user.id)}>{userListElement}</ul>
+      <ul style={{ padding: 0 }} onClick={() => handleUserClick(user.id)}>{userListElement}</ul>
     </div>
   );
 }
@@ -122,7 +121,6 @@ function UserListItem({ user: { login, avatar_url, html_url } }) {
 }
 
 export default UserList;
-
 `}
 
 </DynamicLiveCodeSandpack>

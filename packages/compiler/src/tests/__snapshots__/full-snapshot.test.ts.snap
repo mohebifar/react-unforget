@@ -2,7 +2,6 @@
 
 exports[`Component fixtures applyModification fixture_1 1`] = `
 "import { useCreateCache$unforget } from "@react-unforget/runtime";
-import React from "react";
 export default function SimpleJSX() {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
@@ -24,7 +23,6 @@ export default function SimpleJSX() {
 
 exports[`Component fixtures applyModification fixture_2 1`] = `
 "import { useCreateCache$unforget } from "@react-unforget/runtime";
-import React from "react";
 const SimpleJSXWithArrowFunction = () => {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
@@ -47,7 +45,6 @@ export default SimpleJSXWithArrowFunction;"
 
 exports[`Component fixtures applyModification fixture_3 1`] = `
 "import { useCreateCache$unforget } from "@react-unforget/runtime";
-import React from "react";
 const SimpleJSXWithFunctionExpression = function () {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
@@ -70,7 +67,7 @@ export default SimpleJSXWithFunctionExpression;"
 
 exports[`Component fixtures applyModification fixture_4 1`] = `
 "import { useCreateCache$unforget } from "@react-unforget/runtime";
-import React, { useState } from "react";
+import { useState } from "react";
 export default function Counter() {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
@@ -149,7 +146,7 @@ export default function Counter() {
 
 exports[`Component fixtures applyModification fixture_5 1`] = `
 "import { useCreateCache$unforget } from "@react-unforget/runtime";
-import React, { useState } from "react";
+import { useState } from "react";
 export default function CounterWithMutationTracking() {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
@@ -253,7 +250,7 @@ export default function CounterWithMutationTracking() {
 
 exports[`Component fixtures applyModification fixture_6 1`] = `
 "import { useCreateCache$unforget } from "@react-unforget/runtime";
-import React, { useState } from "react";
+import { useState } from "react";
 function InnerComponentWithProps(_props) {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
@@ -393,7 +390,7 @@ export default function CounterWithInnerComponents() {
 
 exports[`Component fixtures applyModification fixture_7 1`] = `
 "import { useCreateCache$unforget } from "@react-unforget/runtime";
-import React, { useState } from "react";
+import { useState } from "react";
 export default function CounterWithEarlyReturn() {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
@@ -506,7 +503,7 @@ export default function CounterWithEarlyReturn() {
 
 exports[`Component fixtures applyModification fixture_8 1`] = `
 "import { useCreateCache$unforget } from "@react-unforget/runtime";
-import React, { useState } from "react";
+import { useState } from "react";
 export default function CounterWithEarlyReturnWithoutDirectlyUsingTheVariableInJSX() {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
@@ -616,7 +613,7 @@ export default function CounterWithEarlyReturnWithoutDirectlyUsingTheVariableInJ
 
 exports[`Component fixtures applyModification fixture_9 1`] = `
 "import { useCreateCache$unforget } from "@react-unforget/runtime";
-import React, { useState } from "react";
+import { useState } from "react";
 const numbers1 = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 const numbers2 = numbers1.filter(number => number % 2 === 0);
 export default function UserList() {
@@ -753,22 +750,20 @@ export default function UserList() {
 
 exports[`Component fixtures applyModification fixture_10 1`] = `
 "import { useCreateCache$unforget } from "@react-unforget/runtime";
-import React, { useState, useEffect, useMemo, useCallback } from "react";
-const fetchUser = () => {
-  return fetch("https://api.github.com/users/mohebifar").then(response => {
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    return response.json();
-  });
+import { useState, useEffect, useMemo, useCallback } from "react";
+const fetchUser = async () => {
+  const response = await fetch("https://api.github.com/users/mohebifar");
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
+  }
+  return await response.json();
 };
-const fetchUserFollowers = () => {
-  return fetch("https://api.github.com/users/mohebifar/followers").then(response => {
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    return response.json();
-  });
+const fetchUserFollowers = async () => {
+  const response = await fetch("https://api.github.com/users/mohebifar/followers");
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
+  }
+  return await response.json();
 };
 function UserList() {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
@@ -809,7 +804,7 @@ function UserList() {
   32);
   let _unwrapped2 = _$unforgetCache[14].v;
   const _segment = () => {
-    _unwrapped2 = useState([]);
+    _unwrapped2 = useState({});
   };
   let _unwrapped = _$unforgetCache[1].v;
   const _segment2 = () => {
@@ -1225,7 +1220,6 @@ export default UserList;"
 
 exports[`Component fixtures applyModification fixture_11 1`] = `
 "import { useCreateCache$unforget } from "@react-unforget/runtime";
-import React from "react";
 export default function App() {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
@@ -1286,7 +1280,7 @@ export default function App() {
 
 exports[`Component fixtures applyModification fixture_12 1`] = `
 "import { useCreateCache$unforget } from "@react-unforget/runtime";
-import React, { useState } from "react";
+import { useState } from "react";
 function Comp(_props) {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
@@ -1429,7 +1423,7 @@ export default function App() {
 
 exports[`Component fixtures applyModification fixture_13 1`] = `
 "import { useCreateCache$unforget } from "@react-unforget/runtime";
-import React, { useState } from "react";
+import { useState } from "react";
 export default function CounterWithMutationTracking() {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*

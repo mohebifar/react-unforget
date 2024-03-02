@@ -8,13 +8,15 @@ module.exports = {
   theme: {
     extend: {
       gridTemplateColumns: {
-        beforeAfterCodingBlocks: "minmax(0, 1fr) minmax(0, 1rem) minmax(0, 1fr);",
+        beforeAfterCodingBlocks:
+          "minmax(0, 1fr) minmax(0, 1rem) minmax(0, 1fr);",
       },
     },
   },
-  // plugins: [require("daisyui")],
+  plugins: [require("daisyui")],
   daisyui: {
-    themes: ["sunset"],
+    base: false,
+    themes: ["synthwave"],
   },
   darkMode: "class",
 };

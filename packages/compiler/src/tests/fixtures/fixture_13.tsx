@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 export default function CounterWithMutationTracking() {
   const [state, setState] = useState(0);
 
-  let x = [];
-  const z = [];
+  let x: number[] = [];
+  const z: number[] = [];
   let y = state % 2 === 0 ? x : z;
   y.push(state);
 

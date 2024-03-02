@@ -1,27 +1,25 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 
-const fetchUser = () => {
-  return fetch("https://api.github.com/users/mohebifar").then((response) => {
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    return response.json();
-  });
+const fetchUser = async () => {
+  const response = await fetch("https://api.github.com/users/mohebifar");
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
+  }
+  return await response.json();
 };
 
-const fetchUserFollowers = () => {
-  return fetch("https://api.github.com/users/mohebifar/followers").then(
-    (response) => {
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.json();
-    }
+const fetchUserFollowers = async () => {
+  const response = await fetch(
+    "https://api.github.com/users/mohebifar/followers"
   );
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
+  }
+  return await response.json();
 };
 
 function UserList() {
-  const [user, setUser] = useState([]);
+  const [user, setUser] = useState<any>({});
   const [followers, setFollowers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -45,7 +43,7 @@ function UserList() {
   }, []);
 
   // useCallback to memoize a hypothetical handler function
-  const handleUserClick = useCallback((userId) => {
+  const handleUserClick = useCallback((userId: string) => {
     console.log("User clicked:", userId);
     // Handler logic here...
   }, []);
@@ -57,7 +55,7 @@ function UserList() {
 
   const memoizedFollowers = useMemo(() => followers, [followers]);
 
-  const filteredUsers = [];
+  const filteredUsers: any[] = [];
   for (let i = 0; i < memoizedFollowers.length; i++) {
     const user = memoizedFollowers[i];
     if (i % 2 === 0) {

@@ -1,5 +1,11 @@
 # @react-unforget/compiler
 
+## 0.1.0-dev.8
+
+### Minor Changes
+
+- c22c393: Alias analysis problem
+
 ## 0.1.0-dev.7
 
 ### Minor Changes

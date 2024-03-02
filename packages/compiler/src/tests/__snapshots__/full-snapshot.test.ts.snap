@@ -2,6 +2,7 @@
 
 exports[`Component fixtures applyModification fixture_1 1`] = `
 "import { useCreateCache$unforget } from "@react-unforget/runtime";
+import React from "react";
 export default function SimpleJSX() {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
@@ -10,7 +11,7 @@ export default function SimpleJSX() {
   1);
   let _unwrappedJsxEl = _$unforgetCache[0].v;
   const _segment = () => {
-    _unwrappedJsxEl = <div>Hello world!</div>;
+    _unwrappedJsxEl = <p>Hello world!</p>;
   };
   if (_$unforgetCache[0].n) {
     _segment();
@@ -23,6 +24,7 @@ export default function SimpleJSX() {
 
 exports[`Component fixtures applyModification fixture_2 1`] = `
 "import { useCreateCache$unforget } from "@react-unforget/runtime";
+import React from "react";
 const SimpleJSXWithArrowFunction = () => {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
@@ -45,6 +47,7 @@ export default SimpleJSXWithArrowFunction;"
 
 exports[`Component fixtures applyModification fixture_3 1`] = `
 "import { useCreateCache$unforget } from "@react-unforget/runtime";
+import React from "react";
 const SimpleJSXWithFunctionExpression = function () {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
@@ -67,7 +70,7 @@ export default SimpleJSXWithFunctionExpression;"
 
 exports[`Component fixtures applyModification fixture_4 1`] = `
 "import { useCreateCache$unforget } from "@react-unforget/runtime";
-import { useState } from "react";
+import React, { useState } from "react";
 export default function Counter() {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
@@ -98,7 +101,7 @@ export default function Counter() {
   };
   let _unwrappedJsxEl2 = _$unforgetCache[5].v;
   const _segment5 = () => {
-    _unwrappedJsxEl2 = <span>Count: {state}</span>;
+    _unwrappedJsxEl2 = <span data-testid="state-printer">Count: {state}</span>;
   };
   let _unwrappedJsxEl3 = _$unforgetCache[6].v;
   const _segment6 = () => {
@@ -146,7 +149,7 @@ export default function Counter() {
 
 exports[`Component fixtures applyModification fixture_5 1`] = `
 "import { useCreateCache$unforget } from "@react-unforget/runtime";
-import { useState } from "react";
+import React, { useState } from "react";
 export default function CounterWithMutationTracking() {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
@@ -199,7 +202,7 @@ export default function CounterWithMutationTracking() {
   };
   let _unwrappedJsxEl3 = _$unforgetCache[6].v;
   const _segment10 = () => {
-    _unwrappedJsxEl3 = <div>
+    _unwrappedJsxEl3 = <div data-testid="state-printer">
         {_unwrappedJsxEl2} {text}
       </div>;
   };
@@ -250,7 +253,7 @@ export default function CounterWithMutationTracking() {
 
 exports[`Component fixtures applyModification fixture_6 1`] = `
 "import { useCreateCache$unforget } from "@react-unforget/runtime";
-import { useState } from "react";
+import React, { useState } from "react";
 function InnerComponentWithProps(_props) {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
@@ -275,7 +278,7 @@ function InnerComponentWithProps(_props) {
   };
   let _unwrappedJsxEl2 = _$unforgetCache[0].v;
   const _segment4 = () => {
-    _unwrappedJsxEl2 = <div>
+    _unwrappedJsxEl2 = <div data-testid="state-printer">
       {_unwrappedJsxEl} {text}
     </div>;
   };
@@ -390,7 +393,7 @@ export default function CounterWithInnerComponents() {
 
 exports[`Component fixtures applyModification fixture_7 1`] = `
 "import { useCreateCache$unforget } from "@react-unforget/runtime";
-import { useState } from "react";
+import React, { useState } from "react";
 export default function CounterWithEarlyReturn() {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
@@ -503,25 +506,26 @@ export default function CounterWithEarlyReturn() {
 
 exports[`Component fixtures applyModification fixture_8 1`] = `
 "import { useCreateCache$unforget } from "@react-unforget/runtime";
-import { useState } from "react";
+import React, { useState } from "react";
 export default function CounterWithEarlyReturnWithoutDirectlyUsingTheVariableInJSX() {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
   0 => _unwrappedJsxEl5
   1 => state
-  2 => _unwrapped
-  3 => setState
-  4 => _unwrappedJsxEl4
-  5 => _unwrappedJsxEl
-  6 => _unwrappedJsxEl3
-  7 => _unwrappedJsxEl2
+  2 => newValue
+  3 => _unwrapped
+  4 => setState
+  5 => _unwrappedJsxEl4
+  6 => _unwrappedJsxEl
+  7 => _unwrappedJsxEl3
+  8 => _unwrappedJsxEl2
   */
-  8);
-  let _unwrapped = _$unforgetCache[2].v;
+  9);
+  let _unwrapped = _$unforgetCache[3].v;
   const _segment = () => {
     _unwrapped = useState(0);
   };
-  let setState = _$unforgetCache[3].v;
+  let setState = _$unforgetCache[4].v;
   const _segment2 = () => {
     setState = _unwrapped[1];
   };
@@ -544,34 +548,38 @@ export default function CounterWithEarlyReturnWithoutDirectlyUsingTheVariableInJ
     }
     return _$unforgetNull;
   };
-  let _unwrappedJsxEl = _$unforgetCache[5].v;
+  let newValue = _$unforgetCache[2].v;
   const _segment7 = () => {
+    newValue = state + 1;
+  };
+  let _unwrappedJsxEl = _$unforgetCache[6].v;
+  const _segment8 = () => {
     _unwrappedJsxEl = <button onClick={() => setState(state + 1)}>Increment</button>;
   };
-  let _unwrappedJsxEl2 = _$unforgetCache[7].v;
-  const _segment8 = () => {
-    _unwrappedJsxEl2 = <span>Count: {state}</span>;
-  };
-  let _unwrappedJsxEl3 = _$unforgetCache[6].v;
+  let _unwrappedJsxEl2 = _$unforgetCache[8].v;
   const _segment9 = () => {
+    _unwrappedJsxEl2 = <span>Count: {newValue}</span>;
+  };
+  let _unwrappedJsxEl3 = _$unforgetCache[7].v;
+  const _segment10 = () => {
     _unwrappedJsxEl3 = <div>
         {_unwrappedJsxEl2}
       </div>;
   };
-  let _unwrappedJsxEl4 = _$unforgetCache[4].v;
-  const _segment10 = () => {
+  let _unwrappedJsxEl4 = _$unforgetCache[5].v;
+  const _segment11 = () => {
     _unwrappedJsxEl4 = <div>
       {_unwrappedJsxEl}
       {_unwrappedJsxEl3}
     </div>;
   };
   _segment();
-  _$unforgetCache[2].e(_unwrapped);
-  if (_$unforgetCache[3].n || _unwrapped[1] !== _$unforgetCache[2].v[1] || _unwrapped !== _$unforgetCache[2].v) {
+  _$unforgetCache[3].e(_unwrapped);
+  if (_$unforgetCache[4].n || _unwrapped[1] !== _$unforgetCache[3].v[1] || _unwrapped !== _$unforgetCache[3].v) {
     _segment2();
-    _$unforgetCache[3].e(setState);
+    _$unforgetCache[4].e(setState);
   }
-  if (_$unforgetCache[1].n || _unwrapped !== _$unforgetCache[2].v || _unwrapped[0] !== _$unforgetCache[2].v[0]) {
+  if (_$unforgetCache[1].n || _unwrapped !== _$unforgetCache[3].v || _unwrapped[0] !== _$unforgetCache[3].v[0]) {
     _segment3();
     _$unforgetCache[1].e(state);
   }
@@ -581,21 +589,25 @@ export default function CounterWithEarlyReturnWithoutDirectlyUsingTheVariableInJ
       return _temp;
     }
   }
-  if (_$unforgetCache[5].n || setState !== _$unforgetCache[3].v || state !== _$unforgetCache[1].v) {
+  if (_$unforgetCache[2].n || state !== _$unforgetCache[1].v) {
     _segment7();
-    _$unforgetCache[5].e(_unwrappedJsxEl);
+    _$unforgetCache[2].e(newValue);
   }
-  if (_$unforgetCache[7].n || state !== _$unforgetCache[1].v) {
+  if (_$unforgetCache[6].n || setState !== _$unforgetCache[4].v || state !== _$unforgetCache[1].v) {
     _segment8();
-    _$unforgetCache[7].e(_unwrappedJsxEl2);
+    _$unforgetCache[6].e(_unwrappedJsxEl);
   }
-  if (_$unforgetCache[6].n || _unwrappedJsxEl2 !== _$unforgetCache[7].v) {
+  if (_$unforgetCache[8].n || newValue !== _$unforgetCache[2].v) {
     _segment9();
-    _$unforgetCache[6].e(_unwrappedJsxEl3);
+    _$unforgetCache[8].e(_unwrappedJsxEl2);
   }
-  if (_$unforgetCache[4].n || _unwrappedJsxEl !== _$unforgetCache[5].v || _unwrappedJsxEl3 !== _$unforgetCache[6].v) {
+  if (_$unforgetCache[7].n || _unwrappedJsxEl2 !== _$unforgetCache[8].v) {
     _segment10();
-    _$unforgetCache[4].e(_unwrappedJsxEl4);
+    _$unforgetCache[7].e(_unwrappedJsxEl3);
+  }
+  if (_$unforgetCache[5].n || _unwrappedJsxEl !== _$unforgetCache[6].v || _unwrappedJsxEl3 !== _$unforgetCache[7].v) {
+    _segment11();
+    _$unforgetCache[5].e(_unwrappedJsxEl4);
   }
   _$unforgetCommit();
   return _unwrappedJsxEl4;
@@ -604,7 +616,7 @@ export default function CounterWithEarlyReturnWithoutDirectlyUsingTheVariableInJ
 
 exports[`Component fixtures applyModification fixture_9 1`] = `
 "import { useCreateCache$unforget } from "@react-unforget/runtime";
-import { useState } from "react";
+import React, { useState } from "react";
 const numbers1 = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 const numbers2 = numbers1.filter(number => number % 2 === 0);
 export default function UserList() {
@@ -1213,6 +1225,7 @@ export default UserList;"
 
 exports[`Component fixtures applyModification fixture_11 1`] = `
 "import { useCreateCache$unforget } from "@react-unforget/runtime";
+import React from "react";
 export default function App() {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
@@ -1238,7 +1251,7 @@ export default function App() {
   };
   let _unwrappedJsxExp = _$unforgetCache[1].v;
   const _segment5 = () => {
-    _unwrappedJsxExp = a[0];
+    _unwrappedJsxExp = a[1];
   };
   let _unwrappedJsxEl = _$unforgetCache[0].v;
   const _segment6 = () => {
@@ -1258,7 +1271,7 @@ export default function App() {
   if (b !== _$unforgetCache[3].v) {
     _segment4();
   }
-  if (_$unforgetCache[1].n || a[0] !== _$unforgetCache[2].v[0]) {
+  if (_$unforgetCache[1].n || a[1] !== _$unforgetCache[2].v[1]) {
     _segment5();
     _$unforgetCache[1].e(_unwrappedJsxExp);
   }
@@ -1273,7 +1286,7 @@ export default function App() {
 
 exports[`Component fixtures applyModification fixture_12 1`] = `
 "import { useCreateCache$unforget } from "@react-unforget/runtime";
-import { useState } from "react";
+import React, { useState } from "react";
 function Comp(_props) {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
@@ -1416,7 +1429,7 @@ export default function App() {
 
 exports[`Component fixtures applyModification fixture_13 1`] = `
 "import { useCreateCache$unforget } from "@react-unforget/runtime";
-import { useState } from "react";
+import React, { useState } from "react";
 export default function CounterWithMutationTracking() {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
@@ -1426,24 +1439,24 @@ export default function CounterWithMutationTracking() {
   3 => _unwrapped
   4 => state
   5 => y
-  6 => x
-  7 => z
-  8 => _unwrappedJsxExp
+  6 => _unwrappedJsxEl3
+  7 => _unwrappedJsxExp2
+  8 => x
   9 => _unwrappedJsxEl2
-  10 => _unwrappedJsxExp2
-  11 => _unwrappedJsxEl3
-  12 => _unwrappedJsxExp3
+  10 => _unwrappedJsxExp3
+  11 => z
+  12 => _unwrappedJsxExp
   */
   13);
   let _unwrapped = _$unforgetCache[3].v;
   const _segment = () => {
     _unwrapped = useState(0);
   };
-  let x = _$unforgetCache[6].v;
+  let x = _$unforgetCache[8].v;
   const _segment2 = () => {
     x = [];
   };
-  let z = _$unforgetCache[7].v;
+  let z = _$unforgetCache[11].v;
   const _segment3 = () => {
     z = [];
   };
@@ -1451,102 +1464,103 @@ export default function CounterWithMutationTracking() {
   const _segment4 = () => {
     _unwrappedJsxEl2 = <br />;
   };
-  let _unwrappedJsxEl3 = _$unforgetCache[11].v;
-  const _segment5 = () => {
-    _unwrappedJsxEl3 = <br />;
-  };
   let setState = _$unforgetCache[2].v;
-  const _segment6 = () => {
+  const _segment5 = () => {
     setState = _unwrapped[1];
   };
   let state = _$unforgetCache[4].v;
-  const _segment7 = () => {
+  const _segment6 = () => {
     state = _unwrapped[0];
   };
   let y = _$unforgetCache[5].v;
-  const _segment8 = () => {
+  const _segment7 = () => {
     y = state % 2 === 0 ? x : z;
   };
-  const _segment9 = () => {
+  const _segment8 = () => {
     y.push(state);
   };
-  let _unwrappedJsxExp = _$unforgetCache[8].v;
-  const _segment10 = () => {
+  let _unwrappedJsxExp = _$unforgetCache[12].v;
+  const _segment9 = () => {
     _unwrappedJsxExp = y[0];
   };
-  let _unwrappedJsxExp2 = _$unforgetCache[10].v;
-  const _segment11 = () => {
+  let _unwrappedJsxExp2 = _$unforgetCache[7].v;
+  const _segment10 = () => {
     _unwrappedJsxExp2 = JSON.stringify(x);
   };
-  let _unwrappedJsxExp3 = _$unforgetCache[12].v;
-  const _segment12 = () => {
+  let _unwrappedJsxExp3 = _$unforgetCache[10].v;
+  const _segment11 = () => {
     _unwrappedJsxExp3 = JSON.stringify(y);
   };
   let _unwrappedJsxEl = _$unforgetCache[1].v;
-  const _segment13 = () => {
+  const _segment12 = () => {
     _unwrappedJsxEl = <button onClick={() => setState(state + 1)}>Increment</button>;
+  };
+  let _unwrappedJsxEl3 = _$unforgetCache[6].v;
+  const _segment13 = () => {
+    _unwrappedJsxEl3 = <p data-testid="output-printer">
+        x: {_unwrappedJsxExp2}
+        {_unwrappedJsxEl2}
+        y: {_unwrappedJsxExp3}
+      </p>;
   };
   let _unwrappedJsxEl4 = _$unforgetCache[0].v;
   const _segment14 = () => {
     _unwrappedJsxEl4 = <div>
       {_unwrappedJsxEl}
       {_unwrappedJsxExp}
-      {_unwrappedJsxEl2}
-      x: {_unwrappedJsxExp2}
       {_unwrappedJsxEl3}
-      y: {_unwrappedJsxExp3}
     </div>;
   };
   _segment();
   _$unforgetCache[3].e(_unwrapped);
-  if (_$unforgetCache[6].n || y !== _$unforgetCache[5].v || state !== _$unforgetCache[4].v || state !== _$unforgetCache[4].v || z !== _$unforgetCache[7].v || _unwrapped[0] !== _$unforgetCache[3].v[0] || _unwrapped !== _$unforgetCache[3].v) {
+  if (_$unforgetCache[8].n || y !== _$unforgetCache[5].v || state !== _$unforgetCache[4].v || state !== _$unforgetCache[4].v || z !== _$unforgetCache[11].v || _unwrapped[0] !== _$unforgetCache[3].v[0] || _unwrapped !== _$unforgetCache[3].v) {
     _segment2();
-    _$unforgetCache[6].e(x);
+    _$unforgetCache[8].e(x);
   }
-  if (_$unforgetCache[7].n || y !== _$unforgetCache[5].v || state !== _$unforgetCache[4].v || state !== _$unforgetCache[4].v || x !== _$unforgetCache[6].v || _unwrapped[0] !== _$unforgetCache[3].v[0] || _unwrapped !== _$unforgetCache[3].v) {
+  if (_$unforgetCache[11].n || y !== _$unforgetCache[5].v || state !== _$unforgetCache[4].v || x !== _$unforgetCache[8].v || state !== _$unforgetCache[4].v || _unwrapped[0] !== _$unforgetCache[3].v[0] || _unwrapped !== _$unforgetCache[3].v) {
     _segment3();
-    _$unforgetCache[7].e(z);
+    _$unforgetCache[11].e(z);
   }
   if (_$unforgetCache[9].n) {
     _segment4();
     _$unforgetCache[9].e(_unwrappedJsxEl2);
   }
-  if (_$unforgetCache[11].n) {
-    _segment5();
-    _$unforgetCache[11].e(_unwrappedJsxEl3);
-  }
   if (_$unforgetCache[2].n || _unwrapped !== _$unforgetCache[3].v || _unwrapped[1] !== _$unforgetCache[3].v[1]) {
-    _segment6();
+    _segment5();
     _$unforgetCache[2].e(setState);
   }
-  if (_$unforgetCache[4].n || _unwrapped[0] !== _$unforgetCache[3].v[0] || _unwrapped !== _$unforgetCache[3].v || y !== _$unforgetCache[5].v || x !== _$unforgetCache[6].v || z !== _$unforgetCache[7].v) {
-    _segment7();
+  if (_$unforgetCache[4].n || _unwrapped[0] !== _$unforgetCache[3].v[0] || _unwrapped !== _$unforgetCache[3].v || y !== _$unforgetCache[5].v || x !== _$unforgetCache[8].v || z !== _$unforgetCache[11].v) {
+    _segment6();
     _$unforgetCache[4].e(state);
   }
-  if (_$unforgetCache[5].n || state !== _$unforgetCache[4].v || x !== _$unforgetCache[6].v || z !== _$unforgetCache[7].v || y !== _$unforgetCache[5].v || state !== _$unforgetCache[4].v || _unwrapped[0] !== _$unforgetCache[3].v[0] || _unwrapped !== _$unforgetCache[3].v) {
-    _segment8();
+  if (_$unforgetCache[5].n || x !== _$unforgetCache[8].v || state !== _$unforgetCache[4].v || z !== _$unforgetCache[11].v || y !== _$unforgetCache[5].v || state !== _$unforgetCache[4].v || _unwrapped[0] !== _$unforgetCache[3].v[0] || _unwrapped !== _$unforgetCache[3].v) {
+    _segment7();
     _$unforgetCache[5].e(y);
   }
   if (y !== _$unforgetCache[5].v || state !== _$unforgetCache[4].v) {
+    _segment8();
+  }
+  if (_$unforgetCache[12].n || y[0] !== _$unforgetCache[5].v[0]) {
     _segment9();
+    _$unforgetCache[12].e(_unwrappedJsxExp);
   }
-  if (_$unforgetCache[8].n || y[0] !== _$unforgetCache[5].v[0]) {
+  if (_$unforgetCache[7].n || x !== _$unforgetCache[8].v) {
     _segment10();
-    _$unforgetCache[8].e(_unwrappedJsxExp);
+    _$unforgetCache[7].e(_unwrappedJsxExp2);
   }
-  if (_$unforgetCache[10].n || x !== _$unforgetCache[6].v) {
+  if (_$unforgetCache[10].n || y !== _$unforgetCache[5].v) {
     _segment11();
-    _$unforgetCache[10].e(_unwrappedJsxExp2);
-  }
-  if (_$unforgetCache[12].n || y !== _$unforgetCache[5].v) {
-    _segment12();
-    _$unforgetCache[12].e(_unwrappedJsxExp3);
+    _$unforgetCache[10].e(_unwrappedJsxExp3);
   }
   if (_$unforgetCache[1].n || setState !== _$unforgetCache[2].v || state !== _$unforgetCache[4].v) {
-    _segment13();
+    _segment12();
     _$unforgetCache[1].e(_unwrappedJsxEl);
   }
-  if (_$unforgetCache[0].n || _unwrappedJsxEl !== _$unforgetCache[1].v || y !== _$unforgetCache[5].v || x !== _$unforgetCache[6].v || _unwrappedJsxExp !== _$unforgetCache[8].v || _unwrappedJsxEl2 !== _$unforgetCache[9].v || _unwrappedJsxExp2 !== _$unforgetCache[10].v || _unwrappedJsxEl3 !== _$unforgetCache[11].v || _unwrappedJsxExp3 !== _$unforgetCache[12].v) {
+  if (_$unforgetCache[6].n || _unwrappedJsxExp2 !== _$unforgetCache[7].v || _unwrappedJsxEl2 !== _$unforgetCache[9].v || _unwrappedJsxExp3 !== _$unforgetCache[10].v || y !== _$unforgetCache[5].v) {
+    _segment13();
+    _$unforgetCache[6].e(_unwrappedJsxEl3);
+  }
+  if (_$unforgetCache[0].n || _unwrappedJsxEl !== _$unforgetCache[1].v || y !== _$unforgetCache[5].v || _unwrappedJsxEl3 !== _$unforgetCache[6].v || _unwrappedJsxExp !== _$unforgetCache[12].v) {
     _segment14();
     _$unforgetCache[0].e(_unwrappedJsxEl4);
   }

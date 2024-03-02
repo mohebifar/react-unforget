@@ -29,7 +29,6 @@ export function getDeclaredIdentifiersInLVal(
     getDeclaredIdentifiersInLVal(lval.get("left"), identifiers);
   } else {
     console.warn("Unknown LVal type");
-    lval.debug(() => "Unknown LVal type.");
   }
 
   return Array.from(identifiers);

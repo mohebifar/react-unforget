@@ -5,10 +5,6 @@ import { Component } from "../classes/Component";
 import { doesMatchHookName } from "./is-hook-call";
 import { expandArrowFunctionToBlockStatement } from "./expand-arrow-function-to-block-statement";
 
-function doesIdMatchComponentName(name: string) {
-  return /^_?[A-Z]/.test(name);
-}
-
 export function findComponents(program: babel.NodePath<babel.types.Program>) {
   const components: Component[] = [];
 
@@ -81,6 +77,10 @@ export function findComponents(program: babel.NodePath<babel.types.Program>) {
   });
 
   return components;
+}
+
+function doesIdMatchComponentName(name: string) {
+  return /^_?[A-Z]/.test(name);
 }
 
 function isComponentReturnType(node: babel.types.Node | null | undefined) {

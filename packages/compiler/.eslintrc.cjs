@@ -6,5 +6,5 @@ module.exports = {
     project: true,
     tsConfigRootDir: __dirname,
   },
-  ignorePatterns: ["src/fixtures/**/*.js"],
+  ignorePatterns: ["src/tests/fixtures/**/*.js"],
 };

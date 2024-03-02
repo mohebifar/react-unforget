@@ -21,16 +21,23 @@
     "dev": "yarn build --watch",
     "build": "tsup src/main.ts --dts --format cjs,esm --external @babel/parser,@babel/standalone,@babel/traverse,@babel/core",
     "test": "jest",
-    "lint": "eslint src/**/* --max-warnings 15"
+    "lint": "eslint src/**/*.{ts,tsx} --max-warnings 15"
   },
   "devDependencies": {
     "@babel/plugin-syntax-jsx": "^7.23.3",
+    "@babel/preset-env": "^7.24.0",
+    "@babel/preset-react": "^7.23.3",
     "@babel/standalone": "^7.24.0",
     "@react-unforget/eslint-config": "*",
     "@react-unforget/jest-config": "*",
+    "@react-unforget/runtime": "^0.1.0-dev.4",
     "@react-unforget/typescript-config": "*",
+    "@testing-library/react": "^14.2.1",
+    "@testing-library/user-event": "^14.5.2",
     "@types/babel__standalone": "^7.1.7",
     "@types/babel__traverse": "^7.20.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "tsup": "^8.0.2"
   },
   "dependencies": {

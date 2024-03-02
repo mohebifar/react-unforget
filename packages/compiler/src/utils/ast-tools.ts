@@ -134,6 +134,7 @@ export function isChildOfScope(parent: Scope, child: Scope) {
 
   return false;
 }
+
 export function getParentBlockStatement(path: babel.NodePath) {
   return path.findParent((p) =>
     p.isBlockStatement()

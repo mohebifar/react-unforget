@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
 export default function CounterWithEarlyReturnWithoutDirectlyUsingTheVariableInJSX() {
   const [state, setState] = useState(0);
@@ -7,11 +7,13 @@ export default function CounterWithEarlyReturnWithoutDirectlyUsingTheVariableInJ
     return <div>We're inside the early return</div>;
   }
 
+  const newValue = state + 1;
+
   return (
     <div>
       <button onClick={() => setState(state + 1)}>Increment</button>
       <div>
-        <span>Count: {state}</span>
+        <span>Count: {newValue}</span>
       </div>
     </div>
   );

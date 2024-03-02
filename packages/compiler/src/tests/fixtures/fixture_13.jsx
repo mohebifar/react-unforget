@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
 export default function CounterWithMutationTracking() {
   const [state, setState] = useState(0);
@@ -12,10 +12,11 @@ export default function CounterWithMutationTracking() {
     <div>
       <button onClick={() => setState(state + 1)}>Increment</button>
       {y[0]}
-      <br />
-      x: {JSON.stringify(x)}
-      <br />
-      y: {JSON.stringify(y)}
+      <p data-testid="output-printer">
+        x: {JSON.stringify(x)}
+        <br />
+        y: {JSON.stringify(y)}
+      </p>
     </div>
   );
 }

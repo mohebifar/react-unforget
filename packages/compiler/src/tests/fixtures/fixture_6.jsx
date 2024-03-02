@@ -1,8 +1,8 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
 function InnerComponentWithProps({ count, text }) {
   return (
-    <div>
+    <div data-testid="state-printer">
       <span>Count: {count}</span> {text}
     </div>
   );

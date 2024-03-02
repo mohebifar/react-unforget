@@ -6,7 +6,7 @@ import type * as t from "@babel/types";
 import * as fs from "fs";
 import * as path from "path";
 import { visitProgram } from "~/visit-program";
-// @ts-expect-error
+// @ts-expect-error The module has no types
 import babelJsxPlugin from "@babel/plugin-syntax-jsx";
 
 export function transformWithStandalone(input: string) {
@@ -70,7 +70,7 @@ export function parse(input: string, extraPlugins: babel.PluginItem[] = []) {
 }
 
 export function loadFixture(fixturePath: string) {
-  const fixture = path.resolve(__dirname, "../fixtures", fixturePath + ".js");
+  const fixture = path.resolve(__dirname, "../tests/fixtures", fixturePath + ".jsx");
 
   const fileContent = fs.readFileSync(fixture, "utf-8");
 

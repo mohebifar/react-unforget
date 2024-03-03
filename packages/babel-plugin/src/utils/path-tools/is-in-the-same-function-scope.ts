@@ -1,6 +1,6 @@
-import * as babel from "@babel/core";
+import type * as babel from "@babel/core";
 import * as t from "@babel/types";
-import { Scope } from "@babel/traverse";
+import type { Scope } from "@babel/traverse";
 
 // We need this to properly detect if return statements belong to the same function
 export function isInTheSameFunctionScope(

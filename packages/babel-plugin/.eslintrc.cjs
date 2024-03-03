@@ -6,5 +6,12 @@ module.exports = {
     project: true,
     tsConfigRootDir: __dirname,
   },
+  settings: {
+    "import/resolver": {
+      typescript: {
+        project: __dirname,
+      },
+    },
+  },
   ignorePatterns: ["src/tests/fixtures/**/*.tsx"],
 };

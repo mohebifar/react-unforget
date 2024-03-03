@@ -1,12 +1,11 @@
 import * as t from "@babel/types";
-import { ComponentVariable } from "./ComponentVariable";
+import type { AccessorNode } from "~/utils/ast-tools/is-accessor-node";
+import { isAccessorNode } from "~/utils/ast-tools/is-accessor-node";
+import type { ComponentVariable } from "./ComponentVariable";
 
-type AccessorNode =
-  | t.MemberExpression
-  | t.OptionalMemberExpression
-  | t.Identifier
-  | t.PrivateName;
-
+/**
+ * A singly linked list of member expressions
+ */
 export class AccessChainItem {
   public nextComputed = false;
   public right?: AccessChainItem = undefined;
@@ -25,15 +24,6 @@ export class AccessChainItem {
     }
     return currentString;
   }
-}
-
-function isAccessorNode(node: t.Node): node is AccessorNode {
-  return (
-    t.isMemberExpression(node) ||
-    t.isOptionalMemberExpression(node) ||
-    t.isIdentifier(node) ||
-    t.isPrivateName(node)
-  );
 }
 
 // When the variable is used in a member expression, we should optimize comparisons to the last member of member expression as well

@@ -1,5 +1,5 @@
 import type * as babel from "@babel/core";
-import { Binding } from "@babel/traverse";
+import type { Binding } from "@babel/traverse";
 import * as t from "@babel/types";
 import {
   DEFAULT_CACHE_COMMIT_VARIABLE_NAME,
@@ -10,8 +10,7 @@ import {
 import { isControlFlowStatement } from "~/utils/path-tools/control-flow-utils";
 import { isInTheSameFunctionScope } from "~/utils/path-tools/is-in-the-same-function-scope";
 import { isChildOfScope } from "~/utils/scope-tools/is-scope-descendant-of";
-import { getFunctionParent } from "~/utils/path-tools/get-function-parent";
-import { ComponentMutableSegment } from "./ComponentMutableSegment";
+import type { ComponentMutableSegment } from "./ComponentMutableSegment";
 import { ComponentRunnableSegment } from "./ComponentRunnableSegment";
 import { ComponentVariable } from "./ComponentVariable";
 

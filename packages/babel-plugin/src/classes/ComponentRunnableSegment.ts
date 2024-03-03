@@ -1,4 +1,4 @@
-import * as babel from "@babel/core";
+import type * as babel from "@babel/core";
 import * as t from "@babel/types";
 import { convertStatementToSegmentCallable } from "~/utils/micro-transformers/convert-statement-to-segment-callable";
 import { convertDeclarationToAssignments } from "~/utils/micro-transformers/convert-declaration-to-assignments";
@@ -11,13 +11,14 @@ import { getReferencedVariablesInside } from "~/utils/path-tools/get-referenced-
 import { reorderByTopology } from "~/utils/path-tools/reorder-by-topology";
 import { unwrapJsxElements } from "~/utils/micro-transformers/unwrap-jsx-elements";
 import { unwrapJsxExpressions } from "~/utils/micro-transformers/unwrap-jsx-expressions";
-import { Component } from "./Component";
+import type { Component } from "./Component";
+import type {
+  SegmentTransformationResult} from "./ComponentMutableSegment";
 import {
-  ComponentMutableSegment,
-  SegmentTransformationResult,
+  ComponentMutableSegment
 } from "./ComponentMutableSegment";
-import { ComponentSegmentDependency } from "./ComponentSegmentDependency";
-import { ComponentVariable } from "./ComponentVariable";
+import type { ComponentSegmentDependency } from "./ComponentSegmentDependency";
+import type { ComponentVariable } from "./ComponentVariable";
 
 export class ComponentRunnableSegment extends ComponentMutableSegment {
   private blockReturnStatement: babel.NodePath<babel.types.ReturnStatement> | null =

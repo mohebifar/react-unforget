@@ -1,5 +1,5 @@
 import type * as babel from "@babel/core";
-import { Binding } from "@babel/traverse";
+import type { Binding } from "@babel/traverse";
 import * as t from "@babel/types";
 import { convertStatementToSegmentCallable } from "~/utils/micro-transformers/convert-statement-to-segment-callable";
 import { makeCacheEnqueueCallStatement } from "~/utils/ast-factories/make-cache-enqueue-call-statement";
@@ -12,16 +12,17 @@ import {
 } from "~/utils/constants";
 import { findMutatingExpression } from "~/utils/path-tools/find-mutating-expression";
 import { getReferencedVariablesInside } from "~/utils/path-tools/get-referenced-variables-inside";
-import { UnwrappedAssignmentEntry } from "~/utils/micro-transformers/unwrap-pattern-assignment";
+import type { UnwrappedAssignmentEntry } from "~/utils/micro-transformers/unwrap-pattern-assignment";
+import { isForStatementInit } from "~/utils/path-tools/control-flow-utils";
 import { getDeclaredIdentifiersInLVal } from "../utils/path-tools/get-declared-identifiers-in-lval";
-import { Component } from "./Component";
+import type { Component } from "./Component";
+import type {
+  SegmentTransformationResult} from "./ComponentMutableSegment";
 import {
-  ComponentMutableSegment,
-  SegmentTransformationResult,
+  ComponentMutableSegment
 } from "./ComponentMutableSegment";
 import type { ComponentRunnableSegment } from "./ComponentRunnableSegment";
-import { ComponentSegmentDependency } from "./ComponentSegmentDependency";
-import { isForStatementInit } from "~/utils/path-tools/control-flow-utils";
+import type { ComponentSegmentDependency } from "./ComponentSegmentDependency";
 
 export class ComponentVariable extends ComponentMutableSegment {
   private runnableSegmentsMutatingThis = new Set<ComponentMutableSegment>();

@@ -1,5 +1,5 @@
 import * as t from "@babel/types";
-import { ComponentMutableSegment } from "~/classes/ComponentMutableSegment";
+import type { ComponentMutableSegment } from "~/classes/ComponentMutableSegment";
 
 export function makeDependencyCondition(
   mutableSegment: ComponentMutableSegment

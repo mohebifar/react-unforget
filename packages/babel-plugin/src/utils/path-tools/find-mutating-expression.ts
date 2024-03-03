@@ -1,7 +1,7 @@
 import { MUTATING_METHODS } from "../constants";
-import { getDeclaredIdentifiersInLVal } from "./get-declared-identifiers-in-lval";
 import { getLeftmostIdName } from "../ast-tools/get-leftmost-id-name";
 import { getRightmostIdName } from "../ast-tools/get-rightmost-id-name";
+import { getDeclaredIdentifiersInLVal } from "./get-declared-identifiers-in-lval";
 
 export function findMutatingExpression(
   path: babel.NodePath<babel.types.Node>,

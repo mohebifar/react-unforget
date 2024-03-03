@@ -1,4 +1,4 @@
-import * as t from "@babel/types";
+import type * as t from "@babel/types";
 
 export class RightmostIdNotFound extends Error {
   constructor(path: t.Node) {

@@ -1,9 +1,9 @@
+import * as fs from "fs";
+import * as path from "path";
 import * as babel from "@babel/core";
 import * as generateBase from "@babel/generator";
 import traverse from "@babel/traverse";
 import type * as t from "@babel/types";
-import * as fs from "fs";
-import * as path from "path";
 import { visitProgram } from "~/visit-program";
 import babelPlugin from "../main";
 

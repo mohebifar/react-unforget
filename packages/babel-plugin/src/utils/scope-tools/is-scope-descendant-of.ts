@@ -1,4 +1,4 @@
-import { Scope } from "@babel/traverse";
+import type { Scope } from "@babel/traverse";
 
 export function isChildOfScope(parent: Scope, child: Scope) {
   let currentScope = child;

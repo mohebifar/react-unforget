@@ -3,7 +3,8 @@ import * as t from "@babel/types";
 import { makeDependencyCondition } from "~/utils/ast-factories/make-dependency-condition";
 import { DEFAULT_SEGMENT_CALLABLE_VARIABLE_NAME } from "~/utils/constants";
 import { hasHookCall } from "~/utils/path-tools/has-hook-call";
-import { Component } from "./Component";
+import { isAccessorNode } from "~/utils/ast-tools/is-accessor-node";
+import type { Component } from "./Component";
 import type { ComponentRunnableSegment } from "./ComponentRunnableSegment";
 import { ComponentSegmentDependency } from "./ComponentSegmentDependency";
 import type { ComponentVariable } from "./ComponentVariable";
@@ -79,9 +80,13 @@ export abstract class ComponentMutableSegment {
       return;
     }
 
+    if (!isAccessorNode(accessorNode)) {
+      return;
+    }
+
     const componentSegmentDependency = new ComponentSegmentDependency(
       componentVariable,
-      accessorNode as any
+      accessorNode
     );
 
     let alreadyHasDependency = false;

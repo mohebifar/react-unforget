@@ -1,1 +1,1 @@
-# `@react-unforget/babel-plugin`
+# `@react-unforget/compiler`

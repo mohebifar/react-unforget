@@ -2181,6 +2181,23 @@
   resolved "https://registry.yarnpkg.com/@react-hook/passive-layout-effect/-/passive-layout-effect-1.2.1.tgz#c06dac2d011f36d61259aa1c6df4f0d5e28bc55e"
   integrity sha512-IwEphTD75liO8g+6taS+4oqz+nnroocNfWVHWz7j+N+ZO2vYrc6PV1q7GQhuahL0IOR7JccFTsFKQ/mb6iZWAg==
 
+"@react-unforget/babel-plugin@0.1.0-dev.7":
+  version "0.1.0-dev.7"
+  resolved "https://registry.yarnpkg.com/@react-unforget/babel-plugin/-/babel-plugin-0.1.0-dev.7.tgz#b67dbd84490c4a64dbd3c499156cd0b9eabb07ea"
+  integrity sha512-pcmewCS2psDa7wYUj8RbpWIWlMrs6ilMxPAQsc5exnbsqWHl8Etum9/T4mn4lO7w5pXKFH+RvRkoL/ZZ3Oy9pg==
+  dependencies:
+    "@react-unforget/compiler" "0.1.0-dev.8"
+
+"@react-unforget/compiler@0.1.0-dev.8":
+  version "0.1.0-dev.8"
+  resolved "https://registry.yarnpkg.com/@react-unforget/compiler/-/compiler-0.1.0-dev.8.tgz#240475db1456397a865e443f164694f9301b3fdd"
+  integrity sha512-xv4wScobku+3CJpGOodVA2WSqM+QECPiAElUdm2Qci9ynUag/wKsNAVG/5KkAGzE5b2KsmEHD2CE+VQ1l6v1RQ==
+  dependencies:
+    "@babel/helper-validator-identifier" "^7.22.20"
+    "@babel/parser" "^7.24.0"
+    "@babel/traverse" "^7.24.0"
+    "@babel/types" "^7.24.0"
+
 "@rollup/rollup-android-arm-eabi@4.12.0":
   version "4.12.0"
   resolved "https://registry.yarnpkg.com/@rollup/rollup-android-arm-eabi/-/rollup-android-arm-eabi-4.12.0.tgz#38c3abd1955a3c21d492af6b1a1dca4bb1d894d6"

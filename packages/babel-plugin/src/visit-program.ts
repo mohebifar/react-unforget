@@ -8,6 +8,10 @@ import {
 export function visitProgram(path: babel.NodePath<babel.types.Program>) {
   const components = findComponents(path);
 
+  if (components.length === 0) {
+    return;
+  }
+
   components.forEach((component) => {
     component.computeComponentSegments();
     component.applyTransformation();

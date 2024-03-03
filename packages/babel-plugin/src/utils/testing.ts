@@ -1,4 +1,3 @@
-import * as standalone from "@babel/standalone";
 import * as babel from "@babel/core";
 import * as generateBase from "@babel/generator";
 import traverse from "@babel/traverse";
@@ -6,28 +5,14 @@ import type * as t from "@babel/types";
 import * as fs from "fs";
 import * as path from "path";
 import { visitProgram } from "~/visit-program";
+import babelPlugin from "../main";
 
-const babelTransformOptions: babel.TransformOptions = {
-  sourceMaps: "both",
-  presets: [["@babel/preset-react", { runtime: "automatic" }], "jest"],
-  compact: false,
+const babelTransformOptions = {
   plugins: [
     ["@babel/plugin-transform-typescript", { isTSX: true }],
-    {
-      visitor: {
-        Program: (path: babel.NodePath<t.Program>) => {
-          visitProgram(path);
-        },
-      },
-    },
-    ["@babel/plugin-transform-modules-commonjs"],
+    babelPlugin,
   ],
-};
-
-export function transformWithStandalone(input: string) {
-  const { code } = standalone.transform(input, babelTransformOptions)!;
-  return code;
-}
+} satisfies babel.TransformOptions;
 
 export function transformWithCore(input: string) {
   const { code } = babel.transform(input, babelTransformOptions)!;
@@ -37,7 +22,14 @@ export function transformWithCore(input: string) {
 export function transformForJest(input: string, filename: string) {
   const { code } = babel.transformSync(input, {
     ...babelTransformOptions,
+    sourceMaps: "both",
+    compact: false,
+    presets: [["@babel/preset-react", { runtime: "automatic" }], "jest"],
     filename,
+    plugins: [
+      ...babelTransformOptions.plugins,
+      "@babel/plugin-transform-modules-commonjs",
+    ],
   })!;
   return code;
 }

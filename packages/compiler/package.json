@@ -19,7 +19,7 @@
   },
   "scripts": {
     "dev": "yarn build --watch",
-    "build": "tsup src/main.ts --dts --format cjs,esm --external @babel/parser,@babel/standalone,@babel/traverse,@babel/core",
+    "build": "tsup",
     "test": "jest",
     "lint": "eslint src/**/*.{ts,tsx} --max-warnings 15"
   },
@@ -37,6 +37,7 @@
     "@testing-library/user-event": "^14.5.2",
     "@types/babel__standalone": "^7.1.7",
     "@types/babel__traverse": "^7.20.5",
+    "babel-preset-jest": "^29.6.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tsup": "^8.0.2"

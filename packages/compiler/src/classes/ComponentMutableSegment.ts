@@ -1,8 +1,8 @@
 import type * as babel from "@babel/core";
 import * as t from "@babel/types";
-import { makeDependencyCondition } from "~/ast-factories/make-dependency-condition";
+import { makeDependencyCondition } from "~/utils/ast-factories/make-dependency-condition";
 import { DEFAULT_SEGMENT_CALLABLE_VARIABLE_NAME } from "~/utils/constants";
-import { hasHookCall } from "~/utils/is-hook-call";
+import { hasHookCall } from "~/utils/path-tools/has-hook-call";
 import { Component } from "./Component";
 import type { ComponentRunnableSegment } from "./ComponentRunnableSegment";
 import { ComponentSegmentDependency } from "./ComponentSegmentDependency";

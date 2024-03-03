@@ -83,7 +83,7 @@ const config: Config = {
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
   moduleNameMapper: {
     "^~/(.*)$": "<rootDir>/src/$1",
-    "@react-unforget/runtime": "<rootDir>/../runtime/dist/index.cjs"
+    "@react-unforget/runtime": "<rootDir>/../runtime/dist/index.cjs",
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
@@ -168,16 +168,7 @@ const config: Config = {
 
   // A map from regular expressions to paths to transformers
   transform: {
-    "fixture_\\d+\\.jsx?$": [
-      "babel-jest",
-      {
-        presets: [
-          ["@babel/preset-env", { targets: { node: "current" } }],
-          "@babel/preset-react",
-        ],
-        plugins: ["./test-babel-plugin.cjs"],
-      },
-    ],
+    "fixtures/fixture_\\d+\\.tsx?$": "<rootDir>/jestBabelTransformer.cjs",
   },
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation

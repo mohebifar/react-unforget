@@ -1,6 +1,6 @@
 import * as t from "@babel/types";
 import { DEFAULT_SEGMENT_CALLABLE_VARIABLE_NAME } from "~/utils/constants";
-import { unwrapPatternAssignment } from "~/utils/unwrap-pattern-assignment";
+import { unwrapPatternAssignment } from "~/utils/micro-transformers/unwrap-pattern-assignment";
 
 export function convertStatementToSegmentCallable(
   statement: babel.NodePath<babel.types.Statement>,

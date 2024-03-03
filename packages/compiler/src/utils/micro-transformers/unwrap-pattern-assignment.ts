@@ -1,6 +1,6 @@
 import type * as babel from "@babel/core";
 import * as t from "@babel/types";
-import { DEFAULT_UNUSED_VARIABLE_NAME } from "./constants";
+import { DEFAULT_UNUSED_VARIABLE_NAME } from "../constants";
 
 export type UnwrappedAssignmentEntry = {
   id: babel.types.LVal;

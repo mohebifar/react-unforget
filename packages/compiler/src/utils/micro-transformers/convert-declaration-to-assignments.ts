@@ -1,14 +1,19 @@
 import * as t from "@babel/types";
 import { DEFAULT_UNWRAPPED_VARIABLE_NAME } from "~/utils/constants";
-import { unwrapPatternAssignment } from "~/utils/unwrap-pattern-assignment";
+import { unwrapPatternAssignment } from "~/utils/micro-transformers/unwrap-pattern-assignment";
 
-export function declarationToAssignments(
+export function convertDeclarationToAssignments(
   declaration: babel.NodePath<babel.types.VariableDeclaration>,
   kind: "let" | "const" | "var" = "let",
   newVariablesScope = declaration.scope
 ) {
   const result = declaration.get("declarations").map((declarator) => {
-    return declaratorToAssignments(declarator, kind, null, newVariablesScope);
+    return convertDeclaratorToAssignments(
+      declarator,
+      kind,
+      null,
+      newVariablesScope
+    );
   });
 
   return {
@@ -17,7 +22,7 @@ export function declarationToAssignments(
   };
 }
 
-export function declaratorToAssignments(
+export function convertDeclaratorToAssignments(
   declarator: babel.NodePath<babel.types.VariableDeclarator>,
   kind: "let" | "const" | "var" = "let",
   declarationDefaultValue: t.Expression | undefined | null = null,

@@ -1,15 +1,16 @@
 import type * as babel from "@babel/core";
 import { Binding } from "@babel/traverse";
 import * as t from "@babel/types";
-import { isChildOfScope, isControlFlowStatement } from "~/utils/ast-tools";
 import {
   DEFAULT_CACHE_COMMIT_VARIABLE_NAME,
   DEFAULT_CACHE_NULL_VARIABLE_NAME,
   DEFAULT_CACHE_VARIABLE_NAME,
   RUNTIME_MODULE_CREATE_CACHE_HOOK_NAME,
 } from "~/utils/constants";
-import { isInTheSameFunctionScope } from "~/utils/is-in-the-same-function-scope";
-import { getFunctionParent } from "../utils/get-function-parent";
+import { isControlFlowStatement } from "~/utils/path-tools/control-flow-utils";
+import { isInTheSameFunctionScope } from "~/utils/path-tools/is-in-the-same-function-scope";
+import { isChildOfScope } from "~/utils/scope-tools/is-scope-descendant-of";
+import { getFunctionParent } from "~/utils/path-tools/get-function-parent";
 import { ComponentMutableSegment } from "./ComponentMutableSegment";
 import { ComponentRunnableSegment } from "./ComponentRunnableSegment";
 import { ComponentVariable } from "./ComponentVariable";

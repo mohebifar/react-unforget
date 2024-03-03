@@ -1,16 +1,16 @@
 import * as babel from "@babel/core";
 import * as t from "@babel/types";
-import { convertStatementToSegmentCallable } from "~/ast-factories/convert-statement-to-segment-callable";
-import { declarationToAssignments } from "~/ast-factories/declaration-to-assignments";
+import { convertStatementToSegmentCallable } from "~/utils/micro-transformers/convert-statement-to-segment-callable";
+import { convertDeclarationToAssignments } from "~/utils/micro-transformers/convert-declaration-to-assignments";
 import {
   getArgumentOfControlFlowStatement,
   getControlFlowBodies,
   isControlFlowStatement,
-} from "~/utils/ast-tools";
-import { getReferencedVariablesInside } from "~/utils/get-referenced-variables-inside";
-import { reorderByTopology } from "~/utils/reorder-by-topology";
-import { unwrapJsxElements } from "~/utils/unwrap-jsx-elements";
-import { unwrapJsxExpressions } from "~/utils/unwrap-jsx-expressions";
+} from "~/utils/path-tools/control-flow-utils";
+import { getReferencedVariablesInside } from "~/utils/path-tools/get-referenced-variables-inside";
+import { reorderByTopology } from "~/utils/path-tools/reorder-by-topology";
+import { unwrapJsxElements } from "~/utils/micro-transformers/unwrap-jsx-elements";
+import { unwrapJsxExpressions } from "~/utils/micro-transformers/unwrap-jsx-expressions";
 import { Component } from "./Component";
 import {
   ComponentMutableSegment,
@@ -107,7 +107,7 @@ export class ComponentRunnableSegment extends ComponentMutableSegment {
           const loopScope = loopBody.scope;
 
           if (init.isVariableDeclaration()) {
-            const result = declarationToAssignments(init, "let", pathScope);
+            const result = convertDeclarationToAssignments(init, "let", pathScope);
 
             const oldBindings = result.declarations.map((declaration) =>
               loopScope.getBinding(

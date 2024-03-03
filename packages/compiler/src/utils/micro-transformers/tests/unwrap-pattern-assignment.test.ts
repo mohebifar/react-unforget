@@ -1,6 +1,6 @@
 import type * as babel from "@babel/core";
 import * as t from "@babel/types";
-import { generate, parse } from "../testing";
+import { generate, parse } from "../../testing";
 import { unwrapPatternAssignment } from "../unwrap-pattern-assignment";
 
 const parseCodeAndRun = (code: string) => {

@@ -1,5 +1,3 @@
-import { Scope } from "@babel/traverse";
-
 type ControlFlowStatement =
   | babel.NodePath<babel.types.IfStatement>
   | babel.NodePath<babel.types.WhileStatement>
@@ -119,26 +117,6 @@ export function getBlockStatementsOfPath(
       return body.isBlockStatement();
     }
   );
-}
-
-export function isChildOfScope(parent: Scope, child: Scope) {
-  let currentScope = child;
-
-  while (currentScope) {
-    if (currentScope === parent) {
-      return true;
-    }
-
-    currentScope = currentScope.parent;
-  }
-
-  return false;
-}
-
-export function getParentBlockStatement(path: babel.NodePath) {
-  return path.findParent((p) =>
-    p.isBlockStatement()
-  ) as babel.NodePath<babel.types.BlockStatement> | null;
 }
 
 export function isForStatementInit(

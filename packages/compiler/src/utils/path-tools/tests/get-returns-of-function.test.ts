@@ -1,5 +1,5 @@
 import { getReturnsOfFunction } from "../get-returns-of-function";
-import { parse } from "../testing";
+import { parse } from "../../testing";
 
 describe("getReturnTypesOfFunction", () => {
   it("should return the return statement for basic arrow function", () => {

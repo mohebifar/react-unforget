@@ -1,5 +1,5 @@
 import * as t from "@babel/types";
-import { LeftmostIdNotFound } from "./errors/LeftmostIdNotFound";
+import { LeftmostIdNotFound } from "../errors/LeftmostIdNotFound";
 
 export function getLeftmostIdName(
   node: babel.types.LVal | babel.types.Expression

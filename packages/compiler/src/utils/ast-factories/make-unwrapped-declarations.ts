@@ -1,6 +1,6 @@
 import type * as babel from "@babel/core";
 import * as t from "@babel/types";
-import { unwrapPatternAssignment } from "~/utils/unwrap-pattern-assignment";
+import { unwrapPatternAssignment } from "~/utils/micro-transformers/unwrap-pattern-assignment";
 
 export function makeUnwrappedDeclarations(
   id: babel.NodePath<babel.types.LVal>,

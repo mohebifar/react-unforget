@@ -1,19 +1,19 @@
 import type * as babel from "@babel/core";
 import { Binding } from "@babel/traverse";
 import * as t from "@babel/types";
-import { convertStatementToSegmentCallable } from "~/ast-factories/convert-statement-to-segment-callable";
-import { makeCacheEnqueueCallStatement } from "~/ast-factories/make-cache-enqueue-call-statement";
-import { makeUnwrappedDeclarations } from "~/ast-factories/make-unwrapped-declarations";
+import { convertStatementToSegmentCallable } from "~/utils/micro-transformers/convert-statement-to-segment-callable";
+import { makeCacheEnqueueCallStatement } from "~/utils/ast-factories/make-cache-enqueue-call-statement";
+import { makeUnwrappedDeclarations } from "~/utils/ast-factories/make-unwrapped-declarations";
 import {
   DEFAULT_UNWRAPPED_PROPS_VARIABLE_NAME,
   DEFAULT_UNWRAPPED_VARIABLE_NAME,
   RUNTIME_MODULE_CACHE_IS_NOT_SET_PROP_NAME,
   RUNTIME_MODULE_CACHE_VALUE_PROP_NAME,
 } from "~/utils/constants";
-import { findMutatingExpression } from "~/utils/find-mutating-expression";
-import { getReferencedVariablesInside } from "~/utils/get-referenced-variables-inside";
-import { UnwrappedAssignmentEntry } from "~/utils/unwrap-pattern-assignment";
-import { getDeclaredIdentifiersInLVal } from "../utils/get-declared-identifiers-in-lval";
+import { findMutatingExpression } from "~/utils/path-tools/find-mutating-expression";
+import { getReferencedVariablesInside } from "~/utils/path-tools/get-referenced-variables-inside";
+import { UnwrappedAssignmentEntry } from "~/utils/micro-transformers/unwrap-pattern-assignment";
+import { getDeclaredIdentifiersInLVal } from "../utils/path-tools/get-declared-identifiers-in-lval";
 import { Component } from "./Component";
 import {
   ComponentMutableSegment,
@@ -21,7 +21,7 @@ import {
 } from "./ComponentMutableSegment";
 import type { ComponentRunnableSegment } from "./ComponentRunnableSegment";
 import { ComponentSegmentDependency } from "./ComponentSegmentDependency";
-import { isForStatementInit } from "~/utils/ast-tools";
+import { isForStatementInit } from "~/utils/path-tools/control-flow-utils";
 
 export class ComponentVariable extends ComponentMutableSegment {
   private runnableSegmentsMutatingThis = new Set<ComponentMutableSegment>();

@@ -1,5 +1,5 @@
 import * as t from "@babel/types";
-import { findComponents } from "./utils/find-components";
+import { findComponents } from "./utils/path-tools/find-components";
 import {
   RUNTIME_MODULE_CREATE_CACHE_HOOK_NAME,
   RUNTIME_MODULE_NAME,

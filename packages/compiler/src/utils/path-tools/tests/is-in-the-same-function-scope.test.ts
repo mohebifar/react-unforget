@@ -1,6 +1,6 @@
 import * as babel from "@babel/core";
 import { isInTheSameFunctionScope } from "../is-in-the-same-function-scope";
-import { parse } from "../testing";
+import { parse } from "../../testing";
 
 describe("isInTheSameFunctionScope", () => {
   it("basic example", () => {

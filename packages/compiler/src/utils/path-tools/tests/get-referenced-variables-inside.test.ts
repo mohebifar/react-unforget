@@ -1,6 +1,6 @@
 import type * as babel from "@babel/core";
 import { getReferencedVariablesInside } from "../get-referenced-variables-inside";
-import { parse } from "../testing";
+import { parse } from "../../testing";
 
 const parseCodeForTest = (code: string) => {
   const programPath = parse(code);

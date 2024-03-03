@@ -6,40 +6,38 @@ import type * as t from "@babel/types";
 import * as fs from "fs";
 import * as path from "path";
 import { visitProgram } from "~/visit-program";
-// @ts-expect-error The module has no types
-import babelTsPlugin from "@babel/plugin-transform-typescript";
 
-export function transformWithStandalone(input: string) {
-  const { code } = standalone.transform(input, {
-    configFile: false,
-    plugins: [
-      [babelTsPlugin, { isTSX: true }],
-      {
-        visitor: {
-          Program: (path: babel.NodePath<t.Program>) => {
-            visitProgram(path);
-            path.skip();
-          },
+const babelTransformOptions: babel.TransformOptions = {
+  sourceMaps: "both",
+  presets: [["@babel/preset-react", { runtime: "automatic" }], "jest"],
+  compact: false,
+  plugins: [
+    ["@babel/plugin-transform-typescript", { isTSX: true }],
+    {
+      visitor: {
+        Program: (path: babel.NodePath<t.Program>) => {
+          visitProgram(path);
         },
       },
-    ],
-  })!;
+    },
+    ["@babel/plugin-transform-modules-commonjs"],
+  ],
+};
+
+export function transformWithStandalone(input: string) {
+  const { code } = standalone.transform(input, babelTransformOptions)!;
   return code;
 }
 
 export function transformWithCore(input: string) {
-  const { code } = babel.transform(input, {
-    configFile: false,
-    plugins: [
-      [babelTsPlugin, { isTSX: true }],
-      {
-        visitor: {
-          Program: (path: babel.NodePath<t.Program>) => {
-            visitProgram(path);
-          },
-        },
-      },
-    ],
+  const { code } = babel.transform(input, babelTransformOptions)!;
+  return code;
+}
+
+export function transformForJest(input: string, filename: string) {
+  const { code } = babel.transformSync(input, {
+    ...babelTransformOptions,
+    filename,
   })!;
   return code;
 }

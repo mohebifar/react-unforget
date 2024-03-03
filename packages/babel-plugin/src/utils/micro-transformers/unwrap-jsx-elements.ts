@@ -1,6 +1,6 @@
 import type * as babel from "@babel/core";
 import * as t from "@babel/types";
-import type { Component } from "~/classes/Component";
+import type { Component } from "~/models/Component";
 import { DEFAULT_UNWRAPPED_JSX_ELEMENT_VARIABLE_NAME } from "../constants";
 import { getParentBlockStatement } from "../path-tools/get-parent-block-statement";
 import { isInTheSameFunctionScope } from "../path-tools/is-in-the-same-function-scope";

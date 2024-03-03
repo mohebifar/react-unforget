@@ -1,5 +1,5 @@
-import type { ComponentMutableSegment } from "~/classes/ComponentMutableSegment";
-import { CircularDependencyError } from "../errors/CircularDependencyError";
+import type { ComponentMutableSegment } from "~/models/ComponentMutableSegment";
+import { CircularDependencyError } from "~/utils/errors/CircularDependencyError";
 
 type StatementPath = babel.NodePath<babel.types.Statement>;
 

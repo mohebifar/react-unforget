@@ -1,6 +1,6 @@
-import { MUTATING_METHODS } from "../constants";
-import { getLeftmostIdName } from "../ast-tools/get-leftmost-id-name";
-import { getRightmostIdName } from "../ast-tools/get-rightmost-id-name";
+import { MUTATING_METHODS } from "~/utils/constants";
+import { getLeftmostIdName } from "~/utils/ast-tools/get-leftmost-id-name";
+import { getRightmostIdName } from "~/utils/ast-tools/get-rightmost-id-name";
 import { getDeclaredIdentifiersInLVal } from "./get-declared-identifiers-in-lval";
 
 export function findMutatingExpression(

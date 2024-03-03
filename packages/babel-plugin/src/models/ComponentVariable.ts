@@ -14,7 +14,7 @@ import { findMutatingExpression } from "~/utils/path-tools/find-mutating-express
 import { getReferencedVariablesInside } from "~/utils/path-tools/get-referenced-variables-inside";
 import type { UnwrappedAssignmentEntry } from "~/utils/micro-transformers/unwrap-pattern-assignment";
 import { isForStatementInit } from "~/utils/path-tools/control-flow-utils";
-import { getDeclaredIdentifiersInLVal } from "../utils/path-tools/get-declared-identifiers-in-lval";
+import { getDeclaredIdentifiersInLVal } from "~/utils/path-tools/get-declared-identifiers-in-lval";
 import type { Component } from "./Component";
 import type {
   SegmentTransformationResult} from "./ComponentMutableSegment";

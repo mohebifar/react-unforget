@@ -1,5 +1,5 @@
 import type * as babel from "@babel/core";
-import { isHookCall } from "../ast-tools/is-hook-call";
+import { isHookCall } from "~/utils/ast-tools/is-hook-call";
 import { isInTheSameFunctionScope } from "./is-in-the-same-function-scope";
 
 export function hasHookCall(

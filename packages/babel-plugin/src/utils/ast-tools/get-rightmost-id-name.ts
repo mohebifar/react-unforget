@@ -1,5 +1,5 @@
 import * as t from "@babel/types";
-import { RightmostIdNotFound } from "../errors/RightmostIdNotFound";
+import { RightmostIdNotFound } from "~/utils/errors/RightmostIdNotFound";
 
 export function getRightmostIdName(
   node: t.Expression | t.V8IntrinsicIdentifier

@@ -25,6 +25,11 @@ export class Component {
   private cacheCommitIdentifier: t.Identifier;
   private cacheNullIdentifier: t.Identifier;
 
+  private statementsToMutableSegmentMapCache: Map<
+    babel.NodePath<babel.types.Statement>,
+    ComponentMutableSegment
+  > | null = null;
+
   private rootSegment: ComponentRunnableSegment | null = null;
 
   private mapBlockStatementToComponentRunnableSegment = new Map<
@@ -206,10 +211,6 @@ export class Component {
     return runnableSegment;
   }
 
-  isTheFunctionParentOf(path: babel.NodePath<babel.types.Node>) {
-    return getFunctionParent(path) === this.path;
-  }
-
   getComponentVariables() {
     return [...this.componentVariables.values()].filter(
       (componentVariable) => !componentVariable.hasDependencies()
@@ -227,11 +228,6 @@ export class Component {
   getCacheNullIdentifier() {
     return t.cloneNode(this.cacheNullIdentifier);
   }
-
-  private statementsToMutableSegmentMapCache: Map<
-    babel.NodePath<babel.types.Statement>,
-    ComponentMutableSegment
-  > | null = null;
 
   getStatementsToMutableSegmentMap() {
     if (this.statementsToMutableSegmentMapCache) {
@@ -329,28 +325,5 @@ export class Component {
 
   isBindingInComponentScope(binding: Binding) {
     return isChildOfScope(this.path.scope, binding.scope);
-  }
-
-  // --- DEBUGGING ---
-  __debug_getComponentVariables() {
-    return this.componentVariables;
-  }
-
-  __debug_dependencies() {
-    return [
-      ...[
-        ...this.runnableSegments.values(),
-        ...this.componentVariables.values(),
-      ].map((segment) => {
-        return (
-          String(segment.path) +
-          "depends on (" +
-          [...segment.getDependencies().values()]
-            .map((d) => d.componentVariable.name)
-            .join(" , ") +
-          ")"
-        );
-      }),
-    ].join("\n");
   }
 }

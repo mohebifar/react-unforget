@@ -133,22 +133,6 @@ export abstract class ComponentMutableSegment {
     return allDependencies;
   }
 
-  protected filterDependenciesByScope(
-    dependencies: Set<ComponentSegmentDependency>
-  ) {
-    const newDependencies = new Set<ComponentSegmentDependency>(dependencies);
-
-    dependencies.forEach((dependency) => {
-      const isInSameScope = dependency.isInTheScopeOf(this.path);
-
-      if (!isInSameScope) {
-        newDependencies.delete(dependency);
-      }
-    });
-
-    return newDependencies;
-  }
-
   abstract computeDependencyGraph(): void;
 
   abstract get path(): babel.NodePath<babel.types.Node>;
@@ -159,10 +143,6 @@ export abstract class ComponentMutableSegment {
 
   lock() {
     this.cachedDependencies = this.getDependencies();
-  }
-
-  protected makeDependencyCondition() {
-    return makeDependencyCondition(this);
   }
 
   hasHookCall() {
@@ -185,6 +165,73 @@ export abstract class ComponentMutableSegment {
     return (
       this.type === COMPONENT_MUTABLE_SEGMENT_COMPONENT_RUNNABLE_SEGMENT_TYPE
     );
+  }
+
+  getSegmentCallableId() {
+    if (!this.segmentCallableId) {
+      this.segmentCallableId = this.component.path.scope.generateUidIdentifier(
+        DEFAULT_SEGMENT_CALLABLE_VARIABLE_NAME
+      );
+    }
+
+    return this.segmentCallableId;
+  }
+
+  getDependenciesForTransformation() {
+    const dependencies = new Set(this.getDependencies());
+    const visited = new Set<ComponentSegmentDependency>();
+
+    dependencies.forEach((dependency) => {
+      if (!this.dependencies.has(dependency)) {
+        dependencies.delete(dependency);
+      }
+    });
+
+    if (this.isComponentVariable()) {
+      this.filterDependenciesByScope(
+        this.getMutationDependencies(new Set())
+      ).forEach((dependency) => {
+        dependencies.add(dependency);
+      });
+
+      this.component.findDependents(this).forEach((dependent) => {
+        const mutationDependencies =
+          dependent.isComponentVariable() &&
+          dependent.getMutationDependencies();
+        if (mutationDependencies) {
+          for (const dependencyOfMutation of mutationDependencies) {
+            if (visited.has(dependencyOfMutation)) {
+              continue;
+            }
+            if (dependencyOfMutation.componentVariable !== this) {
+              dependencies.add(dependencyOfMutation);
+            }
+          }
+        }
+      });
+    }
+
+    return dependencies;
+  }
+
+  protected makeDependencyCondition() {
+    return makeDependencyCondition(this);
+  }
+
+  protected filterDependenciesByScope(
+    dependencies: Set<ComponentSegmentDependency>
+  ) {
+    const newDependencies = new Set<ComponentSegmentDependency>(dependencies);
+
+    dependencies.forEach((dependency) => {
+      const isInSameScope = dependency.isInTheScopeOf(this.path);
+
+      if (!isInSameScope) {
+        newDependencies.delete(dependency);
+      }
+    });
+
+    return newDependencies;
   }
 
   protected makeSegmentCallStatement(
@@ -246,16 +293,6 @@ export abstract class ComponentMutableSegment {
     return callStatementWithCondition;
   }
 
-  getSegmentCallableId() {
-    if (!this.segmentCallableId) {
-      this.segmentCallableId = this.component.path.scope.generateUidIdentifier(
-        DEFAULT_SEGMENT_CALLABLE_VARIABLE_NAME
-      );
-    }
-
-    return this.segmentCallableId;
-  }
-
   _debug(depth = 0): string {
     const space = "  ".repeat(depth);
     const addedSpace = "  ".repeat(depth + 1);
@@ -269,66 +306,4 @@ export abstract class ComponentMutableSegment {
         .join("\n")
     );
   }
-
-  getDependenciesForTransformation() {
-    const dependencies = new Set(this.getDependencies());
-    const visited = new Set<ComponentSegmentDependency>();
-
-    dependencies.forEach((dependency) => {
-      if (!this.dependencies.has(dependency)) {
-        dependencies.delete(dependency);
-      }
-    });
-
-    if (this.isComponentVariable()) {
-      this.filterDependenciesByScope(
-        this.getMutationDependencies(new Set())
-      ).forEach((dependency) => {
-        dependencies.add(dependency);
-      });
-
-      this.component.findDependents(this).forEach((dependent) => {
-        const mutationDependencies =
-          dependent.isComponentVariable() &&
-          dependent.getMutationDependencies();
-        if (mutationDependencies) {
-          for (const dependencyOfMutation of mutationDependencies) {
-            if (visited.has(dependencyOfMutation)) {
-              continue;
-            }
-            if (dependencyOfMutation.componentVariable !== this) {
-              dependencies.add(dependencyOfMutation);
-            }
-          }
-        }
-      });
-    }
-
-    return dependencies;
-  }
 }
-
-// This function is used to remove the dependencies of the parent from the dependencies of the current segment
-// We perhaps don't need this function anymore
-/*
-function removeParentDependencies(
-  dependencies: Set<ComponentSegmentDependency>,
-  currentSegment: ComponentMutableSegment
-) {
-  const parent = currentSegment.getParent();
-
-  
-
-  if (!parent) {
-    return;
-  }
-
-  const parentDependencies = parent.getDependencies();
-
-  parentDependencies.forEach((dependency) => {
-    dependencies.delete(dependency);
-  });
-
-  removeParentDependencies(dependencies, parent);
-}
-*/

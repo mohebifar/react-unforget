@@ -8,16 +8,16 @@ export function convertStatementToSegmentCallable(
     initialValue,
     cacheNullValue,
     segmentCallableId = statement.scope.generateUidIdentifier(
-      DEFAULT_SEGMENT_CALLABLE_VARIABLE_NAME
+      DEFAULT_SEGMENT_CALLABLE_VARIABLE_NAME,
     ),
   }: {
     initialValue?: t.Expression;
     cacheNullValue?: t.Expression;
     segmentCallableId?: t.Identifier;
-  }
+  },
 ) {
   const parentDeclaration = statement.find((p) =>
-    p.isVariableDeclaration()
+    p.isVariableDeclaration(),
   ) as babel.NodePath<babel.types.VariableDeclaration> | null;
 
   const makeSegmentCallable = (statements: t.Statement[]) => {
@@ -28,10 +28,10 @@ export function convertStatementToSegmentCallable(
           [],
           t.blockStatement(
             statements.concat(
-              cacheNullValue ? [t.returnStatement(cacheNullValue)] : []
-            )
-          )
-        )
+              cacheNullValue ? [t.returnStatement(cacheNullValue)] : [],
+            ),
+          ),
+        ),
       ),
     ]);
   };
@@ -43,7 +43,7 @@ export function convertStatementToSegmentCallable(
       .map((declarator) => {
         return declarator.init
           ? t.expressionStatement(
-              t.assignmentExpression("=", declarator.id, declarator.init)
+              t.assignmentExpression("=", declarator.id, declarator.init),
             )
           : null;
       })
@@ -64,14 +64,14 @@ export function convertStatementToSegmentCallable(
             return unwrapPatternAssignment(declaration.get("id")).map(
               (entry) => {
                 return t.variableDeclarator(entry.id, initialValue);
-              }
+              },
             );
           });
 
         return [
           parentDeclaration,
           parentDeclaration.insertAfter(
-            makeSegmentCallable(assignmentExpressionStatements)
+            makeSegmentCallable(assignmentExpressionStatements),
           ) as babel.NodePath<t.Statement>[],
         ].flat();
       },
@@ -81,7 +81,7 @@ export function convertStatementToSegmentCallable(
       segmentCallableId,
       performTransformation: () => {
         return statement.replaceWith(
-          makeSegmentCallable([statement.node])
+          makeSegmentCallable([statement.node]),
         ) as babel.NodePath<t.Statement>[];
       },
     };

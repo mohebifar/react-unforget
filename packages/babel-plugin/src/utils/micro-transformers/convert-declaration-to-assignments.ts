@@ -5,14 +5,14 @@ import { unwrapPatternAssignment } from "~/utils/micro-transformers/unwrap-patte
 export function convertDeclarationToAssignments(
   declaration: babel.NodePath<babel.types.VariableDeclaration>,
   kind: "let" | "const" | "var" = "let",
-  newVariablesScope = declaration.scope
+  newVariablesScope = declaration.scope,
 ) {
   const result = declaration.get("declarations").map((declarator) => {
     return convertDeclaratorToAssignments(
       declarator,
       kind,
       null,
-      newVariablesScope
+      newVariablesScope,
     );
   });
 
@@ -26,25 +26,25 @@ export function convertDeclaratorToAssignments(
   declarator: babel.NodePath<babel.types.VariableDeclarator>,
   kind: "let" | "const" | "var" = "let",
   declarationDefaultValue: t.Expression | undefined | null = null,
-  newVariablesScope = declarator.scope
+  newVariablesScope = declarator.scope,
 ) {
   const id = declarator.get("id");
   const originalInit = declarator.get("init");
 
   const unwrappedForDeclarations = unwrapPatternAssignment(
     id,
-    declarationDefaultValue
+    declarationDefaultValue,
   );
 
   const declarations = unwrappedForDeclarations.map((item) =>
-    t.variableDeclaration(kind, [t.variableDeclarator(item.id, item.value)])
+    t.variableDeclaration(kind, [t.variableDeclarator(item.id, item.value)]),
   );
 
   let assignmentValue = originalInit.node;
 
   if (declarations.length > 1) {
     const tempVariable = newVariablesScope.generateUidIdentifier(
-      DEFAULT_UNWRAPPED_VARIABLE_NAME
+      DEFAULT_UNWRAPPED_VARIABLE_NAME,
     );
 
     const tempDeclaration = t.variableDeclaration("const", [
@@ -58,7 +58,7 @@ export function convertDeclaratorToAssignments(
 
   const unwrappedForAssignment = unwrapPatternAssignment(
     declarator.get("id"),
-    assignmentValue
+    assignmentValue,
   );
 
   const assignmentExpressions = unwrappedForAssignment
@@ -67,9 +67,9 @@ export function convertDeclaratorToAssignments(
         ? t.assignmentExpression(
             "=",
             item.id,
-            item.value ?? t.identifier("undefined")
+            item.value ?? t.identifier("undefined"),
           )
-        : null
+        : null,
     )
     .filter((v): v is t.AssignmentExpression => Boolean(v));
 

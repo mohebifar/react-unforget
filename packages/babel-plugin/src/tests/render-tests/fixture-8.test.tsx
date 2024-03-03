@@ -16,11 +16,11 @@ describe("Fixture 8 - Simple counter with mutating value", () => {
     await userEvent.click(
       screen.getByRole("button", {
         name: "Increment",
-      })
+      }),
     );
 
     expect(
-      screen.getByText("We're inside the early return")
+      screen.getByText("We're inside the early return"),
     ).toBeInTheDocument();
 
     expect(screen.queryByRole("button")).not.toBeInTheDocument();

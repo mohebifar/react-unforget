@@ -12,10 +12,10 @@ const parseCodeForTest = (code: string) => {
 
 const getFunctionFromBodyPath = (
   programBody: babel.NodePath<babel.types.Statement>[],
-  componentName = "MyComponent"
+  componentName = "MyComponent",
 ) => {
   const fn = programBody.find(
-    (p) => p.isFunctionDeclaration() && p.node.id?.name === componentName
+    (p) => p.isFunctionDeclaration() && p.node.id?.name === componentName,
   ) as babel.NodePath<babel.types.FunctionDeclaration>;
 
   return fn;
@@ -62,7 +62,7 @@ describe("getReferencedVariablesInside", () => {
     expect(bindings).toHaveLength(1);
     expect(bindings[0]?.identifier.name).toStrictEqual("derivedValue");
     expect(bindings[0]?.path).toStrictEqual(
-      fn.get("body.body.0.declarations.0")
+      fn.get("body.body.0.declarations.0"),
     );
   });
 
@@ -83,7 +83,7 @@ describe("getReferencedVariablesInside", () => {
     expect(bindings).toHaveLength(2);
     expect(bindings[0]?.identifier.name).toStrictEqual("derivedValue");
     expect(bindings[0]?.path).toStrictEqual(
-      fn.get("body.body.0.declarations.0")
+      fn.get("body.body.0.declarations.0"),
     );
     expect(bindings[1]?.identifier.name).toStrictEqual("myVariable");
     expect(bindings[1]?.path).toStrictEqual(body.at(0)?.get("declarations.0"));

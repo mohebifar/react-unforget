@@ -5,7 +5,7 @@ import { unwrapPatternAssignment } from "~/utils/micro-transformers/unwrap-patte
 export function makeUnwrappedDeclarations(
   id: babel.NodePath<babel.types.LVal>,
   kind: "const" | "let" | "var",
-  tempVariableId: babel.types.Identifier
+  tempVariableId: babel.types.Identifier,
 ) {
   const unwrappedEntries = unwrapPatternAssignment(id, tempVariableId);
 

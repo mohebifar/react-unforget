@@ -4,7 +4,7 @@ export class CircularDependencyError extends Error {
       "Circular dependency detected - from: " +
         from.toString() +
         " to: " +
-        to.toString()
+        to.toString(),
     );
   }
 }

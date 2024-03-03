@@ -21,7 +21,7 @@ interface Commit {
 }
 
 export const useCreateCache$unforget = <S extends number>(
-  size: S
+  size: S,
 ): [FixedArray<CacheEntry, S>, Commit, UnassignedType] => {
   const valuesRef: MutableRefObject<FixedArray<CacheEntry, S> | null> =
     useRef(null);

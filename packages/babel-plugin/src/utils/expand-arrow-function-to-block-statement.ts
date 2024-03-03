@@ -1,7 +1,7 @@
 import * as t from "@babel/types";
 
 export function expandArrowFunctionToBlockStatement(
-  path: babel.NodePath<t.Function>
+  path: babel.NodePath<t.Function>,
 ) {
   if (!path.isArrowFunctionExpression()) {
     return;
@@ -14,6 +14,6 @@ export function expandArrowFunctionToBlockStatement(
   }
 
   pathBody.replaceWith(
-    t.blockStatement([t.returnStatement(pathBody.node as t.Expression)])
+    t.blockStatement([t.returnStatement(pathBody.node as t.Expression)]),
   );
 }

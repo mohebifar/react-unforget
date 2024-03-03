@@ -4,10 +4,10 @@ import { makeDependencyCondition } from "~/utils/ast-factories/make-dependency-c
 import { DEFAULT_SEGMENT_CALLABLE_VARIABLE_NAME } from "~/utils/constants";
 import { hasHookCall } from "~/utils/path-tools/has-hook-call";
 import { isAccessorNode } from "~/utils/ast-tools/is-accessor-node";
-import type { Component } from "./Component";
+import type { Component } from "../Component";
 import type { ComponentRunnableSegment } from "./ComponentRunnableSegment";
-import { ComponentSegmentDependency } from "./ComponentSegmentDependency";
-import type { ComponentVariable } from "./ComponentVariable";
+import { SegmentDependency } from "./SegmentDependency";
+import type { ComponentVariableSegment } from "./ComponentVariableSegment";
 
 export const COMPONENT_MUTABLE_SEGMENT_COMPONENT_UNSET_TYPE = "Unset";
 export const COMPONENT_MUTABLE_SEGMENT_COMPONENT_VARIABLE_TYPE =
@@ -29,19 +29,19 @@ export type SegmentTransformationResult = {
   updateCache?: babel.types.Statement | null;
 } | null;
 
-export abstract class ComponentMutableSegment {
+export abstract class ComponentSegment {
   private segmentCallableId: t.Identifier | null = null;
   protected appliedTransformation = false;
 
   // Mutable code segments that this depends on this
-  protected dependencies = new Set<ComponentSegmentDependency>();
+  protected dependencies = new Set<SegmentDependency>();
 
   // Mutable code segments that are children of this
-  protected children = new Set<ComponentMutableSegment>();
+  protected children = new Set<ComponentSegment>();
 
-  protected parent: ComponentMutableSegment | null = null;
+  protected parent: ComponentSegment | null = null;
 
-  private cachedDependencies: Set<ComponentSegmentDependency> | null = null;
+  private cachedDependencies: Set<SegmentDependency> | null = null;
 
   getParent() {
     return this.parent;
@@ -49,29 +49,32 @@ export abstract class ComponentMutableSegment {
 
   constructor(
     public component: Component,
-    parent: ComponentMutableSegment | null = null,
-    protected type: ComponentMutableSegmentType = COMPONENT_MUTABLE_SEGMENT_COMPONENT_UNSET_TYPE
+    parent: ComponentSegment | null = null,
+    protected type: ComponentMutableSegmentType = COMPONENT_MUTABLE_SEGMENT_COMPONENT_UNSET_TYPE,
   ) {
     if (parent) {
       this.setParent(parent);
     }
   }
 
-  setParent(parent: ComponentMutableSegment | null) {
+  setParent(parent: ComponentSegment | null) {
     this.parent?.removeChild(this);
     this.parent = parent;
     parent?.addChild(this);
   }
 
-  removeChild(child: ComponentMutableSegment) {
+  removeChild(child: ComponentSegment) {
     this.children.delete(child);
   }
 
-  addChild(child: ComponentMutableSegment) {
+  addChild(child: ComponentSegment) {
     this.children.add(child);
   }
 
-  addDependency(componentVariable: ComponentVariable, accessorNode: t.Node) {
+  addDependency(
+    componentVariable: ComponentVariableSegment,
+    accessorNode: t.Node,
+  ) {
     if (this.isComponentRunnableSegment() && this.isRoot()) {
       return;
     }
@@ -84,9 +87,9 @@ export abstract class ComponentMutableSegment {
       return;
     }
 
-    const componentSegmentDependency = new ComponentSegmentDependency(
+    const componentSegmentDependency = new SegmentDependency(
       componentVariable,
-      accessorNode
+      accessorNode,
     );
 
     let alreadyHasDependency = false;
@@ -111,7 +114,7 @@ export abstract class ComponentMutableSegment {
     return this.dependencies.size > 0;
   }
 
-  getDependencies(visited = new Set<ComponentSegmentDependency>()) {
+  getDependencies(visited = new Set<SegmentDependency>()) {
     if (this.cachedDependencies) {
       return this.cachedDependencies;
     }
@@ -156,13 +159,13 @@ export abstract class ComponentMutableSegment {
 
   getParentStatement() {
     const parentStatement = this.path.find(
-      (p) => p.isStatement() && p.parentPath.isBlockStatement()
+      (p) => p.isStatement() && p.parentPath.isBlockStatement(),
     ) as babel.NodePath<babel.types.Statement> | null;
 
     return parentStatement;
   }
 
-  isComponentVariable(): this is ComponentVariable {
+  isComponentVariable(): this is ComponentVariableSegment {
     return this.type === COMPONENT_MUTABLE_SEGMENT_COMPONENT_VARIABLE_TYPE;
   }
 
@@ -175,7 +178,7 @@ export abstract class ComponentMutableSegment {
   getSegmentCallableId() {
     if (!this.segmentCallableId) {
       this.segmentCallableId = this.component.path.scope.generateUidIdentifier(
-        DEFAULT_SEGMENT_CALLABLE_VARIABLE_NAME
+        DEFAULT_SEGMENT_CALLABLE_VARIABLE_NAME,
       );
     }
 
@@ -184,7 +187,7 @@ export abstract class ComponentMutableSegment {
 
   getDependenciesForTransformation() {
     const dependencies = new Set(this.getDependencies());
-    const visited = new Set<ComponentSegmentDependency>();
+    const visited = new Set<SegmentDependency>();
 
     dependencies.forEach((dependency) => {
       if (!this.dependencies.has(dependency)) {
@@ -194,7 +197,7 @@ export abstract class ComponentMutableSegment {
 
     if (this.isComponentVariable()) {
       this.filterDependenciesByScope(
-        this.getMutationDependencies(new Set())
+        this.getMutationDependencies(new Set()),
       ).forEach((dependency) => {
         dependencies.add(dependency);
       });
@@ -223,10 +226,8 @@ export abstract class ComponentMutableSegment {
     return makeDependencyCondition(this);
   }
 
-  protected filterDependenciesByScope(
-    dependencies: Set<ComponentSegmentDependency>
-  ) {
-    const newDependencies = new Set<ComponentSegmentDependency>(dependencies);
+  protected filterDependenciesByScope(dependencies: Set<SegmentDependency>) {
+    const newDependencies = new Set<SegmentDependency>(dependencies);
 
     dependencies.forEach((dependency) => {
       const isInSameScope = dependency.isInTheScopeOf(this.path);
@@ -240,7 +241,7 @@ export abstract class ComponentMutableSegment {
   }
 
   protected makeSegmentCallStatement(
-    transformation: SegmentTransformationResult
+    transformation: SegmentTransformationResult,
   ) {
     if (!transformation) {
       return null;
@@ -263,7 +264,7 @@ export abstract class ComponentMutableSegment {
       updateStatements.push(
         t.variableDeclaration("const", [
           t.variableDeclarator(customCallVariable, callSegmentCallable),
-        ])
+        ]),
       );
 
       updateStatements.push(
@@ -272,10 +273,10 @@ export abstract class ComponentMutableSegment {
           t.binaryExpression(
             "!==",
             customCallVariable,
-            this.component.getCacheNullIdentifier()
+            this.component.getCacheNullIdentifier(),
           ),
-          t.blockStatement([t.returnStatement(customCallVariable)])
-        )
+          t.blockStatement([t.returnStatement(customCallVariable)]),
+        ),
       );
     } else {
       updateStatements.push(t.expressionStatement(callSegmentCallable));
@@ -290,7 +291,7 @@ export abstract class ComponentMutableSegment {
         ? [
             t.ifStatement(
               dependencyConditions,
-              t.blockStatement(updateStatements)
+              t.blockStatement(updateStatements),
             ),
           ]
         : updateStatements;

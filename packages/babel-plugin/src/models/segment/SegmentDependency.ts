@@ -1,7 +1,7 @@
 import * as t from "@babel/types";
 import type { AccessorNode } from "~/utils/ast-tools/is-accessor-node";
 import { isAccessorNode } from "~/utils/ast-tools/is-accessor-node";
-import type { ComponentVariable } from "./ComponentVariable";
+import type { ComponentVariableSegment } from "./ComponentVariableSegment";
 
 /**
  * A singly linked list of member expressions
@@ -12,7 +12,7 @@ export class AccessChainItem {
 
   constructor(
     public id: string,
-    public idExpression: t.Expression
+    public idExpression: t.Expression,
   ) {}
 
   toString() {
@@ -27,12 +27,12 @@ export class AccessChainItem {
 }
 
 // When the variable is used in a member expression, we should optimize comparisons to the last member of member expression as well
-export class ComponentSegmentDependency {
+export class SegmentDependency {
   private root: AccessChainItem;
 
   constructor(
-    public componentVariable: ComponentVariable,
-    public accessorNode: AccessorNode
+    public componentVariable: ComponentVariableSegment,
+    public accessorNode: AccessorNode,
   ) {
     let currentAccessChainItem: AccessChainItem | null = null;
 
@@ -91,7 +91,7 @@ export class ComponentSegmentDependency {
       } else if (t.isIdentifier(currentAccessorNode)) {
         newAccessChainItem = new AccessChainItem(
           currentAccessorNode.name,
-          currentAccessorNode
+          currentAccessorNode,
         );
 
         currentAccessorNode = null;
@@ -121,7 +121,7 @@ export class ComponentSegmentDependency {
     return this.root.toString();
   }
 
-  equals(other: ComponentSegmentDependency) {
+  equals(other: SegmentDependency) {
     return (
       this.componentVariable === other.componentVariable &&
       this.stringify() === other.stringify()
@@ -153,7 +153,7 @@ export class ComponentSegmentDependency {
 
   isInTheScopeOf(path: babel.NodePath<t.Node>) {
     const isInSameScope = Object.values(path.scope.getAllBindings()).some(
-      (binding) => binding === this.componentVariable.binding
+      (binding) => binding === this.componentVariable.binding,
     );
 
     return isInSameScope;

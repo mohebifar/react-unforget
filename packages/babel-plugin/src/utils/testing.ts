@@ -63,7 +63,7 @@ export function loadFixture(fixturePath: string) {
   const fixture = path.resolve(
     __dirname,
     "../tests/fixtures",
-    fixturePath + ".tsx"
+    fixturePath + ".tsx",
   );
 
   const fileContent = fs.readFileSync(fixture, "utf-8");

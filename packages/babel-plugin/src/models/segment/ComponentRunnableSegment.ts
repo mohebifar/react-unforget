@@ -11,23 +11,20 @@ import { getReferencedVariablesInside } from "~/utils/path-tools/get-referenced-
 import { reorderByTopology } from "~/utils/path-tools/reorder-by-topology";
 import { unwrapJsxElements } from "~/utils/micro-transformers/unwrap-jsx-elements";
 import { unwrapJsxExpressions } from "~/utils/micro-transformers/unwrap-jsx-expressions";
-import type { Component } from "./Component";
-import type {
-  SegmentTransformationResult} from "./ComponentMutableSegment";
-import {
-  ComponentMutableSegment
-} from "./ComponentMutableSegment";
-import type { ComponentSegmentDependency } from "./ComponentSegmentDependency";
-import type { ComponentVariable } from "./ComponentVariable";
+import type { Component } from "../Component";
+import type { SegmentTransformationResult } from "./ComponentSegment";
+import { ComponentSegment } from "./ComponentSegment";
+import type { SegmentDependency } from "./SegmentDependency";
+import type { ComponentVariableSegment } from "./ComponentVariableSegment";
 
-export class ComponentRunnableSegment extends ComponentMutableSegment {
+export class ComponentRunnableSegment extends ComponentSegment {
   private blockReturnStatement: babel.NodePath<babel.types.ReturnStatement> | null =
     null;
 
   constructor(
     component: Component,
-    parent: ComponentMutableSegment | null = null,
-    private statement: babel.NodePath<babel.types.Statement>
+    parent: ComponentSegment | null = null,
+    private statement: babel.NodePath<babel.types.Statement>,
   ) {
     super(component, parent, "ComponentRunnableSegment");
   }
@@ -41,19 +38,19 @@ export class ComponentRunnableSegment extends ComponentMutableSegment {
       this.blockReturnStatement ||
         Array.from(this.children).some(
           (child) =>
-            child.isComponentRunnableSegment() && child.hasReturnStatement
-        )
+            child.isComponentRunnableSegment() && child.hasReturnStatement,
+        ),
     );
   }
 
-  getDependencies(visited = new Set<ComponentSegmentDependency>()) {
+  getDependencies(visited = new Set<SegmentDependency>()) {
     const allDependencies = new Set(super.getDependencies(visited));
 
     return this.filterDependenciesByScope(allDependencies);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  markAsMutating(_mutater: ComponentVariable) {
+  markAsMutating(_mutater: ComponentVariableSegment) {
     const path = this.path;
 
     const referencedVariables = getReferencedVariablesInside(path);
@@ -78,10 +75,10 @@ export class ComponentRunnableSegment extends ComponentMutableSegment {
         const body = path.get("body");
         for (const child of body) {
           jsxTransormations.push(
-            unwrapJsxExpressions(child, this.component, path)
+            unwrapJsxExpressions(child, this.component, path),
           );
           jsxTransormations.push(
-            unwrapJsxElements(child, this.component, path)
+            unwrapJsxElements(child, this.component, path),
           );
         }
         jsxTransormations.forEach((apply) => apply());
@@ -92,11 +89,11 @@ export class ComponentRunnableSegment extends ComponentMutableSegment {
       for (const child of body) {
         const controlFlowBodies = getControlFlowBodies(child);
         const controlFlowReturnWithoutBlock = controlFlowBodies.find(
-          (body) => body && body.isReturnStatement()
+          (body) => body && body.isReturnStatement(),
         ) as babel.NodePath<babel.types.ReturnStatement> | null;
 
         controlFlowReturnWithoutBlock?.replaceWith(
-          t.blockStatement([controlFlowReturnWithoutBlock.node])
+          t.blockStatement([controlFlowReturnWithoutBlock.node]),
         );
 
         // Convert the for init variable to a scope variable
@@ -108,19 +105,23 @@ export class ComponentRunnableSegment extends ComponentMutableSegment {
           const loopScope = loopBody.scope;
 
           if (init.isVariableDeclaration()) {
-            const result = convertDeclarationToAssignments(init, "let", pathScope);
+            const result = convertDeclarationToAssignments(
+              init,
+              "let",
+              pathScope,
+            );
 
             const oldBindings = result.declarations.map((declaration) =>
               loopScope.getBinding(
-                (declaration.declarations[0]!.id as t.Identifier).name
-              )
+                (declaration.declarations[0]!.id as t.Identifier).name,
+              ),
             );
 
             const newPaths = child.insertBefore(result.declarations);
             init.replaceWith(
               result.assignmentExpressions.length > 1
                 ? t.sequenceExpression(result.assignmentExpressions)
-                : result.assignmentExpressions[0]!
+                : result.assignmentExpressions[0]!,
             );
 
             newPaths.forEach((newPath, index) => {
@@ -191,7 +192,7 @@ export class ComponentRunnableSegment extends ComponentMutableSegment {
 
       if (shouldScanForDependencies) {
         const allBindingsOfComponent = Object.values(
-          componentScope.getAllBindings()
+          componentScope.getAllBindings(),
         ).filter((binding) => binding.scope === componentScope);
 
         const referencedVariables = getReferencedVariablesInside(path);
@@ -201,7 +202,7 @@ export class ComponentRunnableSegment extends ComponentMutableSegment {
             if (dependency) {
               this.addDependency(
                 dependency,
-                t.identifier(binding.identifier.name)
+                t.identifier(binding.identifier.name),
               );
             }
           }
@@ -213,7 +214,7 @@ export class ComponentRunnableSegment extends ComponentMutableSegment {
   applyTransformation() {
     const path = this.path;
 
-    const visited = new Set<ComponentMutableSegment>();
+    const visited = new Set<ComponentSegment>();
 
     const transformationsToPerform: (() =>
       | babel.NodePath<t.Statement>[]
@@ -247,7 +248,7 @@ export class ComponentRunnableSegment extends ComponentMutableSegment {
           const callStatement = this.makeSegmentCallStatement(transformation);
 
           transformationsToPerform.push(() =>
-            transformation.performTransformation()
+            transformation.performTransformation(),
           );
 
           if (callStatement) {
@@ -255,7 +256,7 @@ export class ComponentRunnableSegment extends ComponentMutableSegment {
           }
         } else if (statement && t.isReturnStatement(statement.node)) {
           const callCommit = t.expressionStatement(
-            t.callExpression(this.component.getCacheCommitIdentifier(), [])
+            t.callExpression(this.component.getCacheCommitIdentifier(), []),
           );
 
           callables.push(callCommit);
@@ -267,7 +268,7 @@ export class ComponentRunnableSegment extends ComponentMutableSegment {
 
       const newNodes = transformationsToPerform
         .flatMap(
-          (transformation) => transformation()?.map(({ node }) => node) ?? []
+          (transformation) => transformation()?.map(({ node }) => node) ?? [],
         )
         .concat(callables);
 

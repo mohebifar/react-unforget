@@ -12,13 +12,13 @@ describe("Fixture 7 - Counter with early return", () => {
     render(<TestComponent />);
 
     expect(
-      screen.getByText("We're inside the early return")
+      screen.getByText("We're inside the early return"),
     ).toBeInTheDocument();
 
     await userEvent.click(
       screen.getByRole("button", {
         name: "Increment",
-      })
+      }),
     );
 
     expect(screen.getByText("Count: 1")).toBeInTheDocument();
@@ -26,17 +26,17 @@ describe("Fixture 7 - Counter with early return", () => {
     await userEvent.click(
       screen.getByRole("button", {
         name: "Increment",
-      })
+      }),
     );
 
     expect(
-      screen.getByText("We're inside the early return")
+      screen.getByText("We're inside the early return"),
     ).toBeInTheDocument();
 
     await userEvent.click(
       screen.getByRole("button", {
         name: "Increment",
-      })
+      }),
     );
 
     expect(screen.getByText("Count: 3")).toBeInTheDocument();

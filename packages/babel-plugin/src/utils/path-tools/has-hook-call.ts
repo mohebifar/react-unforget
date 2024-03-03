@@ -4,7 +4,7 @@ import { isInTheSameFunctionScope } from "./is-in-the-same-function-scope";
 
 export function hasHookCall(
   path: babel.NodePath<babel.types.Node>,
-  componentPath: babel.NodePath<babel.types.Function>
+  componentPath: babel.NodePath<babel.types.Function>,
 ) {
   let hasHookCall = false;
   path.traverse({

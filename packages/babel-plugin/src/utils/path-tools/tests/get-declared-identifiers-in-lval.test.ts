@@ -5,7 +5,7 @@ import { parse } from "../../testing";
 const parseCodeAndRun = (code: string) => {
   const path = parse(code);
   return getDeclaredIdentifiersInLVal(
-    path.get("body.0.declarations.0.id") as babel.NodePath<babel.types.LVal>
+    path.get("body.0.declarations.0.id") as babel.NodePath<babel.types.LVal>,
   );
 };
 
@@ -50,7 +50,7 @@ describe("getDeclaredIdentifiersInLVal", () => {
             testKey1: testValue = defaultVal,
             testKey2,
             testValue3: [l, m, n]}
-        ] = useValue();`
+        ] = useValue();`,
     );
 
     expect(ids).toStrictEqual([

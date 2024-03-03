@@ -12,11 +12,11 @@ describe("isInTheSameFunctionScope", () => {
 
     const testFn = path.get("body.0") as babel.NodePath<babel.types.Function>;
     const returnStatement = testFn.get(
-      "body.body.0"
+      "body.body.0",
     ) as babel.NodePath<babel.types.ReturnStatement>;
 
     expect(isInTheSameFunctionScope(returnStatement, testFn)).toStrictEqual(
-      true
+      true,
     );
   });
 
@@ -31,11 +31,11 @@ function testFunction() {
 
     const testFn = path.get("body.0") as babel.NodePath<babel.types.Function>;
     const returnStatement = testFn.get(
-      "body.body.0.consequent.body.0"
+      "body.body.0.consequent.body.0",
     ) as babel.NodePath<babel.types.ReturnStatement>;
 
     expect(isInTheSameFunctionScope(returnStatement, testFn)).toStrictEqual(
-      true
+      true,
     );
   });
 
@@ -53,24 +53,24 @@ function testFunction() {
 
     const testFn = path.get("body.0") as babel.NodePath<babel.types.Function>;
     const callbackFn = testFn.get(
-      "body.body.0.declarations.0.init"
+      "body.body.0.declarations.0.init",
     ) as babel.NodePath<babel.types.ArrowFunctionExpression>;
     const returnStatementInCallback = callbackFn.get(
-      "body.body.0"
+      "body.body.0",
     ) as babel.NodePath<babel.types.ReturnStatement>;
 
     const returnStatement = testFn.get(
-      "body.body.1.consequent.body.0"
+      "body.body.1.consequent.body.0",
     ) as babel.NodePath<babel.types.ReturnStatement>;
 
     expect(isInTheSameFunctionScope(returnStatement, testFn)).toStrictEqual(
-      true
+      true,
     );
     expect(
-      isInTheSameFunctionScope(returnStatementInCallback, testFn)
+      isInTheSameFunctionScope(returnStatementInCallback, testFn),
     ).toStrictEqual(false);
     expect(
-      isInTheSameFunctionScope(returnStatementInCallback, callbackFn)
+      isInTheSameFunctionScope(returnStatementInCallback, callbackFn),
     ).toStrictEqual(true);
   });
 });

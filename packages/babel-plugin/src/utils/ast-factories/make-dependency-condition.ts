@@ -1,13 +1,13 @@
 import * as t from "@babel/types";
-import type { ComponentMutableSegment } from "~/models/ComponentMutableSegment";
+import type { ComponentSegment } from "~/models/segment/ComponentSegment";
 
 export function makeDependencyCondition(
-  mutableSegment: ComponentMutableSegment
+  mutableSegment: ComponentSegment,
 ): t.Expression | null {
   const dependencies = mutableSegment.getDependenciesForTransformation();
 
   const eligibleForConditionalRun = Array.from(dependencies.values()).every(
-    (dependency) => !dependency.componentVariable.isForLoopArgumentVariable()
+    (dependency) => !dependency.componentVariable.isForLoopArgumentVariable(),
   );
 
   if (!eligibleForConditionalRun) {
@@ -31,10 +31,10 @@ export function makeDependencyCondition(
 
     comparisonTuples.add([
       dependency.getMemberExpression(
-        t.identifier(dependency.componentVariable.name)
+        t.identifier(dependency.componentVariable.name),
       ),
       dependency.getMemberExpression(
-        dependency.componentVariable.getCacheValueAccessExpression()
+        dependency.componentVariable.getCacheValueAccessExpression(),
       ),
     ]);
   });
@@ -52,6 +52,6 @@ export function makeDependencyCondition(
         ? t.logicalExpression("||", condition, binaryExpression)
         : binaryExpression;
     },
-    isNotSetCondition as babel.types.Expression | null
+    isNotSetCondition as babel.types.Expression | null,
   );
 }

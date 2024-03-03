@@ -8,7 +8,7 @@ describe("Component fixtures", () => {
         const code = transformWithCore(loadFixture(fixtureName));
 
         expect(code).toMatchSnapshot();
-      }
+      },
     );
   });
 });

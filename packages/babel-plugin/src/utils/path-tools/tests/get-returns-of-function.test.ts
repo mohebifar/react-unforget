@@ -10,7 +10,7 @@ const MyComponent = () => {
 `);
 
     const returns = getReturnsOfFunction(
-      path.get("body.0.declarations.0.init") as any
+      path.get("body.0.declarations.0.init") as any,
     );
 
     expect(returns).toHaveLength(1);
@@ -28,7 +28,7 @@ const MyComponent = () => {
 `);
 
     const returns = getReturnsOfFunction(
-      path.get("body.0.declarations.0.init") as any
+      path.get("body.0.declarations.0.init") as any,
     );
 
     expect(returns).toHaveLength(2);
@@ -52,7 +52,7 @@ const MyComponent = () => {
 `);
 
     const returns = getReturnsOfFunction(
-      path.get("body.0.declarations.0.init") as any
+      path.get("body.0.declarations.0.init") as any,
     );
 
     expect(returns).toHaveLength(2);

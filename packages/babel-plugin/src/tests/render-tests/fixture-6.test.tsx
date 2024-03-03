@@ -18,22 +18,22 @@ describe("Fixture 6 - Counter with extra component and mutation tracking", () =>
     const statePrinterElement = screen.getByTestId("state-printer");
 
     expect(statePrinterElement).toHaveTextContent(
-      "Count: 0 The number is: even"
+      "Count: 0 The number is: even",
     );
 
     await userEvent.click(incrementButton);
     expect(statePrinterElement).toHaveTextContent(
-      "Count: 1 The number is: odd"
+      "Count: 1 The number is: odd",
     );
 
     await userEvent.click(incrementButton);
     expect(statePrinterElement).toHaveTextContent(
-      "Count: 2 The number is: even"
+      "Count: 2 The number is: even",
     );
 
     await userEvent.click(incrementButton);
     expect(statePrinterElement).toHaveTextContent(
-      "Count: 3 The number is: odd"
+      "Count: 3 The number is: odd",
     );
   });
 });

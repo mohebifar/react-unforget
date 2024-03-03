@@ -5,7 +5,7 @@ import { getDeclaredIdentifiersInLVal } from "./get-declared-identifiers-in-lval
 
 export function findMutatingExpression(
   path: babel.NodePath<babel.types.Node>,
-  name: string
+  name: string,
 ) {
   const result = path.find((innerPath) => {
     if (innerPath.isStatement()) {

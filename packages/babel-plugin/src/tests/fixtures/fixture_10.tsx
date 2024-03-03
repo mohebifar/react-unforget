@@ -10,7 +10,7 @@ const fetchUser = async () => {
 
 const fetchUserFollowers = async () => {
   const response = await fetch(
-    "https://api.github.com/users/mohebifar/followers"
+    "https://api.github.com/users/mohebifar/followers",
   );
   if (!response.ok) {
     throw new Error("Network response was not ok");

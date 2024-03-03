@@ -20,7 +20,7 @@ export function getFunctionParent(path: babel.NodePath<babel.types.Node>) {
 
   if (parent?.isBlockStatement()) {
     return parent.parentPath.get(
-      "init"
+      "init",
     ) as babel.NodePath<babel.types.Function>;
   }
 }

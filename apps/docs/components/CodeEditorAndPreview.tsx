@@ -38,7 +38,7 @@ export const CodeEditorAndPreview = memo(
       (newCode: string) => {
         updateCurrentFileRef.current(newCode);
       },
-      [updateCurrentFileRef]
+      [updateCurrentFileRef],
     );
 
     useEffect(() => {
@@ -102,5 +102,5 @@ export const CodeEditorAndPreview = memo(
         />
       </div>
     );
-  }
+  },
 );

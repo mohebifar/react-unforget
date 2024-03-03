@@ -2,7 +2,7 @@ import * as t from "@babel/types";
 import { LeftmostIdNotFound } from "~/utils/errors/LeftmostIdNotFound";
 
 export function getLeftmostIdName(
-  node: babel.types.LVal | babel.types.Expression
+  node: babel.types.LVal | babel.types.Expression,
 ): string {
   if (t.isMemberExpression(node) || t.isOptionalMemberExpression(node)) {
     const object = node.object;

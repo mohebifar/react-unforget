@@ -9,9 +9,9 @@ const parseCodeAndRun = (code: string) => {
     path.get("body.0.declarations.0.id") as babel.NodePath<babel.types.LVal>,
     (
       path.get(
-        "body.0.declarations.0.init"
+        "body.0.declarations.0.init",
       ) as babel.NodePath<babel.types.Expression>
-    ).node
+    ).node,
   );
 
   const newAstWithVarDeclaration = newAst.map((entry) => {
@@ -26,20 +26,20 @@ const parseCodeAndRun = (code: string) => {
 describe("unwrapPatternAssignment", () => {
   it("with basic identifier", () => {
     expect(parseCodeAndRun(`const val = foo;`)).toStrictEqual(
-      `const val = foo;`
+      `const val = foo;`,
     );
   });
 
   describe("with array pattern", () => {
     it("basic", () => {
       expect(parseCodeAndRun(`const [a] = foo;`)).toStrictEqual(
-        `const a = foo[0];`
+        `const a = foo[0];`,
       );
     });
 
     it("with value assignment", () => {
       expect(parseCodeAndRun(`const [a = 1] = foo;`)).toStrictEqual(
-        `const a = foo[0] === void 0 ? 1 : foo[0];`
+        `const a = foo[0] === void 0 ? 1 : foo[0];`,
       );
     });
 
@@ -47,7 +47,7 @@ describe("unwrapPatternAssignment", () => {
       expect(parseCodeAndRun(`const [a, b, c] = foo;`)).toStrictEqual(
         `const a = foo[0];
 const b = foo[1];
-const c = foo[2];`
+const c = foo[2];`,
       );
     });
 
@@ -55,7 +55,7 @@ const c = foo[2];`
       expect(parseCodeAndRun(`const [a, b, ...rest] = foo;`)).toStrictEqual(
         `const a = foo[0];
 const b = foo[1];
-const [_unused, _unused2, ...rest] = foo;`
+const [_unused, _unused2, ...rest] = foo;`,
       );
     });
   });
@@ -63,13 +63,13 @@ const [_unused, _unused2, ...rest] = foo;`
   describe("with object pattern", () => {
     it("with basic object pattern", () => {
       expect(parseCodeAndRun(`const {a} = foo;`)).toStrictEqual(
-        `const a = foo.a;`
+        `const a = foo.a;`,
       );
     });
 
     it("pattern and default value assignment", () => {
       expect(parseCodeAndRun(`const {a = 1} = foo;`)).toStrictEqual(
-        `const a = foo.a === void 0 ? 1 : foo.a;`
+        `const a = foo.a === void 0 ? 1 : foo.a;`,
       );
     });
 
@@ -77,7 +77,7 @@ const [_unused, _unused2, ...rest] = foo;`
       expect(parseCodeAndRun(`const {a, b, c} = foo;`)).toStrictEqual(
         `const a = foo.a;
 const b = foo.b;
-const c = foo.c;`
+const c = foo.c;`,
       );
     });
 
@@ -85,17 +85,17 @@ const c = foo.c;`
       expect(parseCodeAndRun(`const {a, b, c: d} = foo;`)).toStrictEqual(
         `const a = foo.a;
 const b = foo.b;
-const d = foo.c;`
+const d = foo.c;`,
       );
     });
 
     it("pattern with different custom key assignment using string literal", () => {
       expect(
-        parseCodeAndRun(`const {a, b, "aria-label": d} = foo;`)
+        parseCodeAndRun(`const {a, b, "aria-label": d} = foo;`),
       ).toStrictEqual(
         `const a = foo.a;
 const b = foo.b;
-const d = foo["aria-label"];`
+const d = foo["aria-label"];`,
       );
     });
 
@@ -103,7 +103,7 @@ const d = foo["aria-label"];`
       expect(parseCodeAndRun(`const {a, b, [myVar]: d} = foo;`)).toStrictEqual(
         `const a = foo.a;
 const b = foo.b;
-const d = foo[myVar];`
+const d = foo[myVar];`,
       );
     });
 
@@ -113,7 +113,7 @@ const d = foo[myVar];`
 const {
   a: _unused,
   ...rest
-} = foo;`
+} = foo;`,
       );
     });
   });
@@ -121,26 +121,26 @@ const {
   describe("complex combinations", () => {
     it("with complex array pattern and object pattern", () => {
       expect(
-        parseCodeAndRun(`const [{a, b, c}, {d}, [{"key": e}]] = foo;`)
+        parseCodeAndRun(`const [{a, b, c}, {d}, [{"key": e}]] = foo;`),
       ).toStrictEqual(
         `const a = foo[0].a;
 const b = foo[0].b;
 const c = foo[0].c;
 const d = foo[1].d;
-const e = foo[2][0]["key"];`
+const e = foo[2][0]["key"];`,
       );
     });
   });
 
   it("with complex array pattern and object pattern and default assignment", () => {
     expect(
-      parseCodeAndRun(`const [{a, b, c}, {d}, [{"key": e = 2}]] = foo;`)
+      parseCodeAndRun(`const [{a, b, c}, {d}, [{"key": e = 2}]] = foo;`),
     ).toStrictEqual(
       `const a = foo[0].a;
 const b = foo[0].b;
 const c = foo[0].c;
 const d = foo[1].d;
-const e = foo[2][0]["key"] === void 0 ? 2 : foo[2][0]["key"];`
+const e = foo[2][0]["key"] === void 0 ? 2 : foo[2][0]["key"];`,
     );
   });
 });

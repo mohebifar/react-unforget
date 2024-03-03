@@ -1,11 +1,11 @@
-import type { ComponentMutableSegment } from "~/models/ComponentMutableSegment";
+import type { ComponentSegment } from "~/models/segment/ComponentSegment";
 import { CircularDependencyError } from "~/utils/errors/CircularDependencyError";
 
 type StatementPath = babel.NodePath<babel.types.Statement>;
 
 export function reorderByTopology(
   statements: StatementPath[] | Set<StatementPath>,
-  map: Map<StatementPath, ComponentMutableSegment>
+  map: Map<StatementPath, ComponentSegment>,
 ) {
   const stack: StatementPath[] = [];
   const visited = new Set<StatementPath>();

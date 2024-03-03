@@ -2,7 +2,7 @@ import type * as babel from "@babel/core";
 
 export function getDeclaredIdentifiersInLVal(
   lval: babel.NodePath<babel.types.LVal | null>,
-  identifiers: Set<string> = new Set()
+  identifiers: Set<string> = new Set(),
 ) {
   if (lval.isIdentifier()) {
     identifiers.add(lval.node.name);

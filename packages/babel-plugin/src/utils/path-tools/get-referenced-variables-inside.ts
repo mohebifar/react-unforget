@@ -4,7 +4,7 @@ import { isReferenceIdentifier } from "./is-reference-identifier";
 
 export function getReferencedVariablesInside(
   path: babel.NodePath<babel.types.Node>,
-  unique = true
+  unique = true,
 ) {
   const visited = new Set<Binding>();
   const map = new Map<babel.NodePath<babel.types.Node>, Binding>();

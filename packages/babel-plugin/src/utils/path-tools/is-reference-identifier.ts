@@ -3,7 +3,7 @@ import type * as babel from "@babel/core";
 // Check if the identifier is a reference to a variable
 // Skip over keys in object properties, function/method names, etc.
 export function isReferenceIdentifier(
-  path: babel.NodePath<babel.types.Node>
+  path: babel.NodePath<babel.types.Node>,
 ): path is babel.NodePath<babel.types.Identifier> {
   return (
     path.isIdentifier() &&
@@ -26,7 +26,7 @@ function variableDeclaratorCheck(path: babel.NodePath<babel.types.Identifier>) {
 
   // For array patterns and object patterns, we want to check if the identifier is part of the id not init
   const parentVariableDeclarator = path.findParent((p) =>
-    p.isVariableDeclarator()
+    p.isVariableDeclarator(),
   );
   const parentVariableDeclaratorId = parentVariableDeclarator?.get("id") as
     | babel.NodePath<babel.types.Node>

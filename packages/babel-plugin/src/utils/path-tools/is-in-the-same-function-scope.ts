@@ -5,7 +5,7 @@ import type { Scope } from "@babel/traverse";
 // We need this to properly detect if return statements belong to the same function
 export function isInTheSameFunctionScope(
   path: babel.NodePath<babel.types.Node>,
-  fn: babel.NodePath<babel.types.Function>
+  fn: babel.NodePath<babel.types.Function>,
 ) {
   let currentScope: Scope | null = path.scope;
   do {

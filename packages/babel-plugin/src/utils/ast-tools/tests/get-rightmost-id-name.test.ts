@@ -8,9 +8,9 @@ const parseCodeAndRun = (code: string) => {
   return getRightmostIdName(
     (
       path.get(
-        "body.0.declarations.0.init"
+        "body.0.declarations.0.init",
       ) as babel.NodePath<babel.types.Expression>
-    ).node
+    ).node,
   );
 };
 
@@ -25,25 +25,25 @@ describe("getRightmostIdName", () => {
 
   it("with member expression and string literal", () => {
     expect(parseCodeAndRun(`const val = foo.bar["test"]`)).toStrictEqual(
-      "test"
+      "test",
     );
   });
 
   it("with member expression and numeric literal", () => {
     expect(parseCodeAndRun(`const val = foo.bar["test"][2]`)).toStrictEqual(
-      "2"
+      "2",
     );
   });
 
   it("throws when prop access is computed", () => {
     expect(() => parseCodeAndRun(`const val = foo.bar[myVar]`)).toThrow(
-      RightmostIdNotFound
+      RightmostIdNotFound,
     );
   });
 
   it("throws when prop access is not id-able", () => {
     expect(() => parseCodeAndRun(`const val = foo.bar[() => {}]`)).toThrow(
-      RightmostIdNotFound
+      RightmostIdNotFound,
     );
   });
 });

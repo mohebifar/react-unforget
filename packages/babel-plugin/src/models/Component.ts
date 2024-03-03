@@ -10,23 +10,23 @@ import {
 import { isControlFlowStatement } from "~/utils/path-tools/control-flow-utils";
 import { isInTheSameFunctionScope } from "~/utils/path-tools/is-in-the-same-function-scope";
 import { isChildOfScope } from "~/utils/scope-tools/is-scope-descendant-of";
-import type { ComponentMutableSegment } from "./ComponentMutableSegment";
-import { ComponentRunnableSegment } from "./ComponentRunnableSegment";
-import { ComponentVariable } from "./ComponentVariable";
+import type { ComponentSegment } from "./segment/ComponentSegment";
+import { ComponentRunnableSegment } from "./segment/ComponentRunnableSegment";
+import { ComponentVariableSegment } from "./segment/ComponentVariableSegment";
 
 export class Component {
   private runnableSegments = new Map<
     babel.NodePath<babel.types.Statement>,
     ComponentRunnableSegment
   >();
-  private componentVariables = new Map<Binding, ComponentVariable>();
+  private componentVariables = new Map<Binding, ComponentVariableSegment>();
   private cacheValueIdentifier: t.Identifier;
   private cacheCommitIdentifier: t.Identifier;
   private cacheNullIdentifier: t.Identifier;
 
   private statementsToMutableSegmentMapCache: Map<
     babel.NodePath<babel.types.Statement>,
-    ComponentMutableSegment
+    ComponentSegment
   > | null = null;
 
   private rootSegment: ComponentRunnableSegment | null = null;
@@ -40,15 +40,15 @@ export class Component {
     path.assertFunction();
 
     this.cacheValueIdentifier = path.scope.generateUidIdentifier(
-      DEFAULT_CACHE_VARIABLE_NAME
+      DEFAULT_CACHE_VARIABLE_NAME,
     );
 
     this.cacheCommitIdentifier = path.scope.generateUidIdentifier(
-      DEFAULT_CACHE_COMMIT_VARIABLE_NAME
+      DEFAULT_CACHE_COMMIT_VARIABLE_NAME,
     );
 
     this.cacheNullIdentifier = path.scope.generateUidIdentifier(
-      DEFAULT_CACHE_NULL_VARIABLE_NAME
+      DEFAULT_CACHE_NULL_VARIABLE_NAME,
     );
   }
 
@@ -74,13 +74,13 @@ export class Component {
   }
 
   findPotentialParentForSegment(
-    path: babel.NodePath<babel.types.Node>
+    path: babel.NodePath<babel.types.Node>,
   ): ComponentRunnableSegment | null {
     const blockOrControlFlowStatement = path.findParent(
       (innerPath) =>
         (innerPath.isBlockStatement() || isControlFlowStatement(innerPath)) &&
         innerPath.isDescendant(this.path) &&
-        isInTheSameFunctionScope(innerPath, this.path)
+        isInTheSameFunctionScope(innerPath, this.path),
     ) as babel.NodePath<babel.types.BlockStatement> | null;
 
     if (!blockOrControlFlowStatement) {
@@ -89,7 +89,7 @@ export class Component {
 
     const parent =
       this.mapBlockStatementToComponentRunnableSegment.get(
-        blockOrControlFlowStatement
+        blockOrControlFlowStatement,
       ) ?? null;
 
     const ensuredParent = parent
@@ -108,15 +108,17 @@ export class Component {
     });
   }
 
-  findDependents(componentVariableToFindDependentsFor: ComponentVariable) {
-    const dependents = new Set<ComponentMutableSegment>();
+  findDependents(
+    componentVariableToFindDependentsFor: ComponentVariableSegment,
+  ) {
+    const dependents = new Set<ComponentSegment>();
 
-    const addDepdendentsToSet = (segment: ComponentMutableSegment) => {
+    const addDepdendentsToSet = (segment: ComponentSegment) => {
       if (
         [...segment.getDependencies().values()].some(
           (dependency) =>
             dependency.componentVariable ===
-            componentVariableToFindDependentsFor
+            componentVariableToFindDependentsFor,
         )
       ) {
         dependents.add(segment);
@@ -154,11 +156,11 @@ export class Component {
     //   // return;
     // }
 
-    const componentVariable = new ComponentVariable(
+    const componentVariable = new ComponentVariableSegment(
       this,
       parent,
       binding,
-      this.componentVariables.size
+      this.componentVariables.size,
     );
 
     this.componentVariables.set(binding, componentVariable);
@@ -198,7 +200,7 @@ export class Component {
     if (path.isBlockStatement()) {
       this.mapBlockStatementToComponentRunnableSegment.set(
         path,
-        runnableSegment
+        runnableSegment,
       );
     }
 
@@ -212,7 +214,7 @@ export class Component {
 
   getComponentVariables() {
     return [...this.componentVariables.values()].filter(
-      (componentVariable) => !componentVariable.hasDependencies()
+      (componentVariable) => !componentVariable.hasDependencies(),
     );
   }
 
@@ -235,10 +237,10 @@ export class Component {
 
     const statementsToMutableSegmentMap = new Map<
       babel.NodePath<babel.types.Statement>,
-      ComponentMutableSegment
+      ComponentSegment
     >();
 
-    const statementsMapSet = (segment: ComponentMutableSegment) => {
+    const statementsMapSet = (segment: ComponentSegment) => {
       const parent = segment.getParentStatement();
       if (parent && !parent.isBlockStatement()) {
         statementsToMutableSegmentMap.set(parent, segment);
@@ -301,7 +303,7 @@ export class Component {
         ]),
         t.callExpression(t.identifier(RUNTIME_MODULE_CREATE_CACHE_HOOK_NAME), [
           sizeNumber,
-        ])
+        ]),
       ),
     ]);
 
@@ -316,7 +318,7 @@ export class Component {
             }`;
           })
           .join("\n") +
-        "\n"
+        "\n",
     );
 
     return declaration;

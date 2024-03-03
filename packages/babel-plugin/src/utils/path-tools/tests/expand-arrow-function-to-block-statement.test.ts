@@ -7,7 +7,7 @@ const parseCodeAndGetFirstDeclarator = (code: string) => {
 
   return [
     path.get(
-      "body.0.declarations.0.init"
+      "body.0.declarations.0.init",
     ) as babel.NodePath<babel.types.ArrowFunctionExpression>,
     path,
   ] as const;

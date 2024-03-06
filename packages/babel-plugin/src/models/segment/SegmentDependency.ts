@@ -1,7 +1,7 @@
 import * as t from "@babel/types";
 import type { AccessorNode } from "~/utils/ast-tools/is-accessor-node";
 import { isAccessorNode } from "~/utils/ast-tools/is-accessor-node";
-import type { ComponentVariableSegment } from "./ComponentVariableSegment";
+import type { ComponentSegment } from "./ComponentSegment";
 
 /**
  * A singly linked list of member expressions
@@ -12,7 +12,7 @@ export class AccessChainItem {
 
   constructor(
     public id: string,
-    public idExpression: t.Expression,
+    public idExpression: t.Expression
   ) {}
 
   toString() {
@@ -31,8 +31,8 @@ export class SegmentDependency {
   private root: AccessChainItem;
 
   constructor(
-    public componentVariable: ComponentVariableSegment,
-    public accessorNode: AccessorNode,
+    public segment: ComponentSegment,
+    public accessorNode: AccessorNode
   ) {
     let currentAccessChainItem: AccessChainItem | null = null;
 
@@ -91,7 +91,7 @@ export class SegmentDependency {
       } else if (t.isIdentifier(currentAccessorNode)) {
         newAccessChainItem = new AccessChainItem(
           currentAccessorNode.name,
-          currentAccessorNode,
+          currentAccessorNode
         );
 
         currentAccessorNode = null;
@@ -123,12 +123,11 @@ export class SegmentDependency {
 
   equals(other: SegmentDependency) {
     return (
-      this.componentVariable === other.componentVariable &&
-      this.stringify() === other.stringify()
+      this.segment === other.segment && this.stringify() === other.stringify()
     );
   }
 
-  getMemberExpression(replacementId: t.Expression) {
+  getDependencyValueReadExpression(newBaseObjectId: t.Expression) {
     let endOfChain: AccessChainItem | null = this.root;
 
     while (endOfChain.right) {
@@ -144,16 +143,16 @@ export class SegmentDependency {
       t.isMemberExpression(endOfChainExpression) ||
       t.isOptionalMemberExpression(endOfChainExpression)
     ) {
-      endOfChainExpression.object = replacementId;
+      endOfChainExpression.object = newBaseObjectId;
       return endOfChainExpression;
     }
 
-    return replacementId;
+    return newBaseObjectId;
   }
 
   isInTheScopeOf(path: babel.NodePath<t.Node>) {
     const isInSameScope = Object.values(path.scope.getAllBindings()).some(
-      (binding) => binding === this.componentVariable.binding,
+      (binding) =>  false // TODO: Fix: binding === this.segment.binding
     );
 
     return isInSameScope;

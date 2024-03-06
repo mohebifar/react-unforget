@@ -22,7 +22,7 @@ export function reorderByTopology(
     const dependencies = map.get(statement)?.getDependencies();
 
     // Visit all the dependent nodes
-    dependencies?.forEach(({ componentVariable }) => {
+    dependencies?.forEach(({ segment: componentVariable }) => {
       const dependencyStatement = componentVariable.getParentStatement()!;
       // If the dependent node is in the recursion stack, we have a cycle
       if (dependencyStatement === statement) {

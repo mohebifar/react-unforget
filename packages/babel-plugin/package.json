@@ -38,6 +38,7 @@
     "@types/babel__standalone": "^7.1.7",
     "@types/babel__traverse": "^7.20.5",
     "babel-preset-jest": "^29.6.3",
+    "html-entities": "^2.5.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tsup": "^8.0.2"

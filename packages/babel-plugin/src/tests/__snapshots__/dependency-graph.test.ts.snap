@@ -1,0 +1,222 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`dependency graph fixture_dependency_graph 1`] = `
+[
+  "graph TD;
+classDef blockSegment fill:#5352ed,stroke:#333,stroke-width:2px;
+classDef rootChild stroke:#ff0000,stroke-width:2px;
+node1["<pre align="left">function Test(_props) {
+  let a = _props.a;
+  let b = _props.b;
+  const _unwrapped = useState(0);
+  const state = _unwrapped[0];
+  const setState = _unwrapped[1];
+  let x: number[] = [];
+  const z: number[] = [];
+  let y = state % 2 === 0 ? x : z;
+  y.push(state);
+  let _unwrapped2 = 10;
+  const _unwrapped3 = [5, 6];
+  let _unwrapped4 = _unwrapped3[0];
+  let _unwrapped5 = _unwrapped3[1];
+  for (let i = _unwrapped2, j = _unwrapped4, k = _unwrapped5; j &lt; i; j++) {
+    y.push(i + j * b);
+  }
+  let _unwrapped6 = 10;
+  for (let i = _unwrapped6; i &lt; 10; i++) {
+    y.push(i);
+  }
+  let _unwrapped7 = state;
+  for (let i = _unwrapped7; i &lt; 10; i++) {
+    y.push(i);
+  }
+  const _unwrappedJsxExp = y[0];
+  const _unwrappedJsxEl = &lt;div&gt;
+      {state} {_unwrappedJsxExp} {a}
+    &lt;/div&gt;;
+  return _unwrappedJsxEl;
+}</pre>"]
+subgraph SG1
+node2["<pre align="left">_props</pre>"]
+class node2 rootChild
+node3["<pre align="left">{
+  let a = _props.a;
+  let b = _props.b;
+  const _unwrapped = useState(0);
+  const state = _unwrapped[0];
+  const setState = _unwrapped[1];
+  let x: number[] = [];
+  const z: number[] = [];
+  let y = state % 2 === 0 ? x : z;
+  y.push(state);
+  let _unwrapped2 = 10;
+  const _unwrapped3 = [5, 6];
+  let _unwrapped4 = _unwrapped3[0];
+  let _unwrapped5 = _unwrapped3[1];
+  for (let i = _unwrapped2, j = _unwrapped4, k = _unwrapped5; j &lt; i; j++) {
+    y.push(i + j * b);
+  }
+  let _unwrapped6 = 10;
+  for (let i = _unwrapped6; i &lt; 10; i++) {
+    y.push(i);
+  }
+  let _unwrapped7 = state;
+  for (let i = _unwrapped7; i &lt; 10; i++) {
+    y.push(i);
+  }
+  const _unwrappedJsxExp = y[0];
+  const _unwrappedJsxEl = &lt;div&gt;
+      {state} {_unwrappedJsxExp} {a}
+    &lt;/div&gt;;
+  return _unwrappedJsxEl;
+}</pre>"]
+subgraph SG2
+node4["<pre align="left">let x: number[] = [];</pre>"]
+node5["<pre align="left">const z: number[] = [];</pre>"]
+node6["<pre align="left">let y = state % 2 === 0 ? x : z;</pre>"]
+node7["<pre align="left">const state = _unwrapped[0];</pre>"]
+node7 --> node6
+node4 --> node6
+node5 --> node6
+node8["<pre align="left">const _unwrapped = useState(0);</pre>"]
+node8 --> node7
+node9["<pre align="left">const setState = _unwrapped[1];</pre>"]
+node10["<pre align="left">y.push(state);</pre>"]
+node6 --> node10
+node7 --> node10
+node11["<pre align="left">for (let i = _unwrapped2, j = _unwrapped4, k = _unwrapped5; j &lt; i; j++) {
+  y.push(i + j * b);
+}</pre>"]
+subgraph SG3
+node12["<pre align="left">let i = _unwrapped2,
+  j = _unwrapped4,
+  k = _unwrapped5;</pre>"]
+node13["<pre align="left">let _unwrapped2 = 10;</pre>"]
+node13 --> node12
+node14["<pre align="left">let _unwrapped4 = _unwrapped3[0];</pre>"]
+node14 --> node12
+node15["<pre align="left">let _unwrapped5 = _unwrapped3[1];</pre>"]
+node15 --> node12
+node16["<pre align="left">{
+  y.push(i + j * b);
+}</pre>"]
+subgraph SG4
+node17["<pre align="left">y.push(i + j * b);</pre>"]
+node6 --> node17
+node12 --> node17
+node12 --> node17
+node18["<pre align="left">let b = _props.b;</pre>"]
+node18 --> node17
+end
+node16 -.-> SG4
+class node16 blockSegment
+end
+node11 -.-> SG3
+class node11 blockSegment
+node12 --> node11
+node12 --> node11
+node19["<pre align="left">const _unwrapped3 = [5, 6];</pre>"]
+node19 --> node14
+node19 --> node15
+node20["<pre align="left">let a = _props.a;</pre>"]
+node2 --> node20
+node2 --> node18
+node21["<pre align="left">for (let i = _unwrapped6; i &lt; 10; i++) {
+  y.push(i);
+}</pre>"]
+subgraph SG5
+node22["<pre align="left">let i = _unwrapped6;</pre>"]
+node23["<pre align="left">let _unwrapped6 = 10;</pre>"]
+node23 --> node22
+node24["<pre align="left">{
+  y.push(i);
+}</pre>"]
+subgraph SG6
+node25["<pre align="left">y.push(i);</pre>"]
+node6 --> node25
+node22 --> node25
+end
+node24 -.-> SG6
+class node24 blockSegment
+end
+node21 -.-> SG5
+class node21 blockSegment
+node22 --> node21
+node26["<pre align="left">for (let i = _unwrapped7; i &lt; 10; i++) {
+  y.push(i);
+}</pre>"]
+subgraph SG7
+node27["<pre align="left">let i = _unwrapped7;</pre>"]
+node28["<pre align="left">let _unwrapped7 = state;</pre>"]
+node28 --> node27
+node29["<pre align="left">{
+  y.push(i);
+}</pre>"]
+subgraph SG8
+node30["<pre align="left">y.push(i);</pre>"]
+node6 --> node30
+node27 --> node30
+end
+node29 -.-> SG8
+class node29 blockSegment
+end
+node26 -.-> SG7
+class node26 blockSegment
+node7 --> node26
+node27 --> node26
+node7 --> node28
+node31["<pre align="left">const _unwrappedJsxExp = y[0];</pre>"]
+node6 --> node31
+node32["<pre align="left">const _unwrappedJsxEl = &lt;div&gt;
+      {state} {_unwrappedJsxExp} {a}
+    &lt;/div&gt;;</pre>"]
+node7 --> node32
+node31 --> node32
+node20 --> node32
+node33["<pre align="left">return _unwrappedJsxEl;</pre>"]
+node32 --> node33
+end
+node3 -.-> SG2
+class node3 blockSegment
+class node3 rootChild
+end
+node1 -.-> SG1
+class node1 blockSegment",
+]
+`;
+
+exports[`dependency graph fixture_dependency_graph 2`] = `
+[
+  "function Test(_props) {
+  let a = _props.a;
+  let b = _props.b;
+  const _unwrapped = useState(0);
+  const state = _unwrapped[0];
+  const setState = _unwrapped[1];
+  let x: number[] = [];
+  const z: number[] = [];
+  let y = state % 2 === 0 ? x : z;
+  y.push(state);
+  let _unwrapped2 = 10;
+  const _unwrapped3 = [5, 6];
+  let _unwrapped4 = _unwrapped3[0];
+  let _unwrapped5 = _unwrapped3[1];
+  for (let i = _unwrapped2, j = _unwrapped4, k = _unwrapped5; j < i; j++) {
+    y.push(i + j * b);
+  }
+  let _unwrapped6 = 10;
+  for (let i = _unwrapped6; i < 10; i++) {
+    y.push(i);
+  }
+  let _unwrapped7 = state;
+  for (let i = _unwrapped7; i < 10; i++) {
+    y.push(i);
+  }
+  const _unwrappedJsxExp = y[0];
+  const _unwrappedJsxEl = <div>
+      {state} {_unwrappedJsxExp} {a}
+    </div>;
+  return _unwrappedJsxEl;
+}",
+]
+`;

@@ -9,9 +9,10 @@ import { unwrapGenericExpression } from "./unwrap-generic-expression";
 export function unwrapJsxExpressions(
   statement: babel.NodePath<t.Statement>,
   component: Component,
-  blockStatement: babel.NodePath<t.BlockStatement>,
+  blockStatement: babel.NodePath<t.BlockStatement>
 ) {
   const performTransformation: ((() => void) | null)[] = [];
+  
   statement.traverse({
     JSXExpressionContainer(path) {
       const expressionPath = path.get("expression");
@@ -35,12 +36,14 @@ export function unwrapJsxExpressions(
 
       const transform = unwrapGenericExpression(
         expressionPath as babel.NodePath<t.Expression>,
-        DEFAULT_UNWRAPPED_JSX_EXPRESSION_VARIABLE_NAME,
+        DEFAULT_UNWRAPPED_JSX_EXPRESSION_VARIABLE_NAME
       );
       performTransformation.push(transform);
     },
   });
 
-  return () =>
-    performTransformation.forEach((transformation) => transformation?.());
+  return performTransformation.length === 0
+    ? null
+    : () =>
+        performTransformation.forEach((transformation) => transformation?.());
 }

@@ -13,19 +13,19 @@ export function visitProgram(path: babel.NodePath<babel.types.Program>) {
   }
 
   components.forEach((component) => {
-    component.computeComponentSegments();
-    component.applyTransformation();
+    component.analyze();
+    // component.applyTransformation();
   });
 
   const useCacheHookIdentifier = t.identifier(
-    RUNTIME_MODULE_CREATE_CACHE_HOOK_NAME,
+    RUNTIME_MODULE_CREATE_CACHE_HOOK_NAME
   );
 
   const moduleNameLiteral = t.stringLiteral(RUNTIME_MODULE_NAME);
 
   const importStatement = t.importDeclaration(
     [t.importSpecifier(useCacheHookIdentifier, useCacheHookIdentifier)],
-    moduleNameLiteral,
+    moduleNameLiteral
   );
 
   path.node.body.unshift(importStatement);

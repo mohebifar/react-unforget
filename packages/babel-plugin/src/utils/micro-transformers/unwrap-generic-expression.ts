@@ -5,7 +5,7 @@ export function unwrapGenericExpression(
   expressionPath: babel.NodePath<t.Expression>,
   defaultVariableName: string,
   wrapReplacement: (replacement: t.Expression) => t.Node = (replacement) =>
-    replacement,
+    replacement
 ) {
   const expression = expressionPath.node;
   const parent = expressionPath.getStatementParent();
@@ -24,7 +24,7 @@ export function unwrapGenericExpression(
     ]);
 
     const [referenceIdPath] = expressionPath.replaceWith(
-      wrapReplacement(t.cloneNode(variableId)),
+      wrapReplacement(t.cloneNode(variableId))
     );
     const [declarationPath] = parent.insertBefore(variableDeclaration);
 

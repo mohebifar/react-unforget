@@ -42,11 +42,8 @@ export function transformWithParseAndCast(input: string) {
   return String(root);
 }
 
-export function parse(input: string, extraPlugins: babel.PluginItem[] = []) {
-  const ast = babel.parse(input, {
-    configFile: false,
-    plugins: ["@babel/plugin-syntax-jsx", ...extraPlugins],
-  })!;
+export function parse(input: string) {
+  const ast = babel.parse(input, babelTransformOptions)!;
 
   let result: babel.NodePath<t.Program> | null = null;
   traverse(ast, {
@@ -63,7 +60,7 @@ export function loadFixture(fixturePath: string) {
   const fixture = path.resolve(
     __dirname,
     "../tests/fixtures",
-    fixturePath + ".tsx",
+    fixturePath + ".tsx"
   );
 
   const fileContent = fs.readFileSync(fixture, "utf-8");

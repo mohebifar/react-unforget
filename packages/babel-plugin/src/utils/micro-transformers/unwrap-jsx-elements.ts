@@ -11,7 +11,7 @@ type JSXChild = t.JSXElement["children"][number];
 export function unwrapJsxElements(
   statement: babel.NodePath<t.Statement>,
   component: Component,
-  blockStatement: babel.NodePath<t.BlockStatement>,
+  blockStatement: babel.NodePath<t.BlockStatement>
 ) {
   const performTransformation: ((() => void) | null)[] = [];
 
@@ -37,7 +37,7 @@ export function unwrapJsxElements(
         path as babel.NodePath<t.Expression>,
         DEFAULT_UNWRAPPED_JSX_ELEMENT_VARIABLE_NAME,
         (replacement) =>
-          nested ? t.jsxExpressionContainer(replacement) : replacement,
+          nested ? t.jsxExpressionContainer(replacement) : replacement
       );
 
       performTransformation.push(transform);
@@ -55,6 +55,8 @@ export function unwrapJsxElements(
     },
   });
 
-  return () =>
-    performTransformation.forEach((transformation) => transformation?.());
+  return performTransformation.length === 0
+    ? null
+    : () =>
+        performTransformation.forEach((transformation) => transformation?.());
 }

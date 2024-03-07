@@ -5,7 +5,7 @@ type StatementPath = babel.NodePath<babel.types.Statement>;
 
 export function reorderByTopology(
   statements: StatementPath[] | Set<StatementPath>,
-  map: Map<StatementPath, ComponentSegment>,
+  map: Map<StatementPath, ComponentSegment>
 ) {
   const stack: StatementPath[] = [];
   const visited = new Set<StatementPath>();
@@ -19,11 +19,12 @@ export function reorderByTopology(
     visited.add(statement);
     recursionStack.add(statement);
 
-    const dependencies = map.get(statement)?.getDependencies();
+    const dependencies = map.get(statement)?.getDirectDependencies();
 
     // Visit all the dependent nodes
-    dependencies?.forEach(({ segment: componentVariable }) => {
-      const dependencyStatement = componentVariable.getParentStatement()!;
+    dependencies?.forEach(({ segment }) => {
+      const dependencyStatement = segment.getPathAsStatement();
+
       // If the dependent node is in the recursion stack, we have a cycle
       if (dependencyStatement === statement) {
         return;
@@ -41,7 +42,7 @@ export function reorderByTopology(
   }
 
   statements.forEach((statement) => {
-    if (map.get(statement)?.getDependencies().size === 0) {
+    if (map.get(statement)?.getDirectDependencies().size === 0) {
       stack.push(statement);
       visited.add(statement);
     }

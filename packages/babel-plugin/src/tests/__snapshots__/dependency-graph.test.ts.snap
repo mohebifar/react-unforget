@@ -5,6 +5,7 @@ exports[`dependency graph fixture_dependency_graph 1`] = `
   "graph TD;
 classDef blockSegment fill:#5352ed,stroke:#333,stroke-width:2px;
 classDef rootChild stroke:#ff0000,stroke-width:2px;
+classDef returnNetwork stroke:#2ecc71,stroke-width:2px;
 node1["<pre align="left">function Test(_props) {
   let a = _props.a;
   let b = _props.b;
@@ -26,18 +27,22 @@ node1["<pre align="left">function Test(_props) {
   for (let i = _unwrapped6; i &lt; 10; i++) {
     y.push(i);
   }
+  const m = y;
   let _unwrapped7 = state;
   for (let i = _unwrapped7; i &lt; 10; i++) {
-    y.push(i);
+    m.push(i);
   }
   const _unwrappedJsxExp = y[0];
-  const _unwrappedJsxEl = &lt;div&gt;
-      {state} {_unwrappedJsxExp} {a}
+  const _unwrappedJsxExp2 = y[0];
+  const _unwrappedJsxEl = &lt;button&gt;Click here&lt;/button&gt;;
+  const _unwrappedJsxEl2 = &lt;div&gt;
+      {state} {_unwrappedJsxExp} {a} {_unwrappedJsxEl} {_unwrappedJsxExp2}
     &lt;/div&gt;;
-  return _unwrappedJsxEl;
+  return _unwrappedJsxEl2;
 }</pre>"]
 subgraph SG1
 node2["<pre align="left">_props</pre>"]
+class node2 returnNetwork;
 class node2 rootChild
 node3["<pre align="left">{
   let a = _props.a;
@@ -60,121 +65,146 @@ node3["<pre align="left">{
   for (let i = _unwrapped6; i &lt; 10; i++) {
     y.push(i);
   }
+  const m = y;
   let _unwrapped7 = state;
   for (let i = _unwrapped7; i &lt; 10; i++) {
-    y.push(i);
+    m.push(i);
   }
   const _unwrappedJsxExp = y[0];
-  const _unwrappedJsxEl = &lt;div&gt;
-      {state} {_unwrappedJsxExp} {a}
+  const _unwrappedJsxExp2 = y[0];
+  const _unwrappedJsxEl = &lt;button&gt;Click here&lt;/button&gt;;
+  const _unwrappedJsxEl2 = &lt;div&gt;
+      {state} {_unwrappedJsxExp} {a} {_unwrappedJsxEl} {_unwrappedJsxExp2}
     &lt;/div&gt;;
-  return _unwrappedJsxEl;
+  return _unwrappedJsxEl2;
 }</pre>"]
 subgraph SG2
 node4["<pre align="left">let x: number[] = [];</pre>"]
+class node4 returnNetwork;
 node5["<pre align="left">const z: number[] = [];</pre>"]
+class node5 returnNetwork;
 node6["<pre align="left">let y = state % 2 === 0 ? x : z;</pre>"]
+class node6 returnNetwork;
 node7["<pre align="left">const state = _unwrapped[0];</pre>"]
+class node7 returnNetwork;
 node7 --> node6
 node4 --> node6
 node5 --> node6
-node8["<pre align="left">const _unwrapped = useState(0);</pre>"]
-node8 --> node7
-node9["<pre align="left">const setState = _unwrapped[1];</pre>"]
-node10["<pre align="left">y.push(state);</pre>"]
-node6 --> node10
-node7 --> node10
-node11["<pre align="left">for (let i = _unwrapped2, j = _unwrapped4, k = _unwrapped5; j &lt; i; j++) {
+node8["<pre align="left">y.push(state);</pre>"]
+node8 -.-> node6
+node9["<pre align="left">y.push(i + j * b);</pre>"]
+node9 -.-> node6
+node10["<pre align="left">y.push(i);</pre>"]
+node10 -.-> node6
+node11["<pre align="left">const _unwrapped = useState(0);</pre>"]
+class node11 returnNetwork;
+node11 --> node7
+node12["<pre align="left">const setState = _unwrapped[1];</pre>"]
+node6 --> node8
+node7 --> node8
+node13["<pre align="left">for (let i = _unwrapped2, j = _unwrapped4, k = _unwrapped5; j &lt; i; j++) {
   y.push(i + j * b);
 }</pre>"]
 subgraph SG3
-node12["<pre align="left">let i = _unwrapped2,
+node14["<pre align="left">let i = _unwrapped2,
   j = _unwrapped4,
   k = _unwrapped5;</pre>"]
-node13["<pre align="left">let _unwrapped2 = 10;</pre>"]
-node13 --> node12
-node14["<pre align="left">let _unwrapped4 = _unwrapped3[0];</pre>"]
-node14 --> node12
-node15["<pre align="left">let _unwrapped5 = _unwrapped3[1];</pre>"]
-node15 --> node12
-node16["<pre align="left">{
+node15["<pre align="left">let _unwrapped2 = 10;</pre>"]
+node15 --> node14
+node16["<pre align="left">let _unwrapped4 = _unwrapped3[0];</pre>"]
+node16 --> node14
+node17["<pre align="left">let _unwrapped5 = _unwrapped3[1];</pre>"]
+node17 --> node14
+node18["<pre align="left">{
   y.push(i + j * b);
 }</pre>"]
 subgraph SG4
-node17["<pre align="left">y.push(i + j * b);</pre>"]
-node6 --> node17
-node12 --> node17
-node12 --> node17
-node18["<pre align="left">let b = _props.b;</pre>"]
-node18 --> node17
+node6 --> node9
+node14 --> node9
+node14 --> node9
+node19["<pre align="left">let b = _props.b;</pre>"]
+node19 --> node9
 end
-node16 -.-> SG4
-class node16 blockSegment
+node18 -.-> SG4
+class node18 blockSegment
 end
-node11 -.-> SG3
-class node11 blockSegment
-node12 --> node11
-node12 --> node11
-node19["<pre align="left">const _unwrapped3 = [5, 6];</pre>"]
-node19 --> node14
-node19 --> node15
-node20["<pre align="left">let a = _props.a;</pre>"]
-node2 --> node20
-node2 --> node18
-node21["<pre align="left">for (let i = _unwrapped6; i &lt; 10; i++) {
+node13 -.-> SG3
+class node13 blockSegment
+node14 --> node13
+node14 --> node13
+node20["<pre align="left">const _unwrapped3 = [5, 6];</pre>"]
+node20 --> node16
+node20 --> node17
+node21["<pre align="left">let a = _props.a;</pre>"]
+class node21 returnNetwork;
+node2 --> node21
+node2 --> node19
+node22["<pre align="left">for (let i = _unwrapped6; i &lt; 10; i++) {
   y.push(i);
 }</pre>"]
 subgraph SG5
-node22["<pre align="left">let i = _unwrapped6;</pre>"]
-node23["<pre align="left">let _unwrapped6 = 10;</pre>"]
-node23 --> node22
-node24["<pre align="left">{
+node23["<pre align="left">let i = _unwrapped6;</pre>"]
+node24["<pre align="left">let _unwrapped6 = 10;</pre>"]
+node24 --> node23
+node25["<pre align="left">{
   y.push(i);
 }</pre>"]
 subgraph SG6
-node25["<pre align="left">y.push(i);</pre>"]
-node6 --> node25
-node22 --> node25
+node6 --> node10
+node23 --> node10
 end
-node24 -.-> SG6
-class node24 blockSegment
+node25 -.-> SG6
+class node25 blockSegment
 end
-node21 -.-> SG5
-class node21 blockSegment
-node22 --> node21
-node26["<pre align="left">for (let i = _unwrapped7; i &lt; 10; i++) {
-  y.push(i);
+node22 -.-> SG5
+class node22 blockSegment
+node23 --> node22
+node26["<pre align="left">const m = y;</pre>"]
+node6 --> node26
+node27["<pre align="left">m.push(i);</pre>"]
+node27 -.-> node26
+node28["<pre align="left">for (let i = _unwrapped7; i &lt; 10; i++) {
+  m.push(i);
 }</pre>"]
 subgraph SG7
-node27["<pre align="left">let i = _unwrapped7;</pre>"]
-node28["<pre align="left">let _unwrapped7 = state;</pre>"]
-node28 --> node27
-node29["<pre align="left">{
-  y.push(i);
+node29["<pre align="left">let i = _unwrapped7;</pre>"]
+node30["<pre align="left">let _unwrapped7 = state;</pre>"]
+node30 --> node29
+node31["<pre align="left">{
+  m.push(i);
 }</pre>"]
 subgraph SG8
-node30["<pre align="left">y.push(i);</pre>"]
-node6 --> node30
-node27 --> node30
+node26 --> node27
+node29 --> node27
 end
-node29 -.-> SG8
-class node29 blockSegment
+node31 -.-> SG8
+class node31 blockSegment
 end
-node26 -.-> SG7
-class node26 blockSegment
-node7 --> node26
-node27 --> node26
+node28 -.-> SG7
+class node28 blockSegment
 node7 --> node28
-node31["<pre align="left">const _unwrappedJsxExp = y[0];</pre>"]
-node6 --> node31
-node32["<pre align="left">const _unwrappedJsxEl = &lt;div&gt;
-      {state} {_unwrappedJsxExp} {a}
+node29 --> node28
+node7 --> node30
+node32["<pre align="left">const _unwrappedJsxExp = y[0];</pre>"]
+class node32 returnNetwork;
+node6 --> node32
+node33["<pre align="left">const _unwrappedJsxExp2 = y[0];</pre>"]
+class node33 returnNetwork;
+node6 --> node33
+node34["<pre align="left">const _unwrappedJsxEl = &lt;button&gt;Click here&lt;/button&gt;;</pre>"]
+class node34 returnNetwork;
+node35["<pre align="left">const _unwrappedJsxEl2 = &lt;div&gt;
+      {state} {_unwrappedJsxExp} {a} {_unwrappedJsxEl} {_unwrappedJsxExp2}
     &lt;/div&gt;;</pre>"]
-node7 --> node32
-node31 --> node32
-node20 --> node32
-node33["<pre align="left">return _unwrappedJsxEl;</pre>"]
-node32 --> node33
+class node35 returnNetwork;
+node7 --> node35
+node32 --> node35
+node21 --> node35
+node34 --> node35
+node33 --> node35
+node36["<pre align="left">return _unwrappedJsxEl2;</pre>"]
+class node36 returnNetwork;
+node35 --> node36
 end
 node3 -.-> SG2
 class node3 blockSegment
@@ -208,15 +238,18 @@ exports[`dependency graph fixture_dependency_graph 2`] = `
   for (let i = _unwrapped6; i < 10; i++) {
     y.push(i);
   }
+  const m = y;
   let _unwrapped7 = state;
   for (let i = _unwrapped7; i < 10; i++) {
-    y.push(i);
+    m.push(i);
   }
   const _unwrappedJsxExp = y[0];
-  const _unwrappedJsxEl = <div>
-      {state} {_unwrappedJsxExp} {a}
+  const _unwrappedJsxExp2 = y[0];
+  const _unwrappedJsxEl = <button>Click here</button>;
+  const _unwrappedJsxEl2 = <div>
+      {state} {_unwrappedJsxExp} {a} {_unwrappedJsxEl} {_unwrappedJsxExp2}
     </div>;
-  return _unwrappedJsxEl;
+  return _unwrappedJsxEl2;
 }",
 ]
 `;

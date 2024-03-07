@@ -17,6 +17,7 @@ import {
 } from "~/utils/path-tools/control-flow-utils";
 import { getReferencedVariablesInside } from "~/utils/path-tools/get-referenced-variables-inside";
 import { preserveReferences } from "~/utils/scope-tools/preserve-references";
+import { findMutatingExpressions } from "~/utils/path-tools/find-mutating-expression";
 import type { Component } from "../Component";
 import { SegmentDependency } from "./SegmentDependency";
 
@@ -54,6 +55,8 @@ export class ComponentSegment {
   private children = new Set<ComponentSegment>();
 
   private dependencies = new Set<SegmentDependency>();
+
+  private mutationDependencies = new Set<ComponentSegment>();
 
   private flags = 0;
 
@@ -152,6 +155,10 @@ export class ComponentSegment {
 
     newDependency.segment.analyze();
 
+    if (this.isFlagSet(ComponentSegmentFlags.IS_IN_RETURN_NETWORK)) {
+      newDependency.segment.markAsInReturnNetwork();
+    }
+
     this.dependencies.add(newDependency);
   }
 
@@ -159,10 +166,16 @@ export class ComponentSegment {
     return this.dependencies.size > 0;
   }
 
-  getDependencies(visited: Set<SegmentDependency> = new Set()) {
-    const allDependencies = new Set(this.dependencies);
+  getDirectDependencies() {
+    return new Set(this.dependencies);
+  }
 
-    return allDependencies;
+  addMutationDependency(segment: ComponentSegment) {
+    this.mutationDependencies.add(segment);
+  }
+
+  getMutationDependencies() {
+    return new Set(this.mutationDependencies);
   }
 
   traverseDependencies(
@@ -277,11 +290,30 @@ export class ComponentSegment {
         segment.analyze();
       });
     } else {
-      const referencedVariables = getReferencedVariablesInside(path);
-      referencedVariables.forEach((binding, innerPath) => {
+      const mutatingExpressions = findMutatingExpressions(path);
+
+      mutatingExpressions.forEach(({ binding }) => {
+        const segment = this.component.getDeclarationSegmentByBinding(binding);
+        if (!segment) {
+          throw new Error(
+            "The segment could not be found for the given binding"
+          );
+        }
+
+        segment.addMutationDependency(this);
+      });
+
+      const isReturnStatement = path.isReturnStatement();
+
+      const referencedVariables = getReferencedVariablesInside(path, false);
+
+      referencedVariables.forEach((_binding, innerPath) => {
+        const binding = innerPath.scope.getBinding(innerPath.node.name)!;
+
         if (!this.component.inTheSameFunctionScope(binding.path)) {
           return;
         }
+
         const segment = this.component.getDeclarationSegmentByBinding(binding);
         if (!segment) {
           throw new Error(
@@ -296,8 +328,27 @@ export class ComponentSegment {
         }
 
         this.addDependency(segment, binding, accessorNode);
+        if (isReturnStatement) {
+          this.markAsInReturnNetwork();
+        }
       });
     }
+  }
+
+  markAsInReturnNetwork() {
+    if (this.isFlagSet(ComponentSegmentFlags.IS_IN_RETURN_NETWORK)) {
+      return;
+    }
+
+    this.setFlag(ComponentSegmentFlags.IS_IN_RETURN_NETWORK);
+
+    this.traverseDependencies((dependency) => {
+      dependency.segment.markAsInReturnNetwork();
+    });
+  }
+
+  isInReturnNetwork() {
+    return this.isFlagSet(ComponentSegmentFlags.IS_IN_RETURN_NETWORK);
   }
 
   /**
@@ -482,7 +533,8 @@ export class ComponentSegment {
 
           thisPath.scope.registerDeclaration(newPath);
 
-          const binding = declarator.scope.getBinding(
+          const scope = intermediateBinding?.scope ?? thisPath.scope;
+          const binding = scope.getOwnBinding(
             (newDeclarator.node.id as t.Identifier).name
           );
 

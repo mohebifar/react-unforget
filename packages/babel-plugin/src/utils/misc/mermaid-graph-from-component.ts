@@ -18,17 +18,23 @@ function printMermaidGraph(root: ComponentSegment): string {
     "graph TD;",
     "classDef blockSegment fill:#5352ed,stroke:#333,stroke-width:2px;",
     "classDef rootChild stroke:#ff0000,stroke-width:2px;",
+    "classDef returnNetwork stroke:#2ecc71,stroke-width:2px;",
   ];
   let nodeIdCounter = 0;
   let subgraphCounter = 0;
 
   function getOrCreateNodeId(segment: ComponentSegment): string {
     if (!visited.has(segment)) {
-      visited.set(segment, `node${++nodeIdCounter}`);
+      const id = `node${++nodeIdCounter}`;
+      visited.set(segment, id);
       const label = encode(segment.printCode().replace(/"/g, '\\"'));
       graphLines.push(
         `${visited.get(segment)}["<pre align="left">${label}</pre>"]`
       );
+      if (segment.isInReturnNetwork()) {
+        const linkClass = `class ${id} returnNetwork;`;
+        graphLines.push(linkClass);
+      }
     }
     return visited.get(segment)!;
   }
@@ -52,9 +58,14 @@ function printMermaidGraph(root: ComponentSegment): string {
       graphLines.push(`class ${nodeId} rootChild`);
     }
 
-    for (const dep of node.getDependencies()) {
+    for (const dep of node.getDirectDependencies()) {
       const depId = getOrCreateNodeId(dep.segment);
       graphLines.push(`${depId} --> ${nodeId}`);
+    }
+
+    for (const dep of node.getMutationDependencies()) {
+      const depId = getOrCreateNodeId(dep);
+      graphLines.push(`${depId} -.-> ${nodeId}`);
     }
   }
 

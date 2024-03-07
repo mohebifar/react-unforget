@@ -1,49 +1,61 @@
 import { MUTATING_METHODS } from "~/utils/constants";
 import { getLeftmostIdName } from "~/utils/ast-tools/get-leftmost-id-name";
 import { getRightmostIdName } from "~/utils/ast-tools/get-rightmost-id-name";
+import type { Binding } from "@babel/traverse";
 import { getDeclaredIdentifiersInLVal } from "./get-declared-identifiers-in-lval";
+import { getReferencedVariablesInside } from "./get-referenced-variables-inside";
 
-export function findMutatingExpression(
-  path: babel.NodePath<babel.types.Node>,
-  name: string,
+export function findMutatingExpressions(
+  path: babel.NodePath<babel.types.Node>
 ) {
-  const result = path.find((innerPath) => {
-    if (innerPath.isStatement()) {
-      return true;
-    }
+  const result: {
+    binding: Binding;
+    path: babel.NodePath<babel.types.Expression>;
+  }[] = [];
 
-    if (innerPath.isAssignmentExpression()) {
-      const left = innerPath.node.left;
-      const leftMostIds = innerPath.isLVal()
-        ? getDeclaredIdentifiersInLVal(innerPath)
-        : [getLeftmostIdName(left)];
+  const referencedIds = getReferencedVariablesInside(path).entries();
 
-      return leftMostIds.includes(name);
-    }
+  for (const [referencePath, binding] of referencedIds) {
+    const name = binding.identifier.name;
 
-    if (innerPath.isUpdateExpression()) {
-      return getLeftmostIdName(innerPath.node.argument) === name;
-    }
+    const found = referencePath.find((currentParentPath) => {
+      if (currentParentPath.isStatement()) {
+        return true;
+      }
 
-    if (innerPath.isCallExpression()) {
-      const callee = innerPath.get("callee");
+      if (currentParentPath.isAssignmentExpression()) {
+        const left = currentParentPath.node.left;
+        const leftMostIds = currentParentPath.isLVal()
+          ? getDeclaredIdentifiersInLVal(currentParentPath)
+          : [getLeftmostIdName(left)];
 
-      if (callee.isMemberExpression()) {
-        const leftMostId = getLeftmostIdName(callee.node);
-        const rightmostId = getRightmostIdName(callee.node);
+        return leftMostIds.includes(name);
+      }
 
-        if (MUTATING_METHODS.includes(rightmostId)) {
-          return leftMostId === name;
+      if (currentParentPath.isUpdateExpression()) {
+        return getLeftmostIdName(currentParentPath.node.argument) === name;
+      }
+
+      if (currentParentPath.isCallExpression()) {
+        const callee = currentParentPath.get("callee");
+
+        if (callee.isMemberExpression()) {
+          const leftMostId = getLeftmostIdName(callee.node);
+          const rightmostId = getRightmostIdName(callee.node);
+
+          if (MUTATING_METHODS.includes(rightmostId)) {
+            return leftMostId === name;
+          }
         }
       }
+
+      return false;
+    });
+
+    if (found?.isExpression()) {
+      result.push({ binding, path: found });
     }
-
-    return false;
-  });
-
-  if (result?.isStatement()) {
-    return null;
   }
 
-  return result as babel.NodePath<babel.types.Expression>;
+  return result;
 }

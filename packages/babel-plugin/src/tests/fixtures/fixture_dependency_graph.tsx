@@ -17,13 +17,15 @@ export default function Test({ a, b }: { a: number; b: number }) {
     y.push(i);
   }
 
+  const m = y;
+
   for (let i = state; i < 10; i++) {
-    y.push(i);
+    m.push(i);
   }
 
   return (
     <div>
-      {state} {y[0]} {a}
+      {state} {y[0]} {a} <button>Click here</button> {y[0]}
     </div>
   );
 }

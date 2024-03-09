@@ -15,12 +15,17 @@
     "@react-unforget/babel-plugin": "0.1.0-dev.10",
     "@react-unforget/runtime": "0.1.0-dev.6",
     "@vercel/analytics": "^1.2.2",
+    "clsx": "^2.1.0",
+    "framer-motion": "^11.0.8",
+    "html-entities": "^2.5.2",
+    "mermaid": "^10.9.0",
     "next": "^14.0.4",
     "nextra": "^2.13.3",
     "nextra-theme-docs": "^2.13.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.0.1",
+    "svg-pan-zoom": "bumbu/svg-pan-zoom",
     "tailwind-merge": "^2.2.1"
   },
   "devDependencies": {

@@ -3,10 +3,15 @@ title: "Home"
 ---
 
 import { DynamicLiveCodeSandpack } from "@components/DynamicLiveCodeSandpack";
+import { OldAndNewCodeReveal } from "@components/OldAndNewCodeReveal";
 
 # React Unforget
 
-React Unforget is a project inspired by the principles of React Forget, designed to streamline and optimize React component rendering. The mission of React Unforget is to enhance the performance of React applications as well as developer experience by automating the memoization process, making it unnecessary to manually use `useMemo` or `useCallback`.
+React Unforget is a project inspired by the principles of React Forget, designed to streamline and optimize React component rendering. The mission of React Unforget is to enhance the performance of React applications as well as developer experience by automating the memoization process, making it unnecessary to manually use `useMemo`, `useCallback` or `React.memo`.
+
+<OldAndNewCodeReveal />
+
+## See it in action
 
 <DynamicLiveCodeSandpack previewClassName="h-44">
 {`import { useState } from "react";
@@ -14,22 +19,22 @@ React Unforget is a project inspired by the principles of React Forget, designed
 export default function CounterWithMutationTracking() {
   const [state, setState] = useState(0);
 
-  let text = "The number is: ";
+let text = "The number is: ";
 
-  if (state % 2 === 0) {
-    text += "even";
-  } else {
-    text += "odd";
-  }
+if (state % 2 === 0) {
+text += "even";
+} else {
+text += "odd";
+}
 
-  return (
-    <div>
-      <button onClick={() => setState(state + 1)}>Increment</button>
-      <div>
-        <span>Count: {state}</span> {text}
-      </div>
-    </div>
-  );
+return (
+<div>
+<button onClick={() => setState(state + 1)}>Increment</button>
+<div>
+<span>Count: {state}</span> {text}
+</div>
+</div>
+);
 }
 `}
 

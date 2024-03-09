@@ -6,7 +6,7 @@ exports[`dependency graph fixture_dependency_graph 1`] = `
 classDef blockSegment fill:#5352ed,stroke:#333,stroke-width:2px;
 classDef rootChild stroke:#ff0000,stroke-width:2px;
 classDef returnNetwork stroke:#2ecc71,stroke-width:2px;
-classDef componentVariable fill:#2ecc71,stroke:#333,stroke-width:1px;
+classDef componentVariable fill:#1289A7,stroke:#333,stroke-width:1px;
 node1["<pre align="left">function Test(_props) {
   let a = _props.a;
   let b = _props.b;

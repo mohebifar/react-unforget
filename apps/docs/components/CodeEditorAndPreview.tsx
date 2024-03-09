@@ -5,7 +5,7 @@ import {
   useSandpack,
 } from "@codesandbox/sandpack-react";
 import { memo, useCallback, useEffect, useRef } from "react";
-import { twMerge } from "tailwind-merge";
+import { cn } from "utils/cn";
 
 type CodeEditorAndPreviewProps = {
   readOnly?: boolean;
@@ -98,7 +98,7 @@ export const CodeEditorAndPreview = memo(
         <div className="h-3 bg-gray-100" />
         <SandpackPreview
           ref={sandboxPreview}
-          className={twMerge(["bg-base-200 h-46", previewClassName])}
+          className={cn(["bg-base-200 h-46", previewClassName])}
         />
       </div>
     );

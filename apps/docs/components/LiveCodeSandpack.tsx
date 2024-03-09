@@ -1,6 +1,8 @@
 import { transform } from "@babel/standalone";
 import { SandpackProvider } from "@codesandbox/sandpack-react";
-import reactUnforgetBabelPlugin from "@react-unforget/babel-plugin";
+import reactUnforgetBabelPlugin, {
+  mermaidGraphFromComponent,
+} from "@react-unforget/babel-plugin";
 
 // @ts-ignore
 import jsxBabelPlugin from "@babel/plugin-syntax-jsx";
@@ -8,6 +10,7 @@ import { useTheme } from "nextra-theme-docs";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { BeforeAfterCodeLayout } from "./BeforeAfterCodeLayout";
 import { CodeEditorAndPreview } from "./CodeEditorAndPreview";
+import { DynamicDependencyGraphViewer } from "./DynamicDependencyGraphViewer";
 
 const indexFileContent = `
 import { createRoot } from "react-dom/client";
@@ -31,18 +34,33 @@ export interface LiveCodeProps {
   previewClassName?: string;
 }
 
-function transformCode(content: string) {
-  const result = transform(content, {
-    plugins: [jsxBabelPlugin, reactUnforgetBabelPlugin],
-  });
-
-  return result?.code ?? "";
-}
-
 function LiveCodeSandpack({ children, previewClassName }: LiveCodeProps) {
   const [beforeCode, setBeforeCode] = useState(children);
   const [afterCode, setAfterCode] = useState(defaultLoadingCode);
+  const [mermaidSyntax, setMermaidSyntax] = useState<any>(null);
+  const [viewDependencyGraph, setViewDependencyGraph] = useState(false);
+  const handleToggleDependencyGraph = useCallback(() => {
+    setViewDependencyGraph((prev) => !prev);
+  }, []);
   const { theme } = useTheme();
+
+  const transformCode = useCallback((content: string) => {
+    const result = transform(content, {
+      plugins: [
+        jsxBabelPlugin,
+        [
+          reactUnforgetBabelPlugin,
+          {
+            _debug_onComponentAnalysisFinished: (component: any) => {
+              setMermaidSyntax(mermaidGraphFromComponent(component));
+            },
+          },
+        ],
+      ],
+    });
+
+    return result?.code ?? "";
+  }, []);
 
   const handleCodeChange = useCallback((newCode: string) => {
     setBeforeCode(newCode);
@@ -83,39 +101,56 @@ function LiveCodeSandpack({ children, previewClassName }: LiveCodeProps) {
   );
 
   return (
-    <BeforeAfterCodeLayout
-      before={
-        <SandpackProvider
-          template="react"
-          files={beforeFiles}
-          theme={theme === "system" || !theme ? "auto" : (theme as any)}
-        >
-          <CodeEditorAndPreview
-            onChange={handleCodeChange}
-            previewClassName={previewClassName}
-          />
-        </SandpackProvider>
-      }
-      after={
-        <SandpackProvider
-          customSetup={{
-            dependencies: {
-              "@react-unforget/runtime": "latest",
-            },
-          }}
-          files={afterFiles}
-          template="react"
-          content={children}
-          theme={theme === "system" || !theme ? "auto" : (theme as any)}
-        >
-          <CodeEditorAndPreview
-            readOnly
-            code={afterCode}
-            previewClassName={previewClassName}
-          />
-        </SandpackProvider>
-      }
-    />
+    <div>
+      <BeforeAfterCodeLayout
+        before={
+          <SandpackProvider
+            template="react"
+            files={beforeFiles}
+            theme={theme === "system" || !theme ? "auto" : (theme as any)}
+          >
+            <CodeEditorAndPreview
+              onChange={handleCodeChange}
+              previewClassName={previewClassName}
+            />
+          </SandpackProvider>
+        }
+        after={
+          <SandpackProvider
+            customSetup={{
+              dependencies: {
+                "@react-unforget/runtime": "latest",
+              },
+            }}
+            files={afterFiles}
+            template="react"
+            content={children}
+            theme={theme === "system" || !theme ? "auto" : (theme as any)}
+          >
+            <CodeEditorAndPreview
+              readOnly
+              code={afterCode}
+              previewClassName={previewClassName}
+            />
+          </SandpackProvider>
+        }
+      />
+      <details
+        open={viewDependencyGraph}
+        className="collapse mt-10 border"
+        onToggle={handleToggleDependencyGraph}
+      >
+        <summary className="collapse-title font-medium">
+          Click here to {viewDependencyGraph ? "hide" : "view"} the dependency
+          graph
+        </summary>
+        <div className="collapse-content">
+          {viewDependencyGraph && (
+            <DynamicDependencyGraphViewer mermaidSyntax={mermaidSyntax} />
+          )}
+        </div>
+      </details>
+    </div>
   );
 }
 

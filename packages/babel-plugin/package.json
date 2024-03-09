@@ -16,10 +16,10 @@
       "require": "./dist/index.cjs",
       "types": "./dist/index.d.ts"
     },
-    "./testing": {
-      "import": "./dist/testing.js",
-      "require": "./dist/testing.cjs",
-      "types": "./dist/testing.d.ts"
+    "./dist/utils/testing": {
+      "import": "./dist/utils/testing.js",
+      "require": "./dist/utils/testing.cjs",
+      "types": "./dist/utils/testing.d.ts"
     }
   },
   "scripts": {

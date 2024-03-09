@@ -1,10 +1,11 @@
 import type * as babel from "@babel/core";
-import { visitProgram } from "~/visit-program";
-import { findComponents } from "~/utils/path-tools/find-components";
 import type { Options } from "~/models/TransformationContext";
 import { makeTransformationContext } from "~/models/TransformationContext";
+import { findComponents } from "~/utils/path-tools/find-components";
+import { visitProgram } from "~/visit-program";
+export { mermaidGraphFromComponent } from "~/utils/misc/mermaid-graph-from-component";
 
-export { visitProgram, findComponents };
+export { findComponents, visitProgram };
 
 export default function unforgetBabelPlugin(
   _: object,
@@ -14,6 +15,8 @@ export default function unforgetBabelPlugin(
     throwOnFailure: options.throwOnFailure ?? false,
     skipComponents: options.skipComponents ?? [],
     skipComponentsWithMutation: options.skipComponentsWithMutation ?? false,
+    _debug_onComponentAnalysisFinished:
+      options._debug_onComponentAnalysisFinished,
   });
   return {
     visitor: {

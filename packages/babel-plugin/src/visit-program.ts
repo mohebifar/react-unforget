@@ -19,6 +19,8 @@ export function visitProgram(
   components.forEach((component) => {
     try {
       component.analyze();
+      context?._debug_onComponentAnalysisFinished?.(component);
+
       component.applyTransformation();
     } catch (e) {
       if (!context || context?.throwOnFailure) {

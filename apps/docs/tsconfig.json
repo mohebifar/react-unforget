@@ -16,7 +16,8 @@
     "module": "esnext",
     "resolveJsonModule": true,
     "paths": {
-      "@components/*": ["components/*"]
+      "@components/*": ["components/*"],
+      "@/*": ["*"]
     }
   },
   "include": [
@@ -25,7 +26,8 @@
     "**/*.tsx",
     "**/*.js",
     "**/*.jsx",
-    "**/*.mdx"
-, "next.config.mjs"  ],
+    "**/*.mdx",
+    "next.config.mjs"
+  ],
   "exclude": ["node_modules"]
 }

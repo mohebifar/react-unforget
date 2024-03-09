@@ -4,7 +4,6 @@ import * as babel from "@babel/core";
 import * as generateBase from "@babel/generator";
 import traverse from "@babel/traverse";
 import type * as t from "@babel/types";
-import { mermaidGraphFromComponent } from "~/utils/misc/mermaid-graph-from-component";
 import babelPlugin from "../index";
 
 const babelTransformOptions = {
@@ -67,5 +66,3 @@ export function parseFixture(fixturePath: string) {
 export function generate(path: babel.types.Node) {
   return generateBase.default(path).code;
 }
-
-export { mermaidGraphFromComponent };

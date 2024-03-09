@@ -67,7 +67,7 @@ function LiveCodeSandpack({ children, previewClassName }: LiveCodeProps) {
         code: beforeCode,
       },
     }),
-    [beforeCode]
+    [beforeCode],
   );
 
   const afterFiles = useMemo(
@@ -79,7 +79,7 @@ function LiveCodeSandpack({ children, previewClassName }: LiveCodeProps) {
         code: afterCode,
       },
     }),
-    [afterCode]
+    [afterCode],
   );
 
   return (

@@ -30,7 +30,7 @@ function printMermaidGraph(root: ComponentSegment): string {
       visited.set(segment, id);
       const label = encode(segment.printCode().replace(/"/g, '\\"'));
       graphLines.push(
-        `${visited.get(segment)}["<pre align="left">${label}</pre>"]`
+        `${visited.get(segment)}["<pre align="left">${label}</pre>"]`,
       );
       if (segment.isInReturnNetwork()) {
         const linkClass = `class ${id} returnNetwork;`;

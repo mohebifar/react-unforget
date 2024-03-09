@@ -3,7 +3,7 @@ import type { ComponentSegment } from "~/models/segment/ComponentSegment";
 import { optimizeSegmentDependencies } from "../model-tools/optimize-segment-dependencies";
 
 export function makeDependencyCondition(
-  mutableSegment: ComponentSegment
+  mutableSegment: ComponentSegment,
 ): t.Expression | null {
   const dependencies = mutableSegment.getDependenciesForTransformation();
 
@@ -25,7 +25,7 @@ export function makeDependencyCondition(
     comparisonTuples.add([
       dependency.getDependencyValueReadExpression(t.identifier(name)),
       dependency.getDependencyValueReadExpression(
-        dependency.segment.getCacheValueAccessExpression()
+        dependency.segment.getCacheValueAccessExpression(),
       ),
     ]);
   });
@@ -43,6 +43,6 @@ export function makeDependencyCondition(
         ? t.logicalExpression("||", condition, binaryExpression)
         : binaryExpression;
     },
-    isNotSetCondition as babel.types.Expression | null
+    isNotSetCondition as babel.types.Expression | null,
   );
 }

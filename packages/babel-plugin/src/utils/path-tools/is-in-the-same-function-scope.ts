@@ -7,7 +7,9 @@ export function isInTheSameFunctionScope(
   path: babel.NodePath<babel.types.Node>,
   fn: babel.NodePath<babel.types.Function>,
 ) {
-  let currentScope: Scope | null = path.scope;
+  let currentScope: Scope | null = path.isFunction()
+    ? path.parentPath.scope
+    : path.scope;
   do {
     if (t.isFunction(currentScope.block)) {
       return currentScope.block === fn.node;

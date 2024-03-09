@@ -29,15 +29,15 @@ export class Component {
     path.assertFunction();
 
     this.cacheValueIdentifier = path.scope.generateUidIdentifier(
-      DEFAULT_CACHE_VARIABLE_NAME
+      DEFAULT_CACHE_VARIABLE_NAME,
     );
 
     this.cacheCommitIdentifier = path.scope.generateUidIdentifier(
-      DEFAULT_CACHE_COMMIT_VARIABLE_NAME
+      DEFAULT_CACHE_COMMIT_VARIABLE_NAME,
     );
 
     this.cacheNullIdentifier = path.scope.generateUidIdentifier(
-      DEFAULT_CACHE_NULL_VARIABLE_NAME
+      DEFAULT_CACHE_NULL_VARIABLE_NAME,
     );
 
     this.init();
@@ -97,7 +97,7 @@ export class Component {
         ]),
         t.callExpression(t.identifier(RUNTIME_MODULE_CREATE_CACHE_HOOK_NAME), [
           sizeNumber,
-        ])
+        ]),
       ),
     ]);
 
@@ -110,7 +110,7 @@ export class Component {
             return `${id} => ${name}`;
           })
           .join("\n") +
-        "\n"
+        "\n",
     );
 
     return declaration;
@@ -125,7 +125,7 @@ export class Component {
   }
 
   createComponentSegment(
-    segmentPath: babel.NodePath<t.Node>
+    segmentPath: babel.NodePath<t.Node>,
   ): ComponentSegment {
     if (this.segmentsMap.has(segmentPath)) {
       return this.segmentsMap.get(segmentPath)!;
@@ -143,13 +143,13 @@ export class Component {
   }
 
   findPotentialParentForSegment(
-    path: babel.NodePath<babel.types.Node>
+    path: babel.NodePath<babel.types.Node>,
   ): ComponentSegment | null {
     const blockOrControlFlowStatement = path.findParent(
       (innerPath) =>
         (innerPath.isBlockStatement() || isControlFlowStatement(innerPath)) &&
         innerPath.isDescendant(this.path) &&
-        isInTheSameFunctionScope(innerPath, this.path)
+        isInTheSameFunctionScope(innerPath, this.path),
     ) as babel.NodePath<babel.types.BlockStatement> | null;
 
     if (!blockOrControlFlowStatement) {
@@ -184,7 +184,7 @@ export class Component {
 
   getDependentsOfSegment(segment: ComponentSegment) {
     return Array.from(this.segmentsMap.values()).filter((s) =>
-      s.hasDirectDependencyOn(segment)
+      s.hasDirectDependencyOn(segment),
     );
   }
 

@@ -28,7 +28,7 @@ export function getDeclaredIdentifiersInLVal(
   } else if (lval.isAssignmentPattern()) {
     getDeclaredIdentifiersInLVal(lval.get("left"), identifiers);
   } else {
-    console.warn("Unknown LVal type");
+    console.warn("Unknown LVal type", lval.node?.type);
   }
 
   return Array.from(identifiers);

@@ -36,7 +36,7 @@ export function findComponents(program: babel.NodePath<babel.types.Program>) {
         const body = path.get("body");
         if (!body.isBlockStatement() && isComponentReturnType(body.node)) {
           components.push(
-            new Component(path as babel.NodePath<babel.types.Function>)
+            new Component(path as babel.NodePath<babel.types.Function>),
           );
           return;
         }
@@ -50,7 +50,7 @@ export function findComponents(program: babel.NodePath<babel.types.Program>) {
 
       if (nameMatchesHook) {
         components.push(
-          new Component(path as babel.NodePath<babel.types.Function>)
+          new Component(path as babel.NodePath<babel.types.Function>),
         );
       }
 
@@ -64,7 +64,7 @@ export function findComponents(program: babel.NodePath<babel.types.Program>) {
         if (argument.isIdentifier()) {
           const binding = argument.scope.getBinding(argument.node.name);
           const variableDeclarator = binding?.path.find((bindingPath) =>
-            bindingPath.isVariableDeclarator()
+            bindingPath.isVariableDeclarator(),
           ) as babel.NodePath<babel.types.VariableDeclarator> | undefined;
 
           if (variableDeclarator) {
@@ -78,7 +78,7 @@ export function findComponents(program: babel.NodePath<babel.types.Program>) {
 
       if (allReturnsMatch) {
         components.push(
-          new Component(path as babel.NodePath<babel.types.Function>)
+          new Component(path as babel.NodePath<babel.types.Function>),
         );
       }
     },

@@ -1,5 +1,11 @@
 # @react-unforget/runtime
 
+## 0.1.0-dev.5
+
+### Minor Changes
+
+- 061a816: Rewrite the analyzer and transformer to support alias analysis better
+
 ## 0.1.0-dev.4
 
 ### Patch Changes

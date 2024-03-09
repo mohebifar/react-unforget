@@ -4,14 +4,13 @@ import * as babel from "@babel/core";
 import * as generateBase from "@babel/generator";
 import traverse from "@babel/traverse";
 import type * as t from "@babel/types";
-import { visitProgram } from "~/visit-program";
 import { mermaidGraphFromComponent } from "~/utils/misc/mermaid-graph-from-component";
 import babelPlugin from "../index";
 
 const babelTransformOptions = {
   plugins: [
     ["@babel/plugin-transform-typescript", { isTSX: true }],
-    babelPlugin,
+    [babelPlugin, { throwOnFailure: true }],
   ],
 } satisfies babel.TransformOptions;
 
@@ -33,14 +32,6 @@ export function transformForJest(input: string, filename: string) {
     ],
   })!;
   return code;
-}
-
-export function transformWithParseAndCast(input: string) {
-  const root = parse(input);
-
-  visitProgram(root);
-
-  return String(root);
 }
 
 export function parse(input: string) {

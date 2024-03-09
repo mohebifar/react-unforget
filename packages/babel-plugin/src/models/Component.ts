@@ -1,9 +1,10 @@
 import type * as babel from "@babel/core";
-import type * as t from "@babel/types";
+import * as t from "@babel/types";
 import {
   DEFAULT_CACHE_COMMIT_VARIABLE_NAME,
   DEFAULT_CACHE_NULL_VARIABLE_NAME,
   DEFAULT_CACHE_VARIABLE_NAME,
+  RUNTIME_MODULE_CREATE_CACHE_HOOK_NAME,
 } from "~/utils/constants";
 import { expandArrowFunctionToBlockStatement } from "~/utils/micro-transformers/expand-arrow-function-to-block-statement";
 import type { Binding } from "@babel/traverse";
@@ -22,7 +23,7 @@ export class Component {
   private segmentsMap = new Map<babel.NodePath<t.Node>, ComponentSegment>();
 
   private rootSegment: ComponentSegment | null = null;
-  private paramsSegment: ComponentSegment[] = [];
+  private cacheIdToName = new Map<number, string>();
 
   constructor(public path: babel.NodePath<t.Function>) {
     path.assertFunction();
@@ -77,6 +78,50 @@ export class Component {
 
     const bodySegment = this.createComponentSegment(body);
     bodySegment.setParent(this.rootSegment);
+  }
+
+  applyTransformation() {
+    this.rootSegment?.applyTransformation();
+    const cacheVariableDeclaration = this.makeCacheVariableDeclaration();
+    this.getFunctionBody().unshiftContainer("body", cacheVariableDeclaration);
+  }
+
+  private makeCacheVariableDeclaration() {
+    const sizeNumber = t.numericLiteral(this.cacheSize);
+    const declaration = t.variableDeclaration("const", [
+      t.variableDeclarator(
+        t.arrayPattern([
+          this.cacheValueIdentifier,
+          this.cacheCommitIdentifier,
+          this.cacheNullIdentifier,
+        ]),
+        t.callExpression(t.identifier(RUNTIME_MODULE_CREATE_CACHE_HOOK_NAME), [
+          sizeNumber,
+        ])
+      ),
+    ]);
+
+    t.addComment(
+      sizeNumber,
+      "leading",
+      "\n" +
+        Array.from(this.cacheIdToName.entries())
+          .map(([id, name]) => {
+            return `${id} => ${name}`;
+          })
+          .join("\n") +
+        "\n"
+    );
+
+    return declaration;
+  }
+
+  getSegmentsMap() {
+    return new Map(this.segmentsMap);
+  }
+
+  getSegmentByPath(path: babel.NodePath<t.Node>) {
+    return this.segmentsMap.get(path);
   }
 
   createComponentSegment(
@@ -137,11 +182,21 @@ export class Component {
     return isInTheSameFunctionScope(path, this.path);
   }
 
+  getDependentsOfSegment(segment: ComponentSegment) {
+    return Array.from(this.segmentsMap.values()).filter((s) =>
+      s.hasDirectDependencyOn(segment)
+    );
+  }
+
   /**
    * Allocate a space in cache for a new variable
    */
-  allocateCacheSpace() {
-    return this.cacheSize++;
+  allocateCacheSpace(name: string) {
+    const newId = this.cacheSize++;
+
+    this.cacheIdToName.set(newId, name);
+
+    return newId;
   }
 
   /* Methods for cache identifiers */

@@ -14,7 +14,7 @@ export function visitProgram(path: babel.NodePath<babel.types.Program>) {
 
   components.forEach((component) => {
     component.analyze();
-    // component.applyTransformation();
+    component.applyTransformation();
   });
 
   const useCacheHookIdentifier = t.identifier(

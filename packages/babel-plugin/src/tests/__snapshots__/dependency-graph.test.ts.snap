@@ -6,6 +6,7 @@ exports[`dependency graph fixture_dependency_graph 1`] = `
 classDef blockSegment fill:#5352ed,stroke:#333,stroke-width:2px;
 classDef rootChild stroke:#ff0000,stroke-width:2px;
 classDef returnNetwork stroke:#2ecc71,stroke-width:2px;
+classDef componentVariable fill:#2ecc71,stroke:#333,stroke-width:1px;
 node1["<pre align="left">function Test(_props) {
   let a = _props.a;
   let b = _props.b;
@@ -32,6 +33,7 @@ node1["<pre align="left">function Test(_props) {
   for (let i = _unwrapped7; i &lt; 10; i++) {
     m.push(i);
   }
+  console.log(\\&quot;Hello world\\&quot;);
   const _unwrappedJsxExp = y[0];
   const _unwrappedJsxExp2 = y[0];
   const _unwrappedJsxEl = &lt;button&gt;Click here&lt;/button&gt;;
@@ -43,6 +45,7 @@ node1["<pre align="left">function Test(_props) {
 subgraph SG1
 node2["<pre align="left">_props</pre>"]
 class node2 returnNetwork;
+class node2 componentVariable;
 class node2 rootChild
 node3["<pre align="left">{
   let a = _props.a;
@@ -70,6 +73,7 @@ node3["<pre align="left">{
   for (let i = _unwrapped7; i &lt; 10; i++) {
     m.push(i);
   }
+  console.log(\\&quot;Hello world\\&quot;);
   const _unwrappedJsxExp = y[0];
   const _unwrappedJsxExp2 = y[0];
   const _unwrappedJsxEl = &lt;button&gt;Click here&lt;/button&gt;;
@@ -81,39 +85,57 @@ node3["<pre align="left">{
 subgraph SG2
 node4["<pre align="left">let x: number[] = [];</pre>"]
 class node4 returnNetwork;
+class node4 componentVariable;
 node5["<pre align="left">const z: number[] = [];</pre>"]
 class node5 returnNetwork;
+class node5 componentVariable;
 node6["<pre align="left">let y = state % 2 === 0 ? x : z;</pre>"]
 class node6 returnNetwork;
+class node6 componentVariable;
 node7["<pre align="left">const state = _unwrapped[0];</pre>"]
 class node7 returnNetwork;
+class node7 componentVariable;
 node7 --> node6
 node4 --> node6
 node5 --> node6
 node8["<pre align="left">y.push(state);</pre>"]
+class node8 returnNetwork;
 node8 -.-> node6
 node9["<pre align="left">y.push(i + j * b);</pre>"]
+class node9 returnNetwork;
 node9 -.-> node6
 node10["<pre align="left">y.push(i);</pre>"]
+class node10 returnNetwork;
 node10 -.-> node6
 node11["<pre align="left">const _unwrapped = useState(0);</pre>"]
 class node11 returnNetwork;
+class node11 componentVariable;
 node11 --> node7
 node12["<pre align="left">const setState = _unwrapped[1];</pre>"]
+class node12 returnNetwork;
+node11 --> node12
 node6 --> node8
 node7 --> node8
 node13["<pre align="left">for (let i = _unwrapped2, j = _unwrapped4, k = _unwrapped5; j &lt; i; j++) {
   y.push(i + j * b);
 }</pre>"]
+class node13 returnNetwork;
 subgraph SG3
 node14["<pre align="left">let i = _unwrapped2,
   j = _unwrapped4,
   k = _unwrapped5;</pre>"]
+class node14 returnNetwork;
 node15["<pre align="left">let _unwrapped2 = 10;</pre>"]
+class node15 returnNetwork;
+class node15 componentVariable;
 node15 --> node14
 node16["<pre align="left">let _unwrapped4 = _unwrapped3[0];</pre>"]
+class node16 returnNetwork;
+class node16 componentVariable;
 node16 --> node14
 node17["<pre align="left">let _unwrapped5 = _unwrapped3[1];</pre>"]
+class node17 returnNetwork;
+class node17 componentVariable;
 node17 --> node14
 node18["<pre align="left">{
   y.push(i + j * b);
@@ -123,6 +145,8 @@ node6 --> node9
 node14 --> node9
 node14 --> node9
 node19["<pre align="left">let b = _props.b;</pre>"]
+class node19 returnNetwork;
+class node19 componentVariable;
 node19 --> node9
 end
 node18 -.-> SG4
@@ -133,18 +157,25 @@ class node13 blockSegment
 node14 --> node13
 node14 --> node13
 node20["<pre align="left">const _unwrapped3 = [5, 6];</pre>"]
+class node20 returnNetwork;
+class node20 componentVariable;
 node20 --> node16
 node20 --> node17
 node21["<pre align="left">let a = _props.a;</pre>"]
 class node21 returnNetwork;
+class node21 componentVariable;
 node2 --> node21
 node2 --> node19
 node22["<pre align="left">for (let i = _unwrapped6; i &lt; 10; i++) {
   y.push(i);
 }</pre>"]
+class node22 returnNetwork;
 subgraph SG5
 node23["<pre align="left">let i = _unwrapped6;</pre>"]
+class node23 returnNetwork;
 node24["<pre align="left">let _unwrapped6 = 10;</pre>"]
+class node24 returnNetwork;
+class node24 componentVariable;
 node24 --> node23
 node25["<pre align="left">{
   y.push(i);
@@ -160,15 +191,22 @@ node22 -.-> SG5
 class node22 blockSegment
 node23 --> node22
 node26["<pre align="left">const m = y;</pre>"]
+class node26 returnNetwork;
+class node26 componentVariable;
 node6 --> node26
 node27["<pre align="left">m.push(i);</pre>"]
+class node27 returnNetwork;
 node27 -.-> node26
 node28["<pre align="left">for (let i = _unwrapped7; i &lt; 10; i++) {
   m.push(i);
 }</pre>"]
+class node28 returnNetwork;
 subgraph SG7
 node29["<pre align="left">let i = _unwrapped7;</pre>"]
+class node29 returnNetwork;
 node30["<pre align="left">let _unwrapped7 = state;</pre>"]
+class node30 returnNetwork;
+class node30 componentVariable;
 node30 --> node29
 node31["<pre align="left">{
   m.push(i);
@@ -185,26 +223,31 @@ class node28 blockSegment
 node7 --> node28
 node29 --> node28
 node7 --> node30
-node32["<pre align="left">const _unwrappedJsxExp = y[0];</pre>"]
-class node32 returnNetwork;
-node6 --> node32
-node33["<pre align="left">const _unwrappedJsxExp2 = y[0];</pre>"]
+node32["<pre align="left">console.log(\\&quot;Hello world\\&quot;);</pre>"]
+node33["<pre align="left">const _unwrappedJsxExp = y[0];</pre>"]
 class node33 returnNetwork;
+class node33 componentVariable;
 node6 --> node33
-node34["<pre align="left">const _unwrappedJsxEl = &lt;button&gt;Click here&lt;/button&gt;;</pre>"]
+node34["<pre align="left">const _unwrappedJsxExp2 = y[0];</pre>"]
 class node34 returnNetwork;
-node35["<pre align="left">const _unwrappedJsxEl2 = &lt;div&gt;
+class node34 componentVariable;
+node6 --> node34
+node35["<pre align="left">const _unwrappedJsxEl = &lt;button&gt;Click here&lt;/button&gt;;</pre>"]
+class node35 returnNetwork;
+class node35 componentVariable;
+node36["<pre align="left">const _unwrappedJsxEl2 = &lt;div&gt;
       {state} {_unwrappedJsxExp} {a} {_unwrappedJsxEl} {_unwrappedJsxExp2}
     &lt;/div&gt;;</pre>"]
-class node35 returnNetwork;
-node7 --> node35
-node32 --> node35
-node21 --> node35
-node34 --> node35
-node33 --> node35
-node36["<pre align="left">return _unwrappedJsxEl2;</pre>"]
 class node36 returnNetwork;
+class node36 componentVariable;
+node7 --> node36
+node33 --> node36
+node21 --> node36
 node35 --> node36
+node34 --> node36
+node37["<pre align="left">return _unwrappedJsxEl2;</pre>"]
+class node37 returnNetwork;
+node36 --> node37
 end
 node3 -.-> SG2
 class node3 blockSegment
@@ -243,6 +286,7 @@ exports[`dependency graph fixture_dependency_graph 2`] = `
   for (let i = _unwrapped7; i < 10; i++) {
     m.push(i);
   }
+  console.log("Hello world");
   const _unwrappedJsxExp = y[0];
   const _unwrappedJsxExp2 = y[0];
   const _unwrappedJsxEl = <button>Click here</button>;

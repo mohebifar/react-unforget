@@ -1,33 +1,37 @@
 import type * as babel from "@babel/core";
-import type { Binding, Scope } from "@babel/traverse";
+import type { Binding } from "@babel/traverse";
 import * as t from "@babel/types";
 import type { AccessorNode } from "~/utils/ast-tools/is-accessor-node";
 import { isAccessorNode } from "~/utils/ast-tools/is-accessor-node";
 import {
-  DEFAULT_UNWRAPPED_PROPS_VARIABLE_NAME,
-  DEFAULT_UNWRAPPED_VARIABLE_NAME,
+  RUNTIME_MODULE_CACHE_IS_NOT_SET_PROP_NAME,
+  RUNTIME_MODULE_CACHE_VALUE_PROP_NAME,
 } from "~/utils/constants";
 import { unwrapJsxElements } from "~/utils/micro-transformers/unwrap-jsx-elements";
 import { unwrapJsxExpressions } from "~/utils/micro-transformers/unwrap-jsx-expressions";
-import { unwrapPatternAssignment } from "~/utils/micro-transformers/unwrap-pattern-assignment";
+import { unwrapSegmentDeclarationPattern } from "~/utils/model-tools/unwrap-segment-declaration-pattern";
 import {
   getArgumentOfControlFlowStatement,
   getControlFlowBodies,
   isControlFlowStatement,
 } from "~/utils/path-tools/control-flow-utils";
+import { findMutatingExpressions } from "~/utils/path-tools/find-mutating-expressions";
 import { getReferencedVariablesInside } from "~/utils/path-tools/get-referenced-variables-inside";
-import { preserveReferences } from "~/utils/scope-tools/preserve-references";
-import { findMutatingExpressions } from "~/utils/path-tools/find-mutating-expression";
+import { hasHookCall } from "~/utils/path-tools/has-hook-call";
+import { makeDependencyCondition } from "~/utils/ast-factories/make-dependency-condition";
+import { makeCacheEnqueueCallStatement } from "~/utils/ast-factories/make-cache-enqueue-call-statement";
+import { reorderByTopology } from "~/utils/path-tools/reorder-by-topology";
+import { splitVariableDeclaration } from "~/utils/path-tools/split-variable-declaration";
+import { findAliases } from "~/utils/path-tools/find-aliases";
+import { isInTheSameFunctionScope } from "~/utils/path-tools/is-in-the-same-function-scope";
 import type { Component } from "../Component";
 import { SegmentDependency } from "./SegmentDependency";
 
 export type SegmentTransformationResult = {
-  performTransformation: () => babel.NodePath<babel.types.Statement>[] | null;
-  segmentCallableId: babel.types.Identifier;
-  dependencyConditions: babel.types.Expression | null;
+  newNodes: t.Statement[];
+  dependencyConditions: t.Expression | null;
   hasHookCall: boolean;
-  hasReturnStatement?: boolean;
-  updateCache?: babel.types.Statement | null;
+  updateCache?: t.Statement | null;
 } | null;
 
 export enum ComponentSegmentFlags {
@@ -35,16 +39,16 @@ export enum ComponentSegmentFlags {
   IS_COMPONENT_VARIABLE = 1 << 0,
   // Whether or not the variable declaration is unwrapped
   UNWRAPPED_VARIABLE_DECLARATION = 1 << 1,
-  // Whether or not the JSX elements are unwrapped
-  UNWRAPPED_JSX_ELEMENTS = 1 << 2,
-  // Whether or not the JSX expressions are unwrapped
-  UNWRAPPED_JSX_EXPRESSIONS = 1 << 3,
+
+  IS_UNWRAPPER = 1 << 2,
   // Whether or not one of the return statements traces back to this segment
   IS_IN_RETURN_NETWORK = 1 << 4,
   // Whether or not the segment is a function argument
   IS_ARGUMENT = 1 << 5,
   // Whether or not the segment is the init part of a for statement
   IS_FOR_INIT = 1 << 6,
+  // Whether or not the segment is destroyed
+  IS_DESTROYED = 1 << 7,
 }
 
 export class ComponentSegment {
@@ -52,11 +56,17 @@ export class ComponentSegment {
 
   private parent: ComponentSegment | null = null;
 
+  public binding: Binding | null = null;
+
   private children = new Set<ComponentSegment>();
 
   private dependencies = new Set<SegmentDependency>();
 
   private mutationDependencies = new Set<ComponentSegment>();
+
+  private aliases = new Set<ComponentSegment>();
+
+  private cacheLocation: number | null = null;
 
   private flags = 0;
 
@@ -76,6 +86,25 @@ export class ComponentSegment {
 
   getPath() {
     return this.path;
+  }
+
+  getDeclaredBinding() {
+    if (!this.binding) {
+      const node = this.path.node;
+      if (
+        t.isVariableDeclaration(node) &&
+        t.isIdentifier(node.declarations[0]?.id)
+      ) {
+        const binding = this.path.scope.getBinding(
+          node.declarations[0].id.name
+        );
+        if (binding) {
+          this.binding = binding;
+        }
+      }
+    }
+
+    return this.binding;
   }
 
   /* Flags methods */
@@ -123,6 +152,14 @@ export class ComponentSegment {
   }
 
   /* Dependency methods */
+  addAlias(segment: ComponentSegment) {
+    this.aliases.add(segment);
+  }
+
+  getAliases() {
+    return new Set(this.aliases);
+  }
+
   addDependency(
     segment: ComponentSegment,
     binding: Binding,
@@ -170,6 +207,12 @@ export class ComponentSegment {
     return new Set(this.dependencies);
   }
 
+  hasDirectDependencyOn(segment: ComponentSegment) {
+    return Array.from(this.dependencies).some(
+      (dependency) => dependency.segment === segment
+    );
+  }
+
   addMutationDependency(segment: ComponentSegment) {
     this.mutationDependencies.add(segment);
   }
@@ -180,7 +223,8 @@ export class ComponentSegment {
 
   traverseDependencies(
     callback: (dependency: SegmentDependency) => void,
-    visited: Set<SegmentDependency> = new Set()
+    visited: Set<SegmentDependency> = new Set(),
+    stop = false
   ) {
     this.dependencies.forEach((dependency) => {
       if (visited.has(dependency)) {
@@ -188,9 +232,167 @@ export class ComponentSegment {
       }
 
       visited.add(dependency);
+
+      if (
+        stop &&
+        dependency.segment.isFlagSet(ComponentSegmentFlags.IS_UNWRAPPER)
+      ) {
+        return;
+      }
       callback(dependency);
-      dependency.segment.traverseDependencies(callback, visited);
+      dependency.segment.traverseDependencies(callback, visited, stop);
     });
+  }
+
+  getDeepDependencies() {
+    const dependencies = new Set<SegmentDependency>();
+
+    this.traverseDependencies(
+      (dependency) => {
+        dependencies.add(dependency);
+      },
+      new Set(),
+      true
+    );
+
+    return dependencies;
+  }
+
+  getDependenciesForTransformation({
+    filterByScope = true,
+    visited = new Set(),
+    traverseUpwardsUntil = null,
+  }: {
+    filterByScope?: boolean;
+    visited?: Set<ComponentSegment>;
+    traverseUpwardsUntil?: ComponentSegment | null;
+  } = {}) {
+    const directDependencies = this.getDirectDependencies();
+
+    const parentOrChildDependencies = new Set<SegmentDependency>();
+
+    if (traverseUpwardsUntil && this !== traverseUpwardsUntil) {
+      this.parent
+        ?.getDependenciesForTransformation({
+          filterByScope: false,
+          visited,
+          traverseUpwardsUntil: traverseUpwardsUntil,
+        })
+        .forEach((dependency) => {
+          parentOrChildDependencies.add(dependency);
+        });
+    } else {
+      this.children.forEach((segment) => {
+        if (visited.has(segment)) {
+          return;
+        }
+
+        visited.add(segment);
+
+        const innerDependencies = segment.getDependenciesForTransformation({
+          filterByScope: false,
+          visited,
+        });
+
+        innerDependencies.forEach((dependency) => {
+          parentOrChildDependencies.add(dependency);
+        });
+      });
+    }
+
+    const mutationDependencies = new Set<SegmentDependency>();
+
+    const segmentsToFollowForMutation = new Set<ComponentSegment>();
+    const visitedForMutation = new Set<ComponentSegment>();
+
+    const visitAlias = (segment: ComponentSegment) => {
+      if (visitedForMutation.has(segment)) {
+        return;
+      }
+      visitedForMutation.add(segment);
+
+      segmentsToFollowForMutation.add(segment);
+
+      segment.getAliases().forEach((alias) => {
+        visitAlias(alias);
+      });
+    };
+
+    visitAlias(this);
+
+    segmentsToFollowForMutation.forEach((aliasSegment) => {
+      aliasSegment.getMutationDependencies().forEach((mutationSegment) => {
+        mutationSegment
+          .getDependenciesForTransformation({
+            visited,
+            traverseUpwardsUntil: this,
+            filterByScope: false,
+          })
+          .forEach((dependency) => {
+            mutationDependencies.add(dependency);
+          });
+      });
+    });
+
+    const allDependencies = new Set([
+      ...directDependencies,
+      ...parentOrChildDependencies,
+      ...mutationDependencies,
+    ]);
+
+    this.component.getDependentsOfSegment(this).forEach((dependent) => {
+      allDependencies.forEach((dependency) => {
+        if (dependency.segment === dependent) {
+          allDependencies.delete(dependency);
+        }
+      });
+    });
+
+    return filterByScope
+      ? new Set(
+          Array.from(allDependencies).filter((dependency) => {
+            return (
+              dependency.segment !== this &&
+              dependency.segment.isViewableInTheScopeOf(this.path) &&
+              !dependency.segment.isFlagSet(ComponentSegmentFlags.IS_FOR_INIT)
+            );
+          })
+        )
+      : allDependencies;
+  }
+
+  traverseDependents(
+    callback: (dependent: ComponentSegment) => void,
+    visited = new Set()
+  ) {
+    this.component.getDependentsOfSegment(this).forEach((dependent) => {
+      if (visited.has(dependent)) {
+        return;
+      }
+
+      visited.add(dependent);
+
+      callback(dependent);
+      dependent.traverseDependents(callback, visited);
+    });
+  }
+
+  makeDependencyCondition() {
+    return makeDependencyCondition(this);
+  }
+
+  /* Destruction methods */
+  destroy(preserveNode = false) {
+    this.parent?.removeChild(this);
+    this.component.removeSegment(this);
+    this.setFlag(ComponentSegmentFlags.IS_DESTROYED);
+    if (!preserveNode) {
+      this.path.remove();
+    }
+  }
+
+  isDestroyed() {
+    return this.isFlagSet(ComponentSegmentFlags.IS_DESTROYED);
   }
 
   /**
@@ -251,32 +453,38 @@ export class ComponentSegment {
         }
       }
 
-      const flowArguments = getArgumentOfControlFlowStatement(path);
+      const controlFlowArguments = getArgumentOfControlFlowStatement(path);
 
-      flowArguments?.forEach((flowArgument) => {
-        getReferencedVariablesInside(flowArgument).forEach(
-          (binding, innerPath) => {
-            if (!this.component.inTheSameFunctionScope(binding.path)) {
-              return;
-            }
-
-            const segment =
-              this.component.getDeclarationSegmentByBinding(binding);
-            if (!segment) {
-              throw new Error(
-                "The segment could not be found for the given binding"
-              );
-            }
-
-            const accessorNode = innerPath.node;
-
-            if (!isAccessorNode(accessorNode)) {
-              throw new Error("Could not find the accessor node");
-            }
-
-            this.addDependency(segment, binding, accessorNode);
+      controlFlowArguments?.forEach((flowArgument) => {
+        const referencedVariablesInsideArgument = flowArgument.isIdentifier()
+          ? new Map([
+              [
+                flowArgument,
+                flowArgument.scope.getBinding(flowArgument.node.name)!,
+              ],
+            ])
+          : getReferencedVariablesInside(flowArgument);
+        referencedVariablesInsideArgument.forEach((binding, innerPath) => {
+          if (!this.component.inTheSameFunctionScope(binding.path)) {
+            return;
           }
-        );
+
+          const segment =
+            this.component.getDeclarationSegmentByBinding(binding);
+          if (!segment) {
+            throw new Error(
+              "The segment could not be found for the given binding"
+            );
+          }
+
+          const accessorNode = innerPath.node;
+
+          if (!isAccessorNode(accessorNode)) {
+            throw new Error("Could not find the accessor node");
+          }
+
+          this.addDependency(segment, binding, accessorNode);
+        });
       });
 
       controlFlowBodies.forEach((body: babel.NodePath<t.Statement>) => {
@@ -342,6 +550,10 @@ export class ComponentSegment {
 
     this.setFlag(ComponentSegmentFlags.IS_IN_RETURN_NETWORK);
 
+    this.component.getDependentsOfSegment(this).forEach((dependent) => {
+      dependent.markAsInReturnNetwork();
+    });
+
     this.traverseDependencies((dependency) => {
       dependency.segment.markAsInReturnNetwork();
     });
@@ -351,11 +563,146 @@ export class ComponentSegment {
     return this.isFlagSet(ComponentSegmentFlags.IS_IN_RETURN_NETWORK);
   }
 
+  hasHookCall() {
+    return hasHookCall(this.path, this.component.path);
+  }
+
+  isTransformable() {
+    return !this.hasHookCall() && this.isInReturnNetwork();
+  }
+
   /**
    * Apply the transformation to the segment
    */
-  applyTransformation(): SegmentTransformationResult {
-    return null;
+  applyTransformation(): t.Statement[] | null {
+    if (this.appliedTransformation) {
+      return null;
+    }
+
+    if (this.isFlagSet(ComponentSegmentFlags.IS_FOR_INIT)) {
+      this.appliedTransformation = true;
+      return null;
+    }
+
+    if (this.path === this.component.path) {
+      this.children.forEach((child) => {
+        child.applyTransformation();
+      });
+
+      this.appliedTransformation = true;
+      return null;
+    }
+
+    const thisPath = this.path;
+
+    const visited = new Set<ComponentSegment>();
+
+    if (thisPath.isBlockStatement()) {
+      const statements = thisPath.get("body");
+
+      const reorderedStatements = reorderByTopology(
+        statements,
+        this.component.getSegmentsMap() as Map<
+          babel.NodePath<t.Statement>,
+          ComponentSegment
+        >
+      );
+
+      const newNodes = reorderedStatements.flatMap((statement) => {
+        const segment = this.component.getSegmentByPath(statement);
+
+        if (segment) {
+          visited.add(segment);
+          return segment?.applyTransformation() ?? [];
+        }
+
+        return [];
+      });
+
+      thisPath.replaceWith(t.blockStatement(newNodes));
+
+      return null;
+    }
+
+    this.children.forEach((child) => {
+      if (!visited.has(child)) {
+        child.applyTransformation();
+      }
+    });
+
+    if (this.isComponentParameter()) {
+      this.appliedTransformation = true;
+
+      this.component
+        .getFunctionBody()
+        ?.unshiftContainer("body", this.getCacheUpdateEnqueueStatement());
+
+      return null;
+    }
+
+    const nodes: t.Statement[] = [];
+    if (this.path.isReturnStatement()) {
+      return [
+        t.expressionStatement(
+          t.callExpression(this.component.getCacheCommitIdentifier(), [])
+        ),
+        this.getPathAsStatement().node,
+      ];
+    }
+
+    const dependencyConditions =
+      this.isInReturnNetwork() && !this.hasHookCall()
+        ? this.makeDependencyCondition()
+        : null;
+
+    const isTransformableVariable =
+      this.isComponentVariable() && this.isInReturnNetwork();
+
+    const splitDeclaration = splitVariableDeclaration(
+      this.getPathAsStatement(),
+      {
+        initialValue: isTransformableVariable
+          ? this.getCacheValueAccessExpression()
+          : undefined,
+      }
+    );
+    const cacheEnqueue = isTransformableVariable
+      ? [this.getCacheUpdateEnqueueStatement()]
+      : [];
+
+    if (splitDeclaration.declaration) {
+      nodes.push(splitDeclaration.declaration);
+    }
+
+    if (dependencyConditions) {
+      nodes.push(
+        t.ifStatement(
+          dependencyConditions,
+          t.blockStatement([
+            ...splitDeclaration.conditionalStatements,
+            ...cacheEnqueue,
+          ])
+        )
+      );
+    } else {
+      nodes.push(...splitDeclaration.conditionalStatements);
+
+      nodes.push(...cacheEnqueue);
+    }
+
+    this.appliedTransformation = true;
+
+    return nodes;
+  }
+
+  allocateCacheLocation() {
+    if (this.cacheLocation === null) {
+      this.cacheLocation = this.component.allocateCacheSpace(
+        this.getDeclaredBinding()?.identifier.name ?? "unknown"
+      );
+    }
+
+    return this.cacheLocation;
   }
 
   ensureComponentVariable(binding: Binding) {
@@ -368,16 +715,43 @@ export class ComponentSegment {
       return declaration.declaresBinding(binding);
     });
 
-    properSegment?.setFlag(ComponentSegmentFlags.IS_COMPONENT_VARIABLE);
+    const newBinding = properSegment?.path.scope.getBinding(
+      binding.identifier.name
+    );
+
+    if (!properSegment) {
+      throw new Error("The proper segment could not be found");
+    }
+
+    properSegment.binding = newBinding ?? null;
+
+    if (!properSegment.isFlagSet(ComponentSegmentFlags.IS_FOR_INIT)) {
+      properSegment.setFlag(ComponentSegmentFlags.IS_COMPONENT_VARIABLE);
+    }
+
+    findAliases(properSegment.path, (p) =>
+      isInTheSameFunctionScope(p, this.component.path)
+    ).forEach((bindings) => {
+      bindings.forEach((binding) => {
+        const segment = this.component.getDeclarationSegmentByBinding(binding);
+        if (!segment) {
+          throw new Error(
+            "The segment could not be found for the given binding"
+          );
+        }
+
+        segment.addAlias(properSegment);
+      });
+    });
 
     return properSegment;
   }
 
-  private isVariableDeclaration() {
+  isVariableDeclaration() {
     return this.path.isVariableDeclaration();
   }
 
-  private isComponentParameter() {
+  isComponentParameter() {
     const parentPath = this.path.parentPath;
 
     if (!parentPath?.isFunction() || parentPath !== this.component.path) {
@@ -389,259 +763,8 @@ export class ComponentSegment {
     return params.some((param) => param === this.path);
   }
 
-  /**
-   * This method unwraps the declaration node if it is an object pattern or array pattern
-   */
   unwrapDeclarationPattern() {
-    if (this.hasUnwrappedVariableDeclaration()) {
-      return [this];
-    }
-
-    const markAsUnwrapped = (segment: ComponentSegment = this) =>
-      segment.setFlag(ComponentSegmentFlags.UNWRAPPED_VARIABLE_DECLARATION);
-
-    const thisPath: babel.NodePath = this.path;
-
-    if (this.isVariableDeclaration()) {
-      thisPath.assertVariableDeclaration();
-
-      const forStatementInitOldAndNewMap = new Map<string, string>();
-
-      const currentKind = thisPath.node.kind;
-      const variableDeclarators = thisPath.get("declarations");
-      const isInForStatementInit = thisPath.parentPath?.isForStatement();
-
-      if (
-        variableDeclarators.length === 1 &&
-        t.isIdentifier(variableDeclarators.at(0)?.node.id) &&
-        !isInForStatementInit
-      ) {
-        markAsUnwrapped();
-        return [this];
-      }
-
-      this.destroy(true);
-
-      const pathToInsertBefore = isInForStatementInit
-        ? thisPath.parentPath!
-        : thisPath;
-
-      let restoreBindings: ((newScope?: Scope) => void)[] = [];
-
-      const createdPaths = variableDeclarators.flatMap((declarator, index) => {
-        const isLastDeclarator = index === variableDeclarators.length - 1;
-        const oldIdPath = declarator.get("id");
-        const oldInitNode = declarator.get("init").node;
-
-        let unwrappedItems = unwrapPatternAssignment(oldIdPath, oldInitNode);
-
-        // if (
-        //   unwrappedItems.length === 1 &&
-        //   variableDeclarators.length === 1 &&
-        //   !isInForStatementInit
-        // ) {
-        //   return [];
-        // }
-
-        let intermediateBinding: Binding | undefined = undefined;
-        let intermediateVariableDeclarationPath: babel.NodePath<t.VariableDeclaration> | null =
-          null;
-
-        if (unwrappedItems.length > 1) {
-          const intermediateId = oldInitNode
-            ? thisPath.scope.generateUidIdentifier(
-                DEFAULT_UNWRAPPED_VARIABLE_NAME
-              )
-            : null;
-
-          unwrappedItems = unwrapPatternAssignment(
-            oldIdPath,
-            oldInitNode,
-            intermediateId
-          );
-
-          if (intermediateId) {
-            [intermediateVariableDeclarationPath] =
-              pathToInsertBefore.insertBefore(
-                t.variableDeclaration("const", [
-                  t.variableDeclarator(intermediateId, oldInitNode),
-                ])
-              );
-
-            const scope = pathToInsertBefore.find((p) =>
-              p.isBlockStatement()
-            )?.scope;
-
-            scope?.registerDeclaration(intermediateVariableDeclarationPath);
-
-            intermediateBinding = scope?.getBinding(intermediateId.name);
-          }
-        }
-
-        const createdPathsForDeclarator = intermediateVariableDeclarationPath
-          ? [intermediateVariableDeclarationPath]
-          : [];
-
-        const createdNodesForPatternElements = unwrappedItems.map(
-          (unwrappedItem) =>
-            t.variableDeclaration(currentKind, [
-              t.variableDeclarator(unwrappedItem.id, unwrappedItem.value),
-            ])
-        );
-
-        restoreBindings = restoreBindings.concat(
-          unwrappedItems.flatMap(({ binding }) =>
-            binding ? [preserveReferences(binding)] : []
-          )
-        );
-
-        let createdPathsForPatternElements: babel.NodePath<t.VariableDeclaration>[] =
-          [];
-
-        if (isInForStatementInit) {
-          createdPathsForPatternElements = pathToInsertBefore.insertBefore(
-            createdNodesForPatternElements.map((node) => {
-              const newId = pathToInsertBefore.scope.generateUidIdentifier(
-                DEFAULT_UNWRAPPED_VARIABLE_NAME
-              );
-              const currentDeclaration = node.declarations[0]!;
-              const oldName = (currentDeclaration?.id as t.Identifier).name;
-
-              forStatementInitOldAndNewMap.set(oldName, newId.name);
-
-              currentDeclaration.id = newId;
-              return node;
-            })
-          );
-        } else {
-          if (isLastDeclarator) {
-            createdPathsForPatternElements =
-              pathToInsertBefore.replaceWithMultiple(
-                createdNodesForPatternElements
-              );
-          } else {
-            createdPathsForPatternElements = pathToInsertBefore.insertBefore(
-              createdNodesForPatternElements
-            );
-          }
-        }
-
-        createdPathsForPatternElements.forEach((newPath) => {
-          const newDeclarator = newPath.get(
-            "declarations.0"
-          ) as babel.NodePath<t.VariableDeclarator>;
-
-          thisPath.scope.registerDeclaration(newPath);
-
-          const scope = intermediateBinding?.scope ?? thisPath.scope;
-          const binding = scope.getOwnBinding(
-            (newDeclarator.node.id as t.Identifier).name
-          );
-
-          if (binding) {
-            binding.path = newDeclarator;
-          }
-
-          intermediateBinding?.reference(newPath);
-
-          return newPath;
-        });
-
-        return createdPathsForDeclarator.concat(createdPathsForPatternElements);
-      });
-
-      if (isInForStatementInit) {
-        const oldToNewMapEntries = Array.from(
-          forStatementInitOldAndNewMap.entries()
-        );
-
-        const [newForInitPath] = thisPath.replaceWith(
-          t.variableDeclaration(
-            "let",
-            oldToNewMapEntries.map(([oldId, newId]) =>
-              t.variableDeclarator(t.identifier(oldId), t.identifier(newId))
-            )
-          )
-        );
-
-        thisPath.scope.registerDeclaration(newForInitPath);
-
-        oldToNewMapEntries.forEach(([, newId]) => {
-          const bindingWithNewId = thisPath.parentPath.scope.getBinding(newId);
-
-          if (!bindingWithNewId) {
-            throw new Error("Binding not found");
-          }
-          bindingWithNewId?.reference(newForInitPath);
-        });
-
-        createdPaths.push(newForInitPath);
-      }
-
-      const newSegments = createdPaths.map((newPath) => {
-        const newSegment = this.component.createComponentSegment(newPath);
-        markAsUnwrapped(newSegment);
-
-        return newSegment;
-      });
-
-      return newSegments;
-    } else if (this.isFlagSet(ComponentSegmentFlags.IS_ARGUMENT)) {
-      if (!thisPath.isPattern()) {
-        return [this];
-      }
-
-      const intermediateId = t.identifier(
-        DEFAULT_UNWRAPPED_PROPS_VARIABLE_NAME
-      );
-
-      const unwrappedItems = unwrapPatternAssignment(
-        thisPath,
-        null,
-        intermediateId
-      );
-
-      const restoreBindings = unwrappedItems.flatMap(({ binding }) =>
-        binding ? [preserveReferences(binding)] : []
-      );
-
-      const [newPath] = thisPath.replaceWith(intermediateId);
-      this.path = newPath;
-
-      newPath.scope.registerBinding("param", newPath);
-
-      const newParamBinding = newPath.scope.getBinding(intermediateId.name)!;
-
-      const newDeclarations = unwrappedItems.map((unwrappedItem) =>
-        t.variableDeclaration("let", [
-          t.variableDeclarator(unwrappedItem.id, unwrappedItem.value),
-        ])
-      );
-
-      const componentBody = this.component.getFunctionBody();
-      const createdPaths = componentBody.unshiftContainer(
-        "body",
-        newDeclarations
-      );
-
-      createdPaths.forEach((newPath) => {
-        newParamBinding.reference(newPath);
-        thisPath.scope.registerDeclaration(newPath);
-      });
-
-      restoreBindings.forEach((restoreBinding) => restoreBinding());
-      markAsUnwrapped();
-
-      return [
-        this,
-        ...createdPaths.map((newPath) => {
-          const newSegment = this.component.createComponentSegment(newPath);
-          markAsUnwrapped(newSegment);
-
-          return newSegment;
-        }),
-      ];
-    }
+    return unwrapSegmentDeclarationPattern(this);
   }
 
   declaresBinding(binding: Binding) {
@@ -666,15 +789,57 @@ export class ComponentSegment {
     return thisPath === bindingPath;
   }
 
-  destroy(preserveNode = false) {
-    this.parent?.removeChild(this);
-    this.component.removeSegment(this);
-    if (!preserveNode) {
-      this.path.remove();
+  isViewableInTheScopeOf(path: babel.NodePath<t.Node>) {
+    if (!this.isComponentVariable()) {
+      return false;
     }
+
+    // Check if the scope of the given path sees the segment
+    const isInSameScope = Object.values(
+      path.find((p) => p.isBlockStatement())?.scope.getAllBindings() ?? {}
+    ).some((binding) => binding === this.getDeclaredBinding());
+
+    return isInSameScope;
   }
 
   printCode() {
     return this.path.toString();
+  }
+
+  private getCacheAccessorExpression() {
+    return t.memberExpression(
+      this.component.getCacheValueIdentifier(),
+      t.numericLiteral(this.allocateCacheLocation()),
+      true
+    );
+  }
+
+  getCacheUpdateEnqueueStatement() {
+    const binding = this.getDeclaredBinding();
+    if (!binding) {
+      throw new Error("The binding is not set" + this.printCode());
+    }
+    return makeCacheEnqueueCallStatement(
+      this.getCacheAccessorExpression(),
+      binding.identifier.name
+    );
+  }
+
+  getCacheValueAccessExpression() {
+    return t.memberExpression(
+      this.getCacheAccessorExpression(),
+      t.identifier(RUNTIME_MODULE_CACHE_VALUE_PROP_NAME)
+    );
+  }
+
+  getCacheIsNotSetAccessExpression() {
+    return t.memberExpression(
+      this.getCacheAccessorExpression(),
+      t.identifier(RUNTIME_MODULE_CACHE_IS_NOT_SET_PROP_NAME)
+    );
+  }
+
+  _unsafe_setPath(path: babel.NodePath<t.Node>) {
+    this.path = path;
   }
 }

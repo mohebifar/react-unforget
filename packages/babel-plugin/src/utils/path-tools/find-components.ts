@@ -2,7 +2,6 @@ import type * as babel from "@babel/core";
 import * as t from "@babel/types";
 import { Component } from "~/models/Component";
 import { doesMatchHookName } from "~/utils/ast-tools/is-hook-call";
-import { expandArrowFunctionToBlockStatement } from "~/utils/micro-transformers/expand-arrow-function-to-block-statement";
 import { getReturnsOfFunction } from "./get-returns-of-function";
 
 export function findComponents(program: babel.NodePath<babel.types.Program>) {

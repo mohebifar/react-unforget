@@ -23,6 +23,8 @@ export default function Test({ a, b }: { a: number; b: number }) {
     m.push(i);
   }
 
+  console.log("Hello world");
+
   return (
     <div>
       {state} {y[0]} {a} <button>Click here</button> {y[0]}

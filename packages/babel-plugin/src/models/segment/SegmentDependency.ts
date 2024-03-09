@@ -149,12 +149,4 @@ export class SegmentDependency {
 
     return newBaseObjectId;
   }
-
-  isInTheScopeOf(path: babel.NodePath<t.Node>) {
-    const isInSameScope = Object.values(path.scope.getAllBindings()).some(
-      (binding) =>  false // TODO: Fix: binding === this.segment.binding
-    );
-
-    return isInSameScope;
-  }
 }

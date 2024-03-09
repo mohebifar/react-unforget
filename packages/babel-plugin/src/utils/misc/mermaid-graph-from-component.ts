@@ -19,6 +19,7 @@ function printMermaidGraph(root: ComponentSegment): string {
     "classDef blockSegment fill:#5352ed,stroke:#333,stroke-width:2px;",
     "classDef rootChild stroke:#ff0000,stroke-width:2px;",
     "classDef returnNetwork stroke:#2ecc71,stroke-width:2px;",
+    "classDef componentVariable fill:#2ecc71,stroke:#333,stroke-width:1px;",
   ];
   let nodeIdCounter = 0;
   let subgraphCounter = 0;
@@ -33,6 +34,10 @@ function printMermaidGraph(root: ComponentSegment): string {
       );
       if (segment.isInReturnNetwork()) {
         const linkClass = `class ${id} returnNetwork;`;
+        graphLines.push(linkClass);
+      }
+      if (segment.isComponentVariable()) {
+        const linkClass = `class ${id} componentVariable;`;
         graphLines.push(linkClass);
       }
     }

@@ -11,6 +11,7 @@
     "@react-unforget/babel-plugin": "0.1.0-dev.3"
   },
   "changesets": [
+    "hungry-frogs-hug",
     "metal-glasses-argue",
     "nervous-ducks-grow",
     "old-tables-grin",
@@ -22,6 +23,7 @@
     "strong-donkeys-guess",
     "swift-zoos-grab",
     "tough-bags-yell",
-    "tough-shrimps-remain"
+    "tough-shrimps-remain",
+    "wise-snails-nail"
   ]
 }

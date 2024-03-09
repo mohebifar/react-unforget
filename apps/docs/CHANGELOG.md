@@ -1,5 +1,13 @@
 # docs
 
+## 1.0.1-dev.3
+
+### Patch Changes
+
+- Updated dependencies [829a728]
+- Updated dependencies [89be8a2]
+  - @react-unforget/babel-plugin@0.1.0-dev.11
+
 ## 1.0.1-dev.2
 
 ### Patch Changes

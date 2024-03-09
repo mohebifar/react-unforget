@@ -1,5 +1,15 @@
 # @react-unforget/compiler
 
+## 0.1.0-dev.11
+
+### Minor Changes
+
+- 829a728: Make the babel plugin configurable through options
+
+### Patch Changes
+
+- 89be8a2: Expose mermaid dependency graph generator API
+
 ## 0.1.0-dev.10
 
 ### Minor Changes

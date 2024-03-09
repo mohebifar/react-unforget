@@ -5,7 +5,7 @@ type StatementPath = babel.NodePath<babel.types.Statement>;
 
 export function reorderByTopology(
   statements: StatementPath[],
-  map: Map<babel.NodePath, ComponentSegment>
+  map: Map<babel.NodePath, ComponentSegment>,
 ) {
   const stack: StatementPath[] = [];
   const visited = new Set<babel.NodePath>();

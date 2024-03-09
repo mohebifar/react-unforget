@@ -15,6 +15,8 @@ describe("dependency graph", () => {
       component.analyze();
 
       mermaidGraphs.push(mermaidGraphFromComponent(component));
+
+      component.applyTransformation();
       componentCodes.push(component.path.toString());
     });
 

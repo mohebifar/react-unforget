@@ -3,10 +3,13 @@ import type { Binding } from "@babel/traverse";
 
 export function getReferencedVariablesInside(
   path: babel.NodePath<babel.types.Node>,
-  unique = true
+  unique = true,
 ) {
   const visited = new Set<Binding>();
-  const map = new Map<babel.NodePath<babel.types.Identifier | babel.types.JSXIdentifier>, Binding>();
+  const map = new Map<
+    babel.NodePath<babel.types.Identifier | babel.types.JSXIdentifier>,
+    Binding
+  >();
 
   path.traverse({
     ReferencedIdentifier(innerPath) {

@@ -53,7 +53,7 @@ export function unwrapSegmentDeclarationPattern(thisSegment: ComponentSegment) {
     const createdPathsAndBindings = variableDeclarators.flatMap(
       (
         declarator,
-        index
+        index,
       ): [
         binding: Binding | null,
         path: babel.NodePath,
@@ -71,14 +71,14 @@ export function unwrapSegmentDeclarationPattern(thisSegment: ComponentSegment) {
         if (unwrappedItems.length > 1) {
           const intermediateId = oldInitNode
             ? thisPath.scope.generateUidIdentifier(
-                DEFAULT_UNWRAPPED_VARIABLE_NAME
+                DEFAULT_UNWRAPPED_VARIABLE_NAME,
               )
             : null;
 
           unwrappedItems = unwrapPatternAssignment(
             oldIdPath,
             oldInitNode,
-            intermediateId
+            intermediateId,
           );
 
           if (intermediateId) {
@@ -86,11 +86,11 @@ export function unwrapSegmentDeclarationPattern(thisSegment: ComponentSegment) {
               pathToInsertBefore.insertBefore(
                 t.variableDeclaration("const", [
                   t.variableDeclarator(intermediateId, oldInitNode),
-                ])
+                ]),
               );
 
             const scope = pathToInsertBefore.find((p) =>
-              p.isBlockStatement()
+              p.isBlockStatement(),
             )?.scope;
 
             scope?.registerDeclaration(intermediateVariableDeclarationPath);
@@ -108,13 +108,13 @@ export function unwrapSegmentDeclarationPattern(thisSegment: ComponentSegment) {
           (unwrappedItem) =>
             t.variableDeclaration(currentKind, [
               t.variableDeclarator(unwrappedItem.id, unwrappedItem.value),
-            ])
+            ]),
         );
 
         restoreBindings = restoreBindings.concat(
           unwrappedItems.flatMap(({ binding }) =>
-            binding ? [preserveReferences(binding)] : []
-          )
+            binding ? [preserveReferences(binding)] : [],
+          ),
         );
 
         let createdPathsForPatternElements: babel.NodePath<t.VariableDeclaration>[] =
@@ -124,7 +124,7 @@ export function unwrapSegmentDeclarationPattern(thisSegment: ComponentSegment) {
           createdNodesForPatternElements = createdNodesForPatternElements.map(
             (node) => {
               const newId = pathToInsertBefore.scope.generateUidIdentifier(
-                DEFAULT_UNWRAPPED_VARIABLE_NAME
+                DEFAULT_UNWRAPPED_VARIABLE_NAME,
               );
               const currentDeclaration = node.declarations[0]!;
               const oldName = (currentDeclaration?.id as t.Identifier).name;
@@ -133,7 +133,7 @@ export function unwrapSegmentDeclarationPattern(thisSegment: ComponentSegment) {
 
               currentDeclaration.id = newId;
               return node;
-            }
+            },
           );
         }
 
@@ -144,25 +144,25 @@ export function unwrapSegmentDeclarationPattern(thisSegment: ComponentSegment) {
 
         if (isInForStatementInit || !isLastDeclarator) {
           createdPathsForPatternElements = pathToInsertBefore.insertBefore(
-            createdNodesForPatternElements
+            createdNodesForPatternElements,
           );
         } else {
           createdPathsForPatternElements =
             pathToInsertBefore.replaceWithMultiple(
-              createdNodesForPatternElements
+              createdNodesForPatternElements,
             );
         }
 
         createdPathsForPatternElements.forEach((newPath) => {
           const newDeclarator = newPath.get(
-            "declarations.0"
+            "declarations.0",
           ) as babel.NodePath<t.VariableDeclarator>;
 
           newPath.scope.registerDeclaration(newPath);
 
           const scope = intermediateBinding?.scope ?? thisPath.scope;
           const binding = scope.getOwnBinding(
-            (newDeclarator.node.id as t.Identifier).name
+            (newDeclarator.node.id as t.Identifier).name,
           );
 
           if (binding) {
@@ -179,25 +179,25 @@ export function unwrapSegmentDeclarationPattern(thisSegment: ComponentSegment) {
             const binding = newPath.scope.getBinding(names[i]!)!;
 
             return [binding, newPath, false] as const;
-          })
+          }),
         );
-      }
+      },
     );
 
     let pathNeedingForInitFlag: babel.NodePath | null = null;
 
     if (isInForStatementInit) {
       const oldToNewMapEntries = Array.from(
-        forStatementInitOldAndNewMap.entries()
+        forStatementInitOldAndNewMap.entries(),
       );
 
       const [newForInitPath] = thisPath.replaceWith(
         t.variableDeclaration(
           "let",
           oldToNewMapEntries.map(([oldId, newId]) =>
-            t.variableDeclarator(t.identifier(oldId), t.identifier(newId))
-          )
-        )
+            t.variableDeclarator(t.identifier(oldId), t.identifier(newId)),
+          ),
+        ),
       );
 
       thisPath.scope.registerDeclaration(newForInitPath);
@@ -233,10 +233,27 @@ export function unwrapSegmentDeclarationPattern(thisSegment: ComponentSegment) {
         newSegment.analyze();
 
         return newSegment;
-      }
+      },
     );
 
     return newSegments;
+  } else if (thisPath.isFunctionDeclaration()) {
+    const variableDeclaration = t.variableDeclaration("var", [
+      t.variableDeclarator(
+        thisPath.node.id as t.Identifier,
+        t.functionExpression(
+          thisPath.node.id as t.Identifier,
+          thisPath.node.params,
+          thisPath.node.body,
+          thisPath.node.generator,
+          thisPath.node.async,
+        ),
+      ),
+    ]);
+
+    const [newPath] = thisPath.replaceWith(variableDeclaration);
+    thisSegment._unsafe_setPath(newPath);
+    return [thisSegment];
   } else if (thisSegment.isFlagSet(ComponentSegmentFlags.IS_ARGUMENT)) {
     if (!thisPath.isPattern()) {
       return [thisSegment];
@@ -247,11 +264,11 @@ export function unwrapSegmentDeclarationPattern(thisSegment: ComponentSegment) {
     const unwrappedItems = unwrapPatternAssignment(
       thisPath,
       null,
-      intermediateId
+      intermediateId,
     );
 
     const restoreBindings = unwrappedItems.flatMap(({ binding }) =>
-      binding ? [preserveReferences(binding)] : []
+      binding ? [preserveReferences(binding)] : [],
     );
 
     const [newPath] = thisPath.replaceWith(intermediateId);
@@ -264,13 +281,13 @@ export function unwrapSegmentDeclarationPattern(thisSegment: ComponentSegment) {
     const newDeclarations = unwrappedItems.map((unwrappedItem) =>
       t.variableDeclaration("let", [
         t.variableDeclarator(unwrappedItem.id, unwrappedItem.value),
-      ])
+      ]),
     );
 
     const componentBody = thisSegment.component.getFunctionBody();
     const createdPaths = componentBody.unshiftContainer(
       "body",
-      newDeclarations
+      newDeclarations,
     );
 
     createdPaths.forEach((newPath) => {

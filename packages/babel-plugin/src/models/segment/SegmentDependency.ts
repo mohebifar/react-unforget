@@ -12,7 +12,7 @@ export class AccessChainItem {
 
   constructor(
     public id: string,
-    public idExpression: t.Expression
+    public idExpression: t.Expression | t.JSXIdentifier,
   ) {}
 
   toString() {
@@ -32,7 +32,7 @@ export class SegmentDependency {
 
   constructor(
     public segment: ComponentSegment,
-    public accessorNode: AccessorNode
+    public accessorNode: AccessorNode,
   ) {
     let currentAccessChainItem: AccessChainItem | null = null;
 
@@ -88,10 +88,13 @@ export class SegmentDependency {
         } else {
           currentAccessorNode = null;
         }
-      } else if (t.isIdentifier(currentAccessorNode)) {
+      } else if (
+        t.isIdentifier(currentAccessorNode) ||
+        t.isJSXIdentifier(currentAccessorNode)
+      ) {
         newAccessChainItem = new AccessChainItem(
           currentAccessorNode.name,
-          currentAccessorNode
+          currentAccessorNode,
         );
 
         currentAccessorNode = null;

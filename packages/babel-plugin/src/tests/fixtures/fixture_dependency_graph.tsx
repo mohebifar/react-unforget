@@ -27,7 +27,13 @@ export default function Test({ a, b }: { a: number; b: number }) {
 
   return (
     <div>
-      {state} {y[0]} {a} <button>Click here</button> {y[0]}
+      {state} {a}{" "}
+      <button onClick={() => setState((p) => p + 1)}>Click here</button>
+      <ul>
+        <li>{JSON.stringify(y)}</li>
+        <li>{JSON.stringify(x)}</li>
+        <li>{JSON.stringify(z)}</li>
+      </ul>
     </div>
   );
 }

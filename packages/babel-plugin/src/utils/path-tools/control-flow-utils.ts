@@ -7,7 +7,7 @@ type ControlFlowStatement =
   | babel.NodePath<babel.types.TryStatement>;
 
 export function getArgumentOfControlFlowStatement(
-  statement: babel.NodePath<babel.types.Statement>
+  statement: babel.NodePath<babel.types.Statement>,
 ) {
   if (statement.isIfStatement()) {
     return [statement.get("test")];
@@ -27,7 +27,7 @@ export function getArgumentOfControlFlowStatement(
       statement.get("test"),
       statement.get("update"),
     ].filter(
-      (s) => s.isExpression() || s.isVariableDeclaration()
+      (s) => s.isExpression() || s.isVariableDeclaration(),
     ) as babel.NodePath<
       babel.types.Expression | babel.types.VariableDeclaration
     >[];
@@ -45,7 +45,7 @@ export function getArgumentOfControlFlowStatement(
 }
 
 export function isControlFlowStatement(
-  statement: babel.NodePath
+  statement: babel.NodePath,
 ): statement is ControlFlowStatement {
   return (
     statement.isIfStatement() ||
@@ -58,7 +58,7 @@ export function isControlFlowStatement(
 }
 
 export function getControlFlowBodies(
-  statement: babel.NodePath<babel.types.Statement>
+  statement: babel.NodePath<babel.types.Statement>,
 ) {
   if (statement.isTryStatement()) {
     const block = statement.get("block");
@@ -116,22 +116,22 @@ export function getControlFlowBodies(
 }
 
 export function getBlockStatementsOfPath(
-  path: babel.NodePath<babel.types.Statement>
+  path: babel.NodePath<babel.types.Statement>,
 ) {
   const bodies = getControlFlowBodies(path);
 
   return bodies.filter(
     (body): body is babel.NodePath<babel.types.BlockStatement> => {
       return body.isBlockStatement();
-    }
+    },
   );
 }
 
 export function isForStatementInit(
-  potentialInit: babel.NodePath<babel.types.Node>
+  potentialInit: babel.NodePath<babel.types.Node>,
 ) {
   const forParent = potentialInit.findParent((p) =>
-    p.isForStatement()
+    p.isForStatement(),
   ) as babel.NodePath<babel.types.ForStatement> | null;
 
   if (!forParent) {
@@ -139,7 +139,7 @@ export function isForStatementInit(
   }
 
   const variableDeclaration = potentialInit.findParent((p) =>
-    p.isVariableDeclaration()
+    p.isVariableDeclaration(),
   ) as babel.NodePath<babel.types.VariableDeclaration> | null;
 
   if (!variableDeclaration) {

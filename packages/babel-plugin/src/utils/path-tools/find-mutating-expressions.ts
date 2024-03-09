@@ -5,7 +5,7 @@ import { MUTATING_METHODS } from "~/utils/constants";
 import { getDeclaredIdentifiersInLVal } from "./get-declared-identifiers-in-lval";
 
 export function findMutatingExpressions(
-  path: babel.NodePath<babel.types.Node>
+  path: babel.NodePath<babel.types.Node>,
 ) {
   const result: {
     binding: Binding;
@@ -14,12 +14,12 @@ export function findMutatingExpressions(
 
   const pairExists = (
     binding: Binding,
-    path: babel.NodePath<babel.types.Node>
+    path: babel.NodePath<babel.types.Node>,
   ) => result.some((entry) => entry.binding === binding && entry.path === path);
 
   const push = (
     binding: Binding,
-    path: babel.NodePath<babel.types.Expression>
+    path: babel.NodePath<babel.types.Expression>,
   ) => {
     if (!pairExists(binding, path)) {
       result.push({ binding, path });
@@ -34,7 +34,9 @@ export function findMutatingExpressions(
       }
 
       const statement = assignmentPath.getStatementParent();
-      const leftMostIds = getDeclaredIdentifiersInLVal(lval);
+      const leftMostIds = lval.isMemberExpression()
+        ? [getLeftmostIdName(lval.node)]
+        : getDeclaredIdentifiersInLVal(lval);
 
       if (leftMostIds.length === 0 || !statement) {
         return;

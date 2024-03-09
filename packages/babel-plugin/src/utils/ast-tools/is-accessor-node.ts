@@ -4,13 +4,15 @@ export type AccessorNode =
   | t.MemberExpression
   | t.OptionalMemberExpression
   | t.Identifier
-  | t.PrivateName;
+  | t.PrivateName
+  | t.JSXIdentifier;
 
 export function isAccessorNode(node: t.Node): node is AccessorNode {
   return (
     t.isMemberExpression(node) ||
     t.isOptionalMemberExpression(node) ||
     t.isIdentifier(node) ||
-    t.isPrivateName(node)
+    t.isPrivateName(node) ||
+    t.isJSXIdentifier(node)
   );
 }

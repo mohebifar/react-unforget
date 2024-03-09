@@ -29,8 +29,8 @@ describe("findAliases", () => {
     expect(
       bindings!.some(
         (binding) =>
-          binding.identifier.name === "b" || binding.identifier.name === "c"
-      )
+          binding.identifier.name === "b" || binding.identifier.name === "c",
+      ),
     ).toBeTruthy();
   });
 
@@ -50,7 +50,7 @@ describe("findAliases", () => {
     const bindings = aliases.get("a");
     expect(bindings).toHaveLength(1);
     expect(
-      bindings!.some((binding) => binding.identifier.name === "b")
+      bindings!.some((binding) => binding.identifier.name === "b"),
     ).toBeTruthy();
   });
 
@@ -70,7 +70,7 @@ describe("findAliases", () => {
     const bindings = aliases.get("a")!;
     expect(bindings).toHaveLength(1);
     expect(
-      bindings.some((binding) => binding.identifier.name === "b")
+      bindings.some((binding) => binding.identifier.name === "b"),
     ).toBeTruthy();
   });
 
@@ -90,10 +90,10 @@ describe("findAliases", () => {
     const bindings = aliases.get("a")!;
     expect(bindings).toHaveLength(2);
     expect(
-      bindings.some((binding) => binding.identifier.name === "b")
+      bindings.some((binding) => binding.identifier.name === "b"),
     ).toBeTruthy();
     expect(
-      bindings.some((binding) => binding.identifier.name === "c")
+      bindings.some((binding) => binding.identifier.name === "c"),
     ).toBeTruthy();
   });
 
@@ -112,10 +112,10 @@ describe("findAliases", () => {
     const bindings = aliases.get("a")!;
     expect(bindings).toHaveLength(2);
     expect(
-      bindings.some((binding) => binding.identifier.name === "b")
+      bindings.some((binding) => binding.identifier.name === "b"),
     ).toBeTruthy();
     expect(
-      bindings.some((binding) => binding.identifier.name === "c")
+      bindings.some((binding) => binding.identifier.name === "c"),
     ).toBeTruthy();
   });
 
@@ -135,7 +135,7 @@ describe("findAliases", () => {
     const bindings = aliases.get("a")!;
     expect(bindings).toHaveLength(1);
     expect(
-      bindings.some((binding) => binding.identifier.name === "c")
+      bindings.some((binding) => binding.identifier.name === "c"),
     ).toBeTruthy();
   });
 
@@ -156,7 +156,7 @@ describe("findAliases", () => {
     const bindings = aliases.get("a")!;
     expect(bindings).toHaveLength(1);
     expect(
-      bindings.some((binding) => binding.identifier.name === "c")
+      bindings.some((binding) => binding.identifier.name === "c"),
     ).toBeTruthy();
   });
 
@@ -177,10 +177,10 @@ describe("findAliases", () => {
     const bindings = aliases.get("a")!;
     expect(bindings).toHaveLength(2);
     expect(
-      bindings.some((binding) => binding.identifier.name === "c")
+      bindings.some((binding) => binding.identifier.name === "c"),
     ).toBeTruthy();
     expect(
-      bindings.some((binding) => binding.identifier.name === "b")
+      bindings.some((binding) => binding.identifier.name === "b"),
     ).toBeTruthy();
   });
 });

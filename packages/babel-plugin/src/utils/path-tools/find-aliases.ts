@@ -3,7 +3,7 @@ import * as t from "@babel/types";
 
 export function findAliases(
   nodePath: babel.NodePath,
-  filterFn: (path: babel.NodePath) => boolean
+  filterFn: (path: babel.NodePath) => boolean,
 ) {
   const map = new Map<string, Binding[]>();
 
@@ -32,7 +32,7 @@ export function findAliases(
 
 function extractAliasesFromRight(
   nodePath: babel.NodePath<t.Expression>,
-  filterFn: (path: babel.NodePath) => boolean
+  filterFn: (path: babel.NodePath) => boolean,
 ) {
   const aliases: Binding[] = [];
 

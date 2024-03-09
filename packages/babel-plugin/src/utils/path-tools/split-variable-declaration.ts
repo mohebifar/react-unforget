@@ -1,19 +1,17 @@
 import * as t from "@babel/types";
 import { unwrapPatternAssignment } from "../micro-transformers/unwrap-pattern-assignment";
 
-  export function splitVariableDeclaration(
+export function splitVariableDeclaration(
   statement: babel.NodePath<babel.types.Statement>,
+  componentPath: babel.NodePath<t.Function>,
   {
     initialValue,
   }: {
     initialValue?: t.Expression;
-  }
+  },
 ) {
-  const parentDeclaration = statement.find((p) =>
-    p.isVariableDeclaration()
-  ) as babel.NodePath<babel.types.VariableDeclaration> | null;
-
-  if (!parentDeclaration) {
+  const parentDeclaration = statement;
+  if (!parentDeclaration.isVariableDeclaration()) {
     return {
       declaration: null,
       conditionalStatements: [statement.node],
@@ -25,7 +23,7 @@ import { unwrapPatternAssignment } from "../micro-transformers/unwrap-pattern-as
     .map((declarator) => {
       return declarator.init
         ? t.expressionStatement(
-            t.assignmentExpression("=", declarator.id, declarator.init)
+            t.assignmentExpression("=", declarator.id, declarator.init),
           )
         : null;
     })

@@ -29,7 +29,7 @@ export function optimizeSegmentDependencies(dependencies: SegmentDependency[]) {
 
         return shortest;
       },
-      null as SegmentDependency | null
+      null as SegmentDependency | null,
     );
 
     optimizedDependencies.push(dependencyWithShortestString!);
@@ -37,6 +37,6 @@ export function optimizeSegmentDependencies(dependencies: SegmentDependency[]) {
 
   return optimizedDependencies;
   return optimizedDependencies.filter((dependency) =>
-    dependency.segment.isTransformable()
+    dependency.segment.isTransformable(),
   );
 }

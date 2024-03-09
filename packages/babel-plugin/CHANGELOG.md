@@ -1,5 +1,11 @@
 # @react-unforget/compiler
 
+## 0.1.0-dev.9
+
+### Minor Changes
+
+- 061a816: Rewrite the analyzer and transformer to support alias analysis better
+
 ## 0.1.0-dev.8
 
 ### Minor Changes

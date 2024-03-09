@@ -1,5 +1,11 @@
 # @react-unforget/compiler
 
+## 0.1.0-dev.10
+
+### Minor Changes
+
+- 5c3b26a: Fix issues with JSX unwrapping, alias analysis, and conditional JSX expressions
+
 ## 0.1.0-dev.9
 
 ### Minor Changes

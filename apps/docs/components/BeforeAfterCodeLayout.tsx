@@ -13,14 +13,13 @@ export function BeforeAfterCodeLayout({
   return (
     <div className="grid xl:grid-rows-1 xl:grid-cols-beforeAfterCodingBlocks grid-cols-1 grid-row-2 gap-4 w-full mt-6">
       <div>
-        <div className="mockup-browser bg-gray-200 border dark:bg-gray-800 dark:border-gray-700">
-          <div className="mockup-browser-toolbar">
-            <div className="text-center font-bold flex-1 pr-20">
-              <div className="flex items-center justify-center gap-2">
-                <PiNumberCircleOneFill size={18} /> Input Code
-              </div>
+        <div className="bg-[#1d1c20] border border-white/[0.08] rounded-lg overflow-hidden">
+          <div className="text-center font-bold flex-1 py-4 pr-4">
+            <div className="flex items-center justify-center gap-2">
+              <PiNumberCircleOneFill size={18} /> Input Code
             </div>
           </div>
+
           {before}
         </div>
       </div>
@@ -35,14 +34,13 @@ export function BeforeAfterCodeLayout({
       </div>
 
       <div>
-        <div className="mockup-browser bg-gray-200 border dark:bg-gray-800 dark:border-gray-700">
-          <div className="mockup-browser-toolbar">
-            <div className="text-center font-bold flex-1 pr-20">
-              <div className="flex items-center justify-center gap-2">
-                <PiNumberCircleTwoFill size={18} /> React Unforget Result
-              </div>
+        <div className="bg-[#1d1c20] border border-white/[0.08] rounded-lg overflow-hidden">
+          <div className="text-center font-bold flex-1 py-4 pr-4">
+            <div className="flex items-center justify-center gap-2">
+              <PiNumberCircleTwoFill size={18} /> React Unforget Result
             </div>
           </div>
+
           {after}
         </div>
       </div>

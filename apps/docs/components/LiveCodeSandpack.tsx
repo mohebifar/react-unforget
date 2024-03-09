@@ -137,7 +137,7 @@ function LiveCodeSandpack({ children, previewClassName }: LiveCodeProps) {
       />
       <details
         open={viewDependencyGraph}
-        className="collapse mt-10 border"
+        className="collapse mt-10 bg-[#1d1c20] border border-white/[0.08] rounded-lg overflow-hidden"
         onToggle={handleToggleDependencyGraph}
       >
         <summary className="collapse-title font-medium">

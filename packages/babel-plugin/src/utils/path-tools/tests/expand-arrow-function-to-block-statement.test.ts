@@ -1,6 +1,6 @@
 import type * as babel from "@babel/core";
 import { parse } from "../../testing";
-import { expandArrowFunctionToBlockStatement } from "../../expand-arrow-function-to-block-statement";
+import { expandArrowFunctionToBlockStatement } from "../../micro-transformers/expand-arrow-function-to-block-statement";
 
 const parseCodeAndGetFirstDeclarator = (code: string) => {
   const path = parse(code);

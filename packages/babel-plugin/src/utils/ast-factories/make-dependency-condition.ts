@@ -1,18 +1,11 @@
 import * as t from "@babel/types";
 import type { ComponentSegment } from "~/models/segment/ComponentSegment";
+import { optimizeSegmentDependencies } from "../model-tools/optimize-segment-dependencies";
 
 export function makeDependencyCondition(
-  mutableSegment: ComponentSegment,
+  mutableSegment: ComponentSegment
 ): t.Expression | null {
   const dependencies = mutableSegment.getDependenciesForTransformation();
-
-  const eligibleForConditionalRun = Array.from(dependencies.values()).every(
-    (dependency) => !dependency.componentVariable.isForLoopArgumentVariable(),
-  );
-
-  if (!eligibleForConditionalRun) {
-    return null;
-  }
 
   const comparisonTuples = new Set<
     [left: babel.types.Expression, right: babel.types.Expression]
@@ -20,21 +13,19 @@ export function makeDependencyCondition(
 
   const allDependencies = [...dependencies.values()];
 
-  allDependencies.forEach((dependency) => {
-    const dependencyId = dependency.componentVariable
-      ? t.identifier(dependency.componentVariable.name)
-      : null;
+  const optimizedDependencies = optimizeSegmentDependencies(allDependencies);
 
-    if (!dependencyId) {
+  optimizedDependencies.forEach((dependency) => {
+    const name = dependency.segment.getDeclaredBinding()?.identifier.name;
+
+    if (!name) {
       return;
     }
 
     comparisonTuples.add([
-      dependency.getMemberExpression(
-        t.identifier(dependency.componentVariable.name),
-      ),
-      dependency.getMemberExpression(
-        dependency.componentVariable.getCacheValueAccessExpression(),
+      dependency.getDependencyValueReadExpression(t.identifier(name)),
+      dependency.getDependencyValueReadExpression(
+        dependency.segment.getCacheValueAccessExpression()
       ),
     ]);
   });
@@ -52,6 +43,6 @@ export function makeDependencyCondition(
         ? t.logicalExpression("||", condition, binaryExpression)
         : binaryExpression;
     },
-    isNotSetCondition as babel.types.Expression | null,
+    isNotSetCondition as babel.types.Expression | null
   );
 }

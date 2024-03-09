@@ -5,7 +5,8 @@ import * as generateBase from "@babel/generator";
 import traverse from "@babel/traverse";
 import type * as t from "@babel/types";
 import { visitProgram } from "~/visit-program";
-import babelPlugin from "../main";
+import { mermaidGraphFromComponent } from "~/utils/misc/mermaid-graph-from-component";
+import babelPlugin from "../index";
 
 const babelTransformOptions = {
   plugins: [
@@ -42,11 +43,8 @@ export function transformWithParseAndCast(input: string) {
   return String(root);
 }
 
-export function parse(input: string, extraPlugins: babel.PluginItem[] = []) {
-  const ast = babel.parse(input, {
-    configFile: false,
-    plugins: ["@babel/plugin-syntax-jsx", ...extraPlugins],
-  })!;
+export function parse(input: string) {
+  const ast = babel.parse(input, babelTransformOptions)!;
 
   let result: babel.NodePath<t.Program> | null = null;
   traverse(ast, {
@@ -63,7 +61,7 @@ export function loadFixture(fixturePath: string) {
   const fixture = path.resolve(
     __dirname,
     "../tests/fixtures",
-    fixturePath + ".tsx",
+    fixturePath + ".tsx"
   );
 
   const fileContent = fs.readFileSync(fixture, "utf-8");
@@ -78,3 +76,5 @@ export function parseFixture(fixturePath: string) {
 export function generate(path: babel.types.Node) {
   return generateBase.default(path).code;
 }
+
+export { mermaidGraphFromComponent };

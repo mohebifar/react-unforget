@@ -9,11 +9,8 @@ export default function SimpleJSX() {
   */
   1);
   let _unwrappedJsxEl = _$unforgetCache[0].v;
-  const _segment = () => {
-    _unwrappedJsxEl = <p>Hello world!</p>;
-  };
   if (_$unforgetCache[0].n) {
-    _segment();
+    _unwrappedJsxEl = <p>Hello world!</p>;
     _$unforgetCache[0].e(_unwrappedJsxEl);
   }
   _$unforgetCommit();
@@ -30,11 +27,8 @@ const SimpleJSXWithArrowFunction = () => {
   */
   1);
   let _unwrappedJsxEl = _$unforgetCache[0].v;
-  const _segment = () => {
-    _unwrappedJsxEl = <div>Hello world!</div>;
-  };
   if (_$unforgetCache[0].n) {
-    _segment();
+    _unwrappedJsxEl = <div>Hello world!</div>;
     _$unforgetCache[0].e(_unwrappedJsxEl);
   }
   _$unforgetCommit();
@@ -52,11 +46,8 @@ const SimpleJSXWithFunctionExpression = function () {
   */
   1);
   let _unwrappedJsxEl = _$unforgetCache[0].v;
-  const _segment = () => {
-    _unwrappedJsxEl = <div>Hello world!</div>;
-  };
   if (_$unforgetCache[0].n) {
-    _segment();
+    _unwrappedJsxEl = <div>Hello world!</div>;
     _$unforgetCache[0].e(_unwrappedJsxEl);
   }
   _$unforgetCommit();
@@ -71,73 +62,58 @@ import { useState } from "react";
 export default function Counter() {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
-  0 => _unwrappedJsxEl4
-  1 => _unwrappedJsxEl
+  0 => _unwrapped
+  1 => state
   2 => setState
-  3 => _unwrapped
-  4 => state
+  3 => _unwrappedJsxExp
+  4 => _unwrappedJsxEl
   5 => _unwrappedJsxEl2
   6 => _unwrappedJsxEl3
+  7 => _unwrappedJsxEl4
   */
-  7);
-  let _unwrapped = _$unforgetCache[3].v;
-  const _segment = () => {
-    _unwrapped = useState(0);
-  };
-  let setState = _$unforgetCache[2].v;
-  const _segment2 = () => {
-    setState = _unwrapped[1];
-  };
-  let state = _$unforgetCache[4].v;
-  const _segment3 = () => {
+  8);
+  let _unwrapped = _$unforgetCache[0].v;
+  _unwrapped = useState(0);
+  _$unforgetCache[0].e(_unwrapped);
+  let state = _$unforgetCache[1].v;
+  if (_$unforgetCache[1].n || _unwrapped !== _$unforgetCache[0].v) {
     state = _unwrapped[0];
-  };
-  let _unwrappedJsxEl = _$unforgetCache[1].v;
-  const _segment4 = () => {
-    _unwrappedJsxEl = <button onClick={() => setState(state + 1)}>Increment</button>;
-  };
+    _$unforgetCache[1].e(state);
+  }
+  let setState = _$unforgetCache[2].v;
+  if (_$unforgetCache[2].n || _unwrapped !== _$unforgetCache[0].v) {
+    setState = _unwrapped[1];
+    _$unforgetCache[2].e(setState);
+  }
+  let _unwrappedJsxExp = _$unforgetCache[3].v;
+  if (_$unforgetCache[3].n || setState !== _$unforgetCache[2].v || state !== _$unforgetCache[1].v) {
+    _unwrappedJsxExp = () => setState(state + 1);
+    _$unforgetCache[3].e(_unwrappedJsxExp);
+  }
+  let _unwrappedJsxEl = _$unforgetCache[4].v;
+  if (_$unforgetCache[4].n || _unwrappedJsxExp !== _$unforgetCache[3].v) {
+    _unwrappedJsxEl = <button onClick={_unwrappedJsxExp}>Increment</button>;
+    _$unforgetCache[4].e(_unwrappedJsxEl);
+  }
   let _unwrappedJsxEl2 = _$unforgetCache[5].v;
-  const _segment5 = () => {
+  if (_$unforgetCache[5].n || state !== _$unforgetCache[1].v) {
     _unwrappedJsxEl2 = <span data-testid="state-printer">Count: {state}</span>;
-  };
+    _$unforgetCache[5].e(_unwrappedJsxEl2);
+  }
   let _unwrappedJsxEl3 = _$unforgetCache[6].v;
-  const _segment6 = () => {
+  if (_$unforgetCache[6].n || _unwrappedJsxEl2 !== _$unforgetCache[5].v) {
     _unwrappedJsxEl3 = <div>
         {_unwrappedJsxEl2}
       </div>;
-  };
-  let _unwrappedJsxEl4 = _$unforgetCache[0].v;
-  const _segment7 = () => {
+    _$unforgetCache[6].e(_unwrappedJsxEl3);
+  }
+  let _unwrappedJsxEl4 = _$unforgetCache[7].v;
+  if (_$unforgetCache[7].n || _unwrappedJsxEl !== _$unforgetCache[4].v || _unwrappedJsxEl3 !== _$unforgetCache[6].v) {
     _unwrappedJsxEl4 = <div>
       {_unwrappedJsxEl}
       {_unwrappedJsxEl3}
     </div>;
-  };
-  _segment();
-  _$unforgetCache[3].e(_unwrapped);
-  if (_$unforgetCache[2].n || _unwrapped !== _$unforgetCache[3].v || _unwrapped[1] !== _$unforgetCache[3].v[1]) {
-    _segment2();
-    _$unforgetCache[2].e(setState);
-  }
-  if (_$unforgetCache[4].n || _unwrapped[0] !== _$unforgetCache[3].v[0] || _unwrapped !== _$unforgetCache[3].v) {
-    _segment3();
-    _$unforgetCache[4].e(state);
-  }
-  if (_$unforgetCache[1].n || setState !== _$unforgetCache[2].v || state !== _$unforgetCache[4].v) {
-    _segment4();
-    _$unforgetCache[1].e(_unwrappedJsxEl);
-  }
-  if (_$unforgetCache[5].n || state !== _$unforgetCache[4].v) {
-    _segment5();
-    _$unforgetCache[5].e(_unwrappedJsxEl2);
-  }
-  if (_$unforgetCache[6].n || _unwrappedJsxEl2 !== _$unforgetCache[5].v) {
-    _segment6();
-    _$unforgetCache[6].e(_unwrappedJsxEl3);
-  }
-  if (_$unforgetCache[0].n || _unwrappedJsxEl !== _$unforgetCache[1].v || _unwrappedJsxEl3 !== _$unforgetCache[6].v) {
-    _segment7();
-    _$unforgetCache[0].e(_unwrappedJsxEl4);
+    _$unforgetCache[7].e(_unwrappedJsxEl4);
   }
   _$unforgetCommit();
   return _unwrappedJsxEl4;
@@ -150,98 +126,71 @@ import { useState } from "react";
 export default function CounterWithMutationTracking() {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
-  0 => state
-  1 => text
-  2 => _unwrapped
-  3 => setState
-  4 => _unwrappedJsxEl4
+  0 => _unwrapped
+  1 => state
+  2 => setState
+  3 => text
+  4 => _unwrappedJsxExp
   5 => _unwrappedJsxEl
-  6 => _unwrappedJsxEl3
-  7 => _unwrappedJsxEl2
+  6 => _unwrappedJsxEl2
+  7 => _unwrappedJsxEl3
+  8 => _unwrappedJsxEl4
   */
-  8);
-  let _unwrapped = _$unforgetCache[2].v;
-  const _segment = () => {
-    _unwrapped = useState(0);
-  };
-  let text = _$unforgetCache[1].v;
-  const _segment2 = () => {
-    text = "The number is: ";
-  };
-  let setState = _$unforgetCache[3].v;
-  const _segment3 = () => {
-    setState = _unwrapped[1];
-  };
-  let state = _$unforgetCache[0].v;
-  const _segment4 = () => {
+  9);
+  let _unwrapped = _$unforgetCache[0].v;
+  _unwrapped = useState(0);
+  _$unforgetCache[0].e(_unwrapped);
+  let state = _$unforgetCache[1].v;
+  if (_$unforgetCache[1].n || _unwrapped !== _$unforgetCache[0].v) {
     state = _unwrapped[0];
-  };
-  const _segment7 = () => {
+    _$unforgetCache[1].e(state);
+  }
+  let setState = _$unforgetCache[2].v;
+  if (_$unforgetCache[2].n || _unwrapped !== _$unforgetCache[0].v) {
+    setState = _unwrapped[1];
+    _$unforgetCache[2].e(setState);
+  }
+  let text = _$unforgetCache[3].v;
+  if (_$unforgetCache[3].n || state !== _$unforgetCache[1].v) {
+    text = "The number is: ";
+    _$unforgetCache[3].e(text);
+  }
+  if (state !== _$unforgetCache[1].v) {
     if (state % 2 === 0) {
-      const _segment5 = () => {
-        text += "even";
-      };
-      _segment5();
+      text += "even";
     } else {
-      const _segment6 = () => {
-        text += "odd";
-      };
-      _segment6();
+      text += "odd";
     }
-  };
+  }
+  let _unwrappedJsxExp = _$unforgetCache[4].v;
+  if (_$unforgetCache[4].n || setState !== _$unforgetCache[2].v || state !== _$unforgetCache[1].v) {
+    _unwrappedJsxExp = () => setState(state + 1);
+    _$unforgetCache[4].e(_unwrappedJsxExp);
+  }
   let _unwrappedJsxEl = _$unforgetCache[5].v;
-  const _segment8 = () => {
-    _unwrappedJsxEl = <button onClick={() => setState(state + 1)}>Increment</button>;
-  };
-  let _unwrappedJsxEl2 = _$unforgetCache[7].v;
-  const _segment9 = () => {
+  if (_$unforgetCache[5].n || _unwrappedJsxExp !== _$unforgetCache[4].v) {
+    _unwrappedJsxEl = <button onClick={_unwrappedJsxExp}>Increment</button>;
+    _$unforgetCache[5].e(_unwrappedJsxEl);
+  }
+  let _unwrappedJsxEl2 = _$unforgetCache[6].v;
+  if (_$unforgetCache[6].n || state !== _$unforgetCache[1].v) {
     _unwrappedJsxEl2 = <span>Count: {state}</span>;
-  };
-  let _unwrappedJsxEl3 = _$unforgetCache[6].v;
-  const _segment10 = () => {
+    _$unforgetCache[6].e(_unwrappedJsxEl2);
+  }
+  let _unwrappedJsxEl3 = _$unforgetCache[7].v;
+  if (_$unforgetCache[7].n || _unwrappedJsxEl2 !== _$unforgetCache[6].v || text !== _$unforgetCache[3].v) {
     _unwrappedJsxEl3 = <div data-testid="state-printer">
         {_unwrappedJsxEl2} {text}
       </div>;
-  };
-  let _unwrappedJsxEl4 = _$unforgetCache[4].v;
-  const _segment11 = () => {
+    _$unforgetCache[7].e(_unwrappedJsxEl3);
+  }
+  let _unwrappedJsxEl4 = _$unforgetCache[8].v;
+  if (_$unforgetCache[8].n || _unwrappedJsxEl !== _$unforgetCache[5].v || _unwrappedJsxEl3 !== _$unforgetCache[7].v) {
     _unwrappedJsxEl4 = <div>
       {_unwrappedJsxEl}
       {_unwrappedJsxEl3}
     </div>;
-  };
-  _segment();
-  _$unforgetCache[2].e(_unwrapped);
-  if (_$unforgetCache[1].n) {
-    _segment2();
-    _$unforgetCache[1].e(text);
-  }
-  if (_$unforgetCache[3].n || _unwrapped[1] !== _$unforgetCache[2].v[1] || _unwrapped !== _$unforgetCache[2].v) {
-    _segment3();
-    _$unforgetCache[3].e(setState);
-  }
-  if (_$unforgetCache[0].n || _unwrapped !== _$unforgetCache[2].v || _unwrapped[0] !== _$unforgetCache[2].v[0]) {
-    _segment4();
-    _$unforgetCache[0].e(state);
-  }
-  if (state !== _$unforgetCache[0].v || text !== _$unforgetCache[1].v) {
-    _segment7();
-  }
-  if (_$unforgetCache[5].n || setState !== _$unforgetCache[3].v || state !== _$unforgetCache[0].v) {
-    _segment8();
-    _$unforgetCache[5].e(_unwrappedJsxEl);
-  }
-  if (_$unforgetCache[7].n || state !== _$unforgetCache[0].v) {
-    _segment9();
-    _$unforgetCache[7].e(_unwrappedJsxEl2);
-  }
-  if (_$unforgetCache[6].n || _unwrappedJsxEl2 !== _$unforgetCache[7].v || text !== _$unforgetCache[1].v) {
-    _segment10();
-    _$unforgetCache[6].e(_unwrappedJsxEl3);
-  }
-  if (_$unforgetCache[4].n || _unwrappedJsxEl !== _$unforgetCache[5].v || _unwrappedJsxEl3 !== _$unforgetCache[6].v) {
-    _segment11();
-    _$unforgetCache[4].e(_unwrappedJsxEl4);
+    _$unforgetCache[8].e(_unwrappedJsxEl4);
   }
   _$unforgetCommit();
   return _unwrappedJsxEl4;
@@ -254,46 +203,34 @@ import { useState } from "react";
 function InnerComponentWithProps(_props) {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
-  0 => _unwrappedJsxEl2
-  1 => _unwrappedJsxEl
-  2 => count
-  3 => _props
-  4 => text
+  0 => _props
+  1 => count
+  2 => text
+  3 => _unwrappedJsxEl
+  4 => _unwrappedJsxEl2
   */
   5);
-  let text = _$unforgetCache[4].v;
-  const _segment = () => {
-    text = _props.text;
-  };
-  let count = _$unforgetCache[2].v;
-  const _segment2 = () => {
+  let count = _$unforgetCache[1].v;
+  if (_$unforgetCache[1].n || _props !== _$unforgetCache[0].v) {
     count = _props.count;
-  };
-  let _unwrappedJsxEl = _$unforgetCache[1].v;
-  const _segment3 = () => {
+    _$unforgetCache[1].e(count);
+  }
+  let text = _$unforgetCache[2].v;
+  if (_$unforgetCache[2].n || _props !== _$unforgetCache[0].v) {
+    text = _props.text;
+    _$unforgetCache[2].e(text);
+  }
+  let _unwrappedJsxEl = _$unforgetCache[3].v;
+  if (_$unforgetCache[3].n || count !== _$unforgetCache[1].v) {
     _unwrappedJsxEl = <span>Count: {count}</span>;
-  };
-  let _unwrappedJsxEl2 = _$unforgetCache[0].v;
-  const _segment4 = () => {
+    _$unforgetCache[3].e(_unwrappedJsxEl);
+  }
+  let _unwrappedJsxEl2 = _$unforgetCache[4].v;
+  if (_$unforgetCache[4].n || _unwrappedJsxEl !== _$unforgetCache[3].v || text !== _$unforgetCache[2].v) {
     _unwrappedJsxEl2 = <div data-testid="state-printer">
       {_unwrappedJsxEl} {text}
     </div>;
-  };
-  if (_$unforgetCache[4].n || _props.text !== _$unforgetCache[3].v.text || _props !== _$unforgetCache[3].v) {
-    _segment();
-    _$unforgetCache[4].e(text);
-  }
-  if (_$unforgetCache[2].n || _props !== _$unforgetCache[3].v || _props.count !== _$unforgetCache[3].v.count) {
-    _segment2();
-    _$unforgetCache[2].e(count);
-  }
-  if (_$unforgetCache[1].n || count !== _$unforgetCache[2].v) {
-    _segment3();
-    _$unforgetCache[1].e(_unwrappedJsxEl);
-  }
-  if (_$unforgetCache[0].n || _unwrappedJsxEl !== _$unforgetCache[1].v || text !== _$unforgetCache[4].v) {
-    _segment4();
-    _$unforgetCache[0].e(_unwrappedJsxEl2);
+    _$unforgetCache[4].e(_unwrappedJsxEl2);
   }
   _$unforgetCommit();
   return _unwrappedJsxEl2;
@@ -301,87 +238,63 @@ function InnerComponentWithProps(_props) {
 export default function CounterWithInnerComponents() {
   const [_$unforgetCache2, _$unforgetCommit2, _$unforgetNull2] = useCreateCache$unforget(
   /*
-  0 => state
-  1 => text
-  2 => _unwrapped
-  3 => setState
-  4 => _unwrappedJsxEl5
+  0 => _unwrapped
+  1 => state
+  2 => setState
+  3 => text
+  4 => _unwrappedJsxExp
   5 => _unwrappedJsxEl3
   6 => _unwrappedJsxEl4
+  7 => _unwrappedJsxEl5
   */
-  7);
-  let _unwrapped = _$unforgetCache2[2].v;
-  const _segment7 = () => {
-    _unwrapped = useState(0);
-  };
-  let text = _$unforgetCache2[1].v;
-  const _segment8 = () => {
-    text = "The number is: ";
-  };
-  let setState = _$unforgetCache2[3].v;
-  const _segment9 = () => {
-    setState = _unwrapped[1];
-  };
-  let state = _$unforgetCache2[0].v;
-  const _segment10 = () => {
+  8);
+  let _unwrapped = _$unforgetCache2[0].v;
+  _unwrapped = useState(0);
+  _$unforgetCache2[0].e(_unwrapped);
+  let state = _$unforgetCache2[1].v;
+  if (_$unforgetCache2[1].n || _unwrapped !== _$unforgetCache2[0].v) {
     state = _unwrapped[0];
-  };
-  const _segment13 = () => {
+    _$unforgetCache2[1].e(state);
+  }
+  let setState = _$unforgetCache2[2].v;
+  if (_$unforgetCache2[2].n || _unwrapped !== _$unforgetCache2[0].v) {
+    setState = _unwrapped[1];
+    _$unforgetCache2[2].e(setState);
+  }
+  let text = _$unforgetCache2[3].v;
+  if (_$unforgetCache2[3].n || state !== _$unforgetCache2[1].v) {
+    text = "The number is: ";
+    _$unforgetCache2[3].e(text);
+  }
+  if (state !== _$unforgetCache2[1].v) {
     if (state % 2 === 0) {
-      const _segment11 = () => {
-        text += "even";
-      };
-      _segment11();
+      text += "even";
     } else {
-      const _segment12 = () => {
-        text += "odd";
-      };
-      _segment12();
+      text += "odd";
     }
-  };
+  }
+  let _unwrappedJsxExp = _$unforgetCache2[4].v;
+  if (_$unforgetCache2[4].n || setState !== _$unforgetCache2[2].v || state !== _$unforgetCache2[1].v) {
+    _unwrappedJsxExp = () => setState(state + 1);
+    _$unforgetCache2[4].e(_unwrappedJsxExp);
+  }
   let _unwrappedJsxEl3 = _$unforgetCache2[5].v;
-  const _segment14 = () => {
-    _unwrappedJsxEl3 = <button onClick={() => setState(state + 1)}>Increment</button>;
-  };
+  if (_$unforgetCache2[5].n || _unwrappedJsxExp !== _$unforgetCache2[4].v) {
+    _unwrappedJsxEl3 = <button onClick={_unwrappedJsxExp}>Increment</button>;
+    _$unforgetCache2[5].e(_unwrappedJsxEl3);
+  }
   let _unwrappedJsxEl4 = _$unforgetCache2[6].v;
-  const _segment15 = () => {
+  if (_$unforgetCache2[6].n || state !== _$unforgetCache2[1].v || text !== _$unforgetCache2[3].v) {
     _unwrappedJsxEl4 = <InnerComponentWithProps count={state} text={text} />;
-  };
-  let _unwrappedJsxEl5 = _$unforgetCache2[4].v;
-  const _segment16 = () => {
+    _$unforgetCache2[6].e(_unwrappedJsxEl4);
+  }
+  let _unwrappedJsxEl5 = _$unforgetCache2[7].v;
+  if (_$unforgetCache2[7].n || _unwrappedJsxEl3 !== _$unforgetCache2[5].v || _unwrappedJsxEl4 !== _$unforgetCache2[6].v) {
     _unwrappedJsxEl5 = <div>
       {_unwrappedJsxEl3}
       {_unwrappedJsxEl4}
     </div>;
-  };
-  _segment7();
-  _$unforgetCache2[2].e(_unwrapped);
-  if (_$unforgetCache2[1].n) {
-    _segment8();
-    _$unforgetCache2[1].e(text);
-  }
-  if (_$unforgetCache2[3].n || _unwrapped[1] !== _$unforgetCache2[2].v[1] || _unwrapped !== _$unforgetCache2[2].v) {
-    _segment9();
-    _$unforgetCache2[3].e(setState);
-  }
-  if (_$unforgetCache2[0].n || _unwrapped !== _$unforgetCache2[2].v || _unwrapped[0] !== _$unforgetCache2[2].v[0]) {
-    _segment10();
-    _$unforgetCache2[0].e(state);
-  }
-  if (state !== _$unforgetCache2[0].v || text !== _$unforgetCache2[1].v) {
-    _segment13();
-  }
-  if (_$unforgetCache2[5].n || setState !== _$unforgetCache2[3].v || state !== _$unforgetCache2[0].v) {
-    _segment14();
-    _$unforgetCache2[5].e(_unwrappedJsxEl3);
-  }
-  if (_$unforgetCache2[6].n || state !== _$unforgetCache2[0].v || text !== _$unforgetCache2[1].v) {
-    _segment15();
-    _$unforgetCache2[6].e(_unwrappedJsxEl4);
-  }
-  if (_$unforgetCache2[4].n || _unwrappedJsxEl3 !== _$unforgetCache2[5].v || _unwrappedJsxEl4 !== _$unforgetCache2[6].v) {
-    _segment16();
-    _$unforgetCache2[4].e(_unwrappedJsxEl5);
+    _$unforgetCache2[7].e(_unwrappedJsxEl5);
   }
   _$unforgetCommit2();
   return _unwrappedJsxEl5;
@@ -394,107 +307,85 @@ import { useState } from "react";
 export default function CounterWithEarlyReturn() {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
-  0 => _unwrappedJsxEl6
-  1 => _unwrappedJsxEl5
+  0 => _unwrapped
+  1 => state
   2 => setState
-  3 => _unwrapped
-  4 => state
-  5 => _unwrappedJsxEl4
-  6 => _unwrappedJsxEl
-  7 => _unwrappedJsxEl3
+  3 => _unwrappedJsxExp2
+  4 => _unwrappedJsxEl5
+  5 => _unwrappedJsxEl6
+  6 => _unwrappedJsxExp
+  7 => _unwrappedJsxEl
   8 => _unwrappedJsxEl2
+  9 => _unwrappedJsxEl3
+  10 => _unwrappedJsxEl4
   */
-  9);
-  let _unwrapped = _$unforgetCache[3].v;
-  const _segment = () => {
-    _unwrapped = useState(0);
-  };
-  let setState = _$unforgetCache[2].v;
-  const _segment2 = () => {
-    setState = _unwrapped[1];
-  };
-  let state = _$unforgetCache[4].v;
-  const _segment3 = () => {
+  11);
+  let _unwrapped = _$unforgetCache[0].v;
+  _unwrapped = useState(0);
+  _$unforgetCache[0].e(_unwrapped);
+  let state = _$unforgetCache[1].v;
+  if (_$unforgetCache[1].n || _unwrapped !== _$unforgetCache[0].v) {
     state = _unwrapped[0];
-  };
-  const _segment8 = () => {
+    _$unforgetCache[1].e(state);
+  }
+  let setState = _$unforgetCache[2].v;
+  if (_$unforgetCache[2].n || _unwrapped !== _$unforgetCache[0].v) {
+    setState = _unwrapped[1];
+    _$unforgetCache[2].e(setState);
+  }
+  if (state !== _$unforgetCache[1].v || setState !== _$unforgetCache[2].v) {
     if (state % 2 === 0) {
-      let _unwrappedJsxEl5 = _$unforgetCache[1].v;
-      const _segment4 = () => {
-        _unwrappedJsxEl5 = <button onClick={() => setState(state + 1)}>Increment</button>;
-      };
-      let _unwrappedJsxEl6 = _$unforgetCache[0].v;
-      const _segment5 = () => {
+      let _unwrappedJsxExp2 = _$unforgetCache[3].v;
+      if (_$unforgetCache[3].n || setState !== _$unforgetCache[2].v || state !== _$unforgetCache[1].v) {
+        _unwrappedJsxExp2 = () => setState(state + 1);
+        _$unforgetCache[3].e(_unwrappedJsxExp2);
+      }
+      let _unwrappedJsxEl5 = _$unforgetCache[4].v;
+      if (_$unforgetCache[4].n || _unwrappedJsxExp2 !== _$unforgetCache[3].v) {
+        _unwrappedJsxEl5 = <button onClick={_unwrappedJsxExp2}>Increment</button>;
+        _$unforgetCache[4].e(_unwrappedJsxEl5);
+      }
+      let _unwrappedJsxEl6 = _$unforgetCache[5].v;
+      if (_$unforgetCache[5].n || _unwrappedJsxEl5 !== _$unforgetCache[4].v) {
         _unwrappedJsxEl6 = <div>
         We're inside the early return
         {_unwrappedJsxEl5}
       </div>;
-      };
-      if (_$unforgetCache[1].n || setState !== _$unforgetCache[2].v || state !== _$unforgetCache[4].v) {
-        _segment4();
-        _$unforgetCache[1].e(_unwrappedJsxEl5);
-      }
-      if (_$unforgetCache[0].n || _unwrappedJsxEl5 !== _$unforgetCache[1].v) {
-        _segment5();
-        _$unforgetCache[0].e(_unwrappedJsxEl6);
+        _$unforgetCache[5].e(_unwrappedJsxEl6);
       }
       _$unforgetCommit();
       return _unwrappedJsxEl6;
     }
-    return _$unforgetNull;
-  };
-  let _unwrappedJsxEl = _$unforgetCache[6].v;
-  const _segment9 = () => {
-    _unwrappedJsxEl = <button onClick={() => setState(state + 1)}>Increment</button>;
-  };
+  }
+  let _unwrappedJsxExp = _$unforgetCache[6].v;
+  if (_$unforgetCache[6].n || setState !== _$unforgetCache[2].v || state !== _$unforgetCache[1].v) {
+    _unwrappedJsxExp = () => setState(state + 1);
+    _$unforgetCache[6].e(_unwrappedJsxExp);
+  }
+  let _unwrappedJsxEl = _$unforgetCache[7].v;
+  if (_$unforgetCache[7].n || _unwrappedJsxExp !== _$unforgetCache[6].v) {
+    _unwrappedJsxEl = <button onClick={_unwrappedJsxExp}>Increment</button>;
+    _$unforgetCache[7].e(_unwrappedJsxEl);
+  }
   let _unwrappedJsxEl2 = _$unforgetCache[8].v;
-  const _segment10 = () => {
+  if (_$unforgetCache[8].n || state !== _$unforgetCache[1].v) {
     _unwrappedJsxEl2 = <span>Count: {state}</span>;
-  };
-  let _unwrappedJsxEl3 = _$unforgetCache[7].v;
-  const _segment11 = () => {
+    _$unforgetCache[8].e(_unwrappedJsxEl2);
+  }
+  let _unwrappedJsxEl3 = _$unforgetCache[9].v;
+  if (_$unforgetCache[9].n || _unwrappedJsxEl2 !== _$unforgetCache[8].v) {
     _unwrappedJsxEl3 = <div>
         {_unwrappedJsxEl2}
       </div>;
-  };
-  let _unwrappedJsxEl4 = _$unforgetCache[5].v;
-  const _segment12 = () => {
+    _$unforgetCache[9].e(_unwrappedJsxEl3);
+  }
+  let _unwrappedJsxEl4 = _$unforgetCache[10].v;
+  if (_$unforgetCache[10].n || _unwrappedJsxEl !== _$unforgetCache[7].v || _unwrappedJsxEl3 !== _$unforgetCache[9].v) {
     _unwrappedJsxEl4 = <div>
       {_unwrappedJsxEl}
       {_unwrappedJsxEl3}
     </div>;
-  };
-  _segment();
-  _$unforgetCache[3].e(_unwrapped);
-  if (_$unforgetCache[2].n || _unwrapped !== _$unforgetCache[3].v || _unwrapped[1] !== _$unforgetCache[3].v[1]) {
-    _segment2();
-    _$unforgetCache[2].e(setState);
-  }
-  if (_$unforgetCache[4].n || _unwrapped[0] !== _$unforgetCache[3].v[0] || _unwrapped !== _$unforgetCache[3].v) {
-    _segment3();
-    _$unforgetCache[4].e(state);
-  }
-  if (state !== _$unforgetCache[4].v || setState !== _$unforgetCache[2].v) {
-    const _temp = _segment8();
-    if (_temp !== _$unforgetNull) {
-      return _temp;
-    }
-  }
-  if (_$unforgetCache[6].n || setState !== _$unforgetCache[2].v || state !== _$unforgetCache[4].v) {
-    _segment9();
-    _$unforgetCache[6].e(_unwrappedJsxEl);
-  }
-  if (_$unforgetCache[8].n || state !== _$unforgetCache[4].v) {
-    _segment10();
-    _$unforgetCache[8].e(_unwrappedJsxEl2);
-  }
-  if (_$unforgetCache[7].n || _unwrappedJsxEl2 !== _$unforgetCache[8].v) {
-    _segment11();
-    _$unforgetCache[7].e(_unwrappedJsxEl3);
-  }
-  if (_$unforgetCache[5].n || _unwrappedJsxEl !== _$unforgetCache[6].v || _unwrappedJsxEl3 !== _$unforgetCache[7].v) {
-    _segment12();
-    _$unforgetCache[5].e(_unwrappedJsxEl4);
+    _$unforgetCache[10].e(_unwrappedJsxEl4);
   }
   _$unforgetCommit();
   return _unwrappedJsxEl4;
@@ -507,104 +398,76 @@ import { useState } from "react";
 export default function CounterWithEarlyReturnWithoutDirectlyUsingTheVariableInJSX() {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
-  0 => _unwrappedJsxEl5
+  0 => _unwrapped
   1 => state
-  2 => newValue
-  3 => _unwrapped
-  4 => setState
-  5 => _unwrappedJsxEl4
+  2 => setState
+  3 => _unwrappedJsxEl5
+  4 => newValue
+  5 => _unwrappedJsxExp
   6 => _unwrappedJsxEl
-  7 => _unwrappedJsxEl3
-  8 => _unwrappedJsxEl2
+  7 => _unwrappedJsxEl2
+  8 => _unwrappedJsxEl3
+  9 => _unwrappedJsxEl4
   */
-  9);
-  let _unwrapped = _$unforgetCache[3].v;
-  const _segment = () => {
-    _unwrapped = useState(0);
-  };
-  let setState = _$unforgetCache[4].v;
-  const _segment2 = () => {
-    setState = _unwrapped[1];
-  };
+  10);
+  let _unwrapped = _$unforgetCache[0].v;
+  _unwrapped = useState(0);
+  _$unforgetCache[0].e(_unwrapped);
   let state = _$unforgetCache[1].v;
-  const _segment3 = () => {
+  if (_$unforgetCache[1].n || _unwrapped !== _$unforgetCache[0].v) {
     state = _unwrapped[0];
-  };
-  const _segment6 = () => {
+    _$unforgetCache[1].e(state);
+  }
+  let setState = _$unforgetCache[2].v;
+  if (_$unforgetCache[2].n || _unwrapped !== _$unforgetCache[0].v) {
+    setState = _unwrapped[1];
+    _$unforgetCache[2].e(setState);
+  }
+  if (state !== _$unforgetCache[1].v) {
     if (state % 2 === 1) {
-      let _unwrappedJsxEl5 = _$unforgetCache[0].v;
-      const _segment4 = () => {
+      let _unwrappedJsxEl5 = _$unforgetCache[3].v;
+      if (_$unforgetCache[3].n) {
         _unwrappedJsxEl5 = <div>We're inside the early return</div>;
-      };
-      if (_$unforgetCache[0].n) {
-        _segment4();
-        _$unforgetCache[0].e(_unwrappedJsxEl5);
+        _$unforgetCache[3].e(_unwrappedJsxEl5);
       }
       _$unforgetCommit();
       return _unwrappedJsxEl5;
     }
-    return _$unforgetNull;
-  };
-  let newValue = _$unforgetCache[2].v;
-  const _segment7 = () => {
+  }
+  let newValue = _$unforgetCache[4].v;
+  if (_$unforgetCache[4].n || state !== _$unforgetCache[1].v) {
     newValue = state + 1;
-  };
+    _$unforgetCache[4].e(newValue);
+  }
+  let _unwrappedJsxExp = _$unforgetCache[5].v;
+  if (_$unforgetCache[5].n || setState !== _$unforgetCache[2].v || state !== _$unforgetCache[1].v) {
+    _unwrappedJsxExp = () => setState(state + 1);
+    _$unforgetCache[5].e(_unwrappedJsxExp);
+  }
   let _unwrappedJsxEl = _$unforgetCache[6].v;
-  const _segment8 = () => {
-    _unwrappedJsxEl = <button onClick={() => setState(state + 1)}>Increment</button>;
-  };
-  let _unwrappedJsxEl2 = _$unforgetCache[8].v;
-  const _segment9 = () => {
+  if (_$unforgetCache[6].n || _unwrappedJsxExp !== _$unforgetCache[5].v) {
+    _unwrappedJsxEl = <button onClick={_unwrappedJsxExp}>Increment</button>;
+    _$unforgetCache[6].e(_unwrappedJsxEl);
+  }
+  let _unwrappedJsxEl2 = _$unforgetCache[7].v;
+  if (_$unforgetCache[7].n || newValue !== _$unforgetCache[4].v) {
     _unwrappedJsxEl2 = <span>Count: {newValue}</span>;
-  };
-  let _unwrappedJsxEl3 = _$unforgetCache[7].v;
-  const _segment10 = () => {
+    _$unforgetCache[7].e(_unwrappedJsxEl2);
+  }
+  let _unwrappedJsxEl3 = _$unforgetCache[8].v;
+  if (_$unforgetCache[8].n || _unwrappedJsxEl2 !== _$unforgetCache[7].v) {
     _unwrappedJsxEl3 = <div>
         {_unwrappedJsxEl2}
       </div>;
-  };
-  let _unwrappedJsxEl4 = _$unforgetCache[5].v;
-  const _segment11 = () => {
+    _$unforgetCache[8].e(_unwrappedJsxEl3);
+  }
+  let _unwrappedJsxEl4 = _$unforgetCache[9].v;
+  if (_$unforgetCache[9].n || _unwrappedJsxEl !== _$unforgetCache[6].v || _unwrappedJsxEl3 !== _$unforgetCache[8].v) {
     _unwrappedJsxEl4 = <div>
       {_unwrappedJsxEl}
       {_unwrappedJsxEl3}
     </div>;
-  };
-  _segment();
-  _$unforgetCache[3].e(_unwrapped);
-  if (_$unforgetCache[4].n || _unwrapped[1] !== _$unforgetCache[3].v[1] || _unwrapped !== _$unforgetCache[3].v) {
-    _segment2();
-    _$unforgetCache[4].e(setState);
-  }
-  if (_$unforgetCache[1].n || _unwrapped !== _$unforgetCache[3].v || _unwrapped[0] !== _$unforgetCache[3].v[0]) {
-    _segment3();
-    _$unforgetCache[1].e(state);
-  }
-  if (state !== _$unforgetCache[1].v) {
-    const _temp = _segment6();
-    if (_temp !== _$unforgetNull) {
-      return _temp;
-    }
-  }
-  if (_$unforgetCache[2].n || state !== _$unforgetCache[1].v) {
-    _segment7();
-    _$unforgetCache[2].e(newValue);
-  }
-  if (_$unforgetCache[6].n || setState !== _$unforgetCache[4].v || state !== _$unforgetCache[1].v) {
-    _segment8();
-    _$unforgetCache[6].e(_unwrappedJsxEl);
-  }
-  if (_$unforgetCache[8].n || newValue !== _$unforgetCache[2].v) {
-    _segment9();
-    _$unforgetCache[8].e(_unwrappedJsxEl2);
-  }
-  if (_$unforgetCache[7].n || _unwrappedJsxEl2 !== _$unforgetCache[8].v) {
-    _segment10();
-    _$unforgetCache[7].e(_unwrappedJsxEl3);
-  }
-  if (_$unforgetCache[5].n || _unwrappedJsxEl !== _$unforgetCache[6].v || _unwrappedJsxEl3 !== _$unforgetCache[7].v) {
-    _segment11();
-    _$unforgetCache[5].e(_unwrappedJsxEl4);
+    _$unforgetCache[9].e(_unwrappedJsxEl4);
   }
   _$unforgetCommit();
   return _unwrappedJsxEl4;
@@ -619,129 +482,89 @@ const numbers2 = numbers1.filter(number => number % 2 === 0);
 export default function UserList() {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
-  0 => i
-  1 => numbers
-  2 => filteredNumbers
-  3 => currentN
-  4 => _unwrapped
-  5 => setNumbers
+  0 => _unwrapped2
+  1 => _unwrapped
+  2 => numbers
+  3 => setNumbers
+  4 => filteredNumbers
+  5 => currentN
   6 => handleUserClick
-  7 => _unwrappedJsxEl
-  8 => _unwrappedJsxEl3
+  7 => _unwrappedJsxExp
+  8 => _unwrappedJsxEl
   9 => _unwrappedJsxEl2
-  10 => _unwrappedJsxExp
+  10 => _unwrappedJsxEl3
   */
   11);
-  let _unwrapped = _$unforgetCache[4].v;
-  const _segment = () => {
-    _unwrapped = useState(numbers1);
-  };
-  let setNumbers = _$unforgetCache[5].v;
-  const _segment2 = () => {
-    setNumbers = _unwrapped[1];
-  };
-  let numbers = _$unforgetCache[1].v;
-  const _segment3 = () => {
-    numbers = _unwrapped[0];
-  };
-  let filteredNumbers = _$unforgetCache[2].v;
-  const _segment4 = () => {
+  let _unwrapped2 = _$unforgetCache[0].v;
+  _unwrapped2 = useState(numbers1);
+  _$unforgetCache[0].e(_unwrapped2);
+  let _unwrapped = _$unforgetCache[1].v;
+  if (_$unforgetCache[1].n) {
+    _unwrapped = 0;
+    _$unforgetCache[1].e(_unwrapped);
+  }
+  let numbers = _$unforgetCache[2].v;
+  if (_$unforgetCache[2].n || _unwrapped2 !== _$unforgetCache[0].v) {
+    numbers = _unwrapped2[0];
+    _$unforgetCache[2].e(numbers);
+  }
+  let setNumbers = _$unforgetCache[3].v;
+  if (_$unforgetCache[3].n || _unwrapped2 !== _$unforgetCache[0].v) {
+    setNumbers = _unwrapped2[1];
+    _$unforgetCache[3].e(setNumbers);
+  }
+  let filteredNumbers = _$unforgetCache[4].v;
+  if (_$unforgetCache[4].n || numbers !== _$unforgetCache[2].v) {
     filteredNumbers = [];
-  };
-  let i = _$unforgetCache[0].v;
-  const _segment5 = () => {};
-  const _segment10 = () => {
-    for (i = 0; i < numbers.length; i++) {
-      let currentN = _$unforgetCache[3].v;
-      const _segment6 = () => {
+    _$unforgetCache[4].e(filteredNumbers);
+  }
+  if (numbers !== _$unforgetCache[2].v || _unwrapped !== _$unforgetCache[1].v || filteredNumbers !== _$unforgetCache[4].v) {
+    for (let i = _unwrapped; i < numbers.length; i++) {
+      let currentN = _$unforgetCache[5].v;
+      if (_$unforgetCache[5].n || numbers !== _$unforgetCache[2].v) {
         currentN = numbers[i];
-      };
-      const _segment8 = () => {
+        _$unforgetCache[5].e(currentN);
+      }
+      if (filteredNumbers !== _$unforgetCache[4].v || currentN !== _$unforgetCache[5].v) {
         if (i % 2 === 0) {
-          const _segment7 = () => {
+          if (filteredNumbers !== _$unforgetCache[4].v || currentN !== _$unforgetCache[5].v) {
             filteredNumbers.push(currentN);
-          };
-          if (filteredNumbers !== _$unforgetCache[2].v) {
-            _segment7();
           }
         }
-      };
-      if (_$unforgetCache[3].n || numbers !== _$unforgetCache[1].v || i !== _$unforgetCache[0].v) {
-        _segment6();
-        _$unforgetCache[3].e(currentN);
-      }
-      if (filteredNumbers !== _$unforgetCache[2].v || currentN !== _$unforgetCache[3].v || i !== _$unforgetCache[0].v) {
-        _segment8();
       }
     }
-  };
+  }
   let handleUserClick = _$unforgetCache[6].v;
-  const _segment11 = () => {
+  if (_$unforgetCache[6].n || setNumbers !== _$unforgetCache[3].v) {
     handleUserClick = () => {
       setNumbers(p => numbers1 === p ? numbers2 : numbers1);
     };
-  };
-  let _unwrappedJsxExp = _$unforgetCache[10].v;
-  const _segment12 = () => {
+    _$unforgetCache[6].e(handleUserClick);
+  }
+  let _unwrappedJsxExp = _$unforgetCache[7].v;
+  if (_$unforgetCache[7].n || filteredNumbers !== _$unforgetCache[4].v) {
     _unwrappedJsxExp = filteredNumbers.map(n => <div key={n}>{n}</div>);
-  };
-  let _unwrappedJsxEl = _$unforgetCache[7].v;
-  const _segment13 = () => {
+    _$unforgetCache[7].e(_unwrappedJsxExp);
+  }
+  let _unwrappedJsxEl = _$unforgetCache[8].v;
+  if (_$unforgetCache[8].n || handleUserClick !== _$unforgetCache[6].v) {
     _unwrappedJsxEl = <button onClick={handleUserClick}>Toggle even ones</button>;
-  };
+    _$unforgetCache[8].e(_unwrappedJsxEl);
+  }
   let _unwrappedJsxEl2 = _$unforgetCache[9].v;
-  const _segment14 = () => {
+  if (_$unforgetCache[9].n || _unwrappedJsxExp !== _$unforgetCache[7].v) {
     _unwrappedJsxEl2 = <ul>
         {_unwrappedJsxExp}
       </ul>;
-  };
-  let _unwrappedJsxEl3 = _$unforgetCache[8].v;
-  const _segment15 = () => {
+    _$unforgetCache[9].e(_unwrappedJsxEl2);
+  }
+  let _unwrappedJsxEl3 = _$unforgetCache[10].v;
+  if (_$unforgetCache[10].n || _unwrappedJsxEl !== _$unforgetCache[8].v || _unwrappedJsxEl2 !== _$unforgetCache[9].v) {
     _unwrappedJsxEl3 = <div>
       {_unwrappedJsxEl}
       {_unwrappedJsxEl2}
     </div>;
-  };
-  _segment();
-  _$unforgetCache[4].e(_unwrapped);
-  if (_$unforgetCache[5].n || _unwrapped[1] !== _$unforgetCache[4].v[1] || _unwrapped !== _$unforgetCache[4].v) {
-    _segment2();
-    _$unforgetCache[5].e(setNumbers);
-  }
-  if (_$unforgetCache[1].n || _unwrapped !== _$unforgetCache[4].v || _unwrapped[0] !== _$unforgetCache[4].v[0] || i !== _$unforgetCache[0].v || filteredNumbers !== _$unforgetCache[2].v || filteredNumbers !== _$unforgetCache[2].v) {
-    _segment3();
-    _$unforgetCache[1].e(numbers);
-  }
-  if (_$unforgetCache[2].n || filteredNumbers !== _$unforgetCache[2].v || i !== _$unforgetCache[0].v || numbers !== _$unforgetCache[1].v || _unwrapped !== _$unforgetCache[4].v || _unwrapped[0] !== _$unforgetCache[4].v[0] || numbers !== _$unforgetCache[1].v) {
-    _segment4();
-    _$unforgetCache[2].e(filteredNumbers);
-  }
-  if (_$unforgetCache[0].n || numbers !== _$unforgetCache[1].v || filteredNumbers !== _$unforgetCache[2].v || _unwrapped !== _$unforgetCache[4].v || _unwrapped[0] !== _$unforgetCache[4].v[0] || filteredNumbers !== _$unforgetCache[2].v || numbers !== _$unforgetCache[1].v) {
-    _segment5();
-    _$unforgetCache[0].e(i);
-  }
-  if (i !== _$unforgetCache[0].v || numbers !== _$unforgetCache[1].v || filteredNumbers !== _$unforgetCache[2].v) {
-    _segment10();
-  }
-  if (_$unforgetCache[6].n || setNumbers !== _$unforgetCache[5].v) {
-    _segment11();
-    _$unforgetCache[6].e(handleUserClick);
-  }
-  if (_$unforgetCache[10].n || filteredNumbers !== _$unforgetCache[2].v) {
-    _segment12();
-    _$unforgetCache[10].e(_unwrappedJsxExp);
-  }
-  if (_$unforgetCache[7].n || handleUserClick !== _$unforgetCache[6].v) {
-    _segment13();
-    _$unforgetCache[7].e(_unwrappedJsxEl);
-  }
-  if (_$unforgetCache[9].n || _unwrappedJsxExp !== _$unforgetCache[10].v) {
-    _segment14();
-    _$unforgetCache[9].e(_unwrappedJsxEl2);
-  }
-  if (_$unforgetCache[8].n || _unwrappedJsxEl !== _$unforgetCache[7].v || _unwrappedJsxEl2 !== _$unforgetCache[9].v) {
-    _segment15();
-    _$unforgetCache[8].e(_unwrappedJsxEl3);
+    _$unforgetCache[10].e(_unwrappedJsxEl3);
   }
   _$unforgetCommit();
   return _unwrappedJsxEl3;
@@ -768,355 +591,243 @@ const fetchUserFollowers = async () => {
 function UserList() {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
-  0 => setFollowers
+  0 => _unwrapped2
   1 => _unwrapped
-  2 => followers
-  3 => memoizedFollowers
-  4 => i
-  5 => filteredUsers
-  6 => user
-  7 => usersForUI
-  8 => userListElement
-  9 => _unwrappedJsxEl6
-  10 => _unwrappedJsxEl7
-  11 => _unwrappedJsxEl3
-  12 => _unwrappedJsxExp
-  13 => user
-  14 => _unwrapped2
-  15 => setUser
-  16 => setLoading
-  17 => _unwrapped3
-  18 => loading
-  19 => _unwrappedJsxEl
-  20 => error
-  21 => _unwrappedJsxEl2
-  22 => _unwrapped4
-  23 => setError
-  24 => setShouldFilterUsers
-  25 => _unwrapped5
-  26 => setFilterUsers
+  2 => _unwrapped3
+  3 => _unwrapped4
+  4 => _unwrapped5
+  5 => handleUserClick
+  6 => _unwrapped6
+  7 => _unwrappedJsxEl
+  8 => _unwrappedJsxEl4
+  9 => user
+  10 => setUser
+  11 => followers
+  12 => setFollowers
+  13 => loading
+  14 => setLoading
+  15 => error
+  16 => setError
+  17 => setFilterUsers
+  18 => setShouldFilterUsers
+  19 => toggleEvenOnes
+  20 => memoizedFollowers
+  21 => filteredUsers
+  22 => user
+  23 => usersForUI
+  24 => _unwrappedJsxEl2
+  25 => userListElement
+  26 => _unwrappedJsxExp
   27 => _unwrappedJsxExp2
-  28 => _unwrappedJsxEl5
-  29 => toggleEvenOnes
-  30 => handleUserClick
-  31 => _unwrappedJsxEl4
+  28 => _unwrappedJsxExp3
+  29 => _unwrappedJsxEl3
+  30 => _unwrappedJsxEl5
+  31 => _unwrappedJsxEl6
+  32 => _unwrappedJsxEl7
   */
-  32);
-  let _unwrapped2 = _$unforgetCache[14].v;
-  const _segment = () => {
-    _unwrapped2 = useState({});
-  };
+  33);
+  let _unwrapped2 = _$unforgetCache[0].v;
+  _unwrapped2 = useState({});
+  _$unforgetCache[0].e(_unwrapped2);
   let _unwrapped = _$unforgetCache[1].v;
-  const _segment2 = () => {
-    _unwrapped = useState([]);
-  };
-  let _unwrapped3 = _$unforgetCache[17].v;
-  const _segment3 = () => {
-    _unwrapped3 = useState(true);
-  };
-  let _unwrapped4 = _$unforgetCache[22].v;
-  const _segment4 = () => {
-    _unwrapped4 = useState(null);
-  };
-  let _unwrapped5 = _$unforgetCache[25].v;
-  const _segment5 = () => {
-    _unwrapped5 = useState(false);
-  };
+  _unwrapped = useState([]);
+  _$unforgetCache[1].e(_unwrapped);
+  let _unwrapped3 = _$unforgetCache[2].v;
+  _unwrapped3 = useState(true);
+  _$unforgetCache[2].e(_unwrapped3);
+  let _unwrapped4 = _$unforgetCache[3].v;
+  _unwrapped4 = useState(null);
+  _$unforgetCache[3].e(_unwrapped4);
+  let _unwrapped5 = _$unforgetCache[4].v;
+  _unwrapped5 = useState(false);
+  _$unforgetCache[4].e(_unwrapped5);
   // useCallback to memoize a hypothetical handler function
-  let handleUserClick = _$unforgetCache[30].v;
+  let handleUserClick = _$unforgetCache[5].v;
 
   // without useCallback
-  const _segment6 = () => {
-    handleUserClick = useCallback(userId => {
-      console.log("User clicked:", userId);
-      // Handler logic here...
-    }, []);
-  };
-  let _unwrappedJsxEl = _$unforgetCache[19].v;
-  const _segment7 = () => {
+  handleUserClick = useCallback(userId => {
+    console.log("User clicked:", userId);
+    // Handler logic here...
+  }, []);
+  _$unforgetCache[5].e(handleUserClick);
+  let _unwrapped6 = _$unforgetCache[6].v;
+  if (_$unforgetCache[6].n) {
+    _unwrapped6 = 0;
+    _$unforgetCache[6].e(_unwrapped6);
+  }
+  let _unwrappedJsxEl = _$unforgetCache[7].v;
+  if (_$unforgetCache[7].n) {
     _unwrappedJsxEl = <div>Loading...</div>;
-  };
-  let _unwrappedJsxEl4 = _$unforgetCache[31].v;
-  const _segment8 = () => {
+    _$unforgetCache[7].e(_unwrappedJsxEl);
+  }
+  let _unwrappedJsxEl4 = _$unforgetCache[8].v;
+  if (_$unforgetCache[8].n) {
     _unwrappedJsxEl4 = <h1>User List</h1>;
-  };
-  let setUser = _$unforgetCache[15].v;
-  const _segment9 = () => {
-    setUser = _unwrapped2[1];
-  };
-  let followers = _$unforgetCache[2].v;
-  const _segment10 = () => {
-    followers = _unwrapped[0];
-  };
-  let memoizedFollowers = _$unforgetCache[3].v;
-  const _segment11 = () => {
-    memoizedFollowers = useMemo(() => followers, [followers]);
-  };
-  let filteredUsers = _$unforgetCache[5].v;
-  const _segment12 = () => {
-    filteredUsers = [];
-  };
-  let user = _$unforgetCache[13].v;
-  const _segment13 = () => {
+    _$unforgetCache[8].e(_unwrappedJsxEl4);
+  }
+  let user = _$unforgetCache[9].v;
+  if (_$unforgetCache[9].n || _unwrapped2 !== _$unforgetCache[0].v) {
     user = _unwrapped2[0];
-  };
-  let setFollowers = _$unforgetCache[0].v;
-  const _segment14 = () => {
+    _$unforgetCache[9].e(user);
+  }
+  let setUser = _$unforgetCache[10].v;
+  if (_$unforgetCache[10].n || _unwrapped2 !== _$unforgetCache[0].v) {
+    setUser = _unwrapped2[1];
+    _$unforgetCache[10].e(setUser);
+  }
+  let followers = _$unforgetCache[11].v;
+  if (_$unforgetCache[11].n || _unwrapped !== _$unforgetCache[1].v) {
+    followers = _unwrapped[0];
+    _$unforgetCache[11].e(followers);
+  }
+  let setFollowers = _$unforgetCache[12].v;
+  if (_$unforgetCache[12].n || _unwrapped !== _$unforgetCache[1].v) {
     setFollowers = _unwrapped[1];
-  };
-  let setLoading = _$unforgetCache[16].v;
-  const _segment15 = () => {
-    setLoading = _unwrapped3[1];
-  };
-  let loading = _$unforgetCache[18].v;
-  const _segment16 = () => {
+    _$unforgetCache[12].e(setFollowers);
+  }
+  let loading = _$unforgetCache[13].v;
+  if (_$unforgetCache[13].n || _unwrapped3 !== _$unforgetCache[2].v) {
     loading = _unwrapped3[0];
-  };
-  let setError = _$unforgetCache[23].v;
-  const _segment17 = () => {
-    setError = _unwrapped4[1];
-  };
-  let error = _$unforgetCache[20].v;
-  const _segment18 = () => {
+    _$unforgetCache[13].e(loading);
+  }
+  let setLoading = _$unforgetCache[14].v;
+  if (_$unforgetCache[14].n || _unwrapped3 !== _$unforgetCache[2].v) {
+    setLoading = _unwrapped3[1];
+    _$unforgetCache[14].e(setLoading);
+  }
+  let error = _$unforgetCache[15].v;
+  if (_$unforgetCache[15].n || _unwrapped4 !== _$unforgetCache[3].v) {
     error = _unwrapped4[0];
-  };
-  let setShouldFilterUsers = _$unforgetCache[24].v;
-  const _segment19 = () => {
-    setShouldFilterUsers = _unwrapped5[1];
-  };
-  let setFilterUsers = _$unforgetCache[26].v;
-  const _segment20 = () => {
+    _$unforgetCache[15].e(error);
+  }
+  let setError = _$unforgetCache[16].v;
+  if (_$unforgetCache[16].n || _unwrapped4 !== _$unforgetCache[3].v) {
+    setError = _unwrapped4[1];
+    _$unforgetCache[16].e(setError);
+  }
+  let setFilterUsers = _$unforgetCache[17].v;
+  if (_$unforgetCache[17].n || _unwrapped5 !== _$unforgetCache[4].v) {
     setFilterUsers = _unwrapped5[0];
-  };
-  const _segment21 = () => {
-    useEffect(() => {
-      Promise.all([fetchUser(), fetchUserFollowers(), new Promise(resolve => setTimeout(resolve, 2000))]).then(([userData, followersData]) => {
-        setFollowers(followersData);
-        setUser(userData);
-        setLoading(false);
-      }).catch(error => {
-        setError(error.toString());
-        setLoading(false);
-      });
-    }, []);
-  };
-  let toggleEvenOnes = _$unforgetCache[29].v;
-  const _segment22 = () => {
+    _$unforgetCache[17].e(setFilterUsers);
+  }
+  let setShouldFilterUsers = _$unforgetCache[18].v;
+  if (_$unforgetCache[18].n || _unwrapped5 !== _$unforgetCache[4].v) {
+    setShouldFilterUsers = _unwrapped5[1];
+    _$unforgetCache[18].e(setShouldFilterUsers);
+  }
+  useEffect(() => {
+    Promise.all([fetchUser(), fetchUserFollowers(), new Promise(resolve => setTimeout(resolve, 2000))]).then(([userData, followersData]) => {
+      setFollowers(followersData);
+      setUser(userData);
+      setLoading(false);
+    }).catch(error => {
+      setError(error.toString());
+      setLoading(false);
+    });
+  }, []);
+  let toggleEvenOnes = _$unforgetCache[19].v;
+  if (_$unforgetCache[19].n || setShouldFilterUsers !== _$unforgetCache[18].v) {
     toggleEvenOnes = () => {
       setShouldFilterUsers(prev => !prev);
     };
-  };
-  let i = _$unforgetCache[4].v;
-  const _segment23 = () => {};
-  const _segment28 = () => {
-    for (i = 0; i < memoizedFollowers.length; i++) {
-      let user = _$unforgetCache[6].v;
-      const _segment24 = () => {
+    _$unforgetCache[19].e(toggleEvenOnes);
+  }
+  let memoizedFollowers = _$unforgetCache[20].v;
+  memoizedFollowers = useMemo(() => followers, [followers]);
+  _$unforgetCache[20].e(memoizedFollowers);
+  let filteredUsers = _$unforgetCache[21].v;
+  if (_$unforgetCache[21].n || memoizedFollowers !== _$unforgetCache[20].v) {
+    filteredUsers = [];
+    _$unforgetCache[21].e(filteredUsers);
+  }
+  if (memoizedFollowers !== _$unforgetCache[20].v || _unwrapped6 !== _$unforgetCache[6].v || filteredUsers !== _$unforgetCache[21].v) {
+    for (let i = _unwrapped6; i < memoizedFollowers.length; i++) {
+      let user = _$unforgetCache[22].v;
+      if (_$unforgetCache[22].n || memoizedFollowers !== _$unforgetCache[20].v) {
         user = memoizedFollowers[i];
-      };
-      const _segment26 = () => {
+        _$unforgetCache[22].e(user);
+      }
+      if (filteredUsers !== _$unforgetCache[21].v || user !== _$unforgetCache[22].v) {
         if (i % 2 === 0) {
-          const _segment25 = () => {
+          if (filteredUsers !== _$unforgetCache[21].v || user !== _$unforgetCache[22].v) {
             filteredUsers.push(user);
-          };
-          if (filteredUsers !== _$unforgetCache[5].v) {
-            _segment25();
           }
         }
-      };
-      if (_$unforgetCache[6].n || memoizedFollowers !== _$unforgetCache[3].v || i !== _$unforgetCache[4].v) {
-        _segment24();
-        _$unforgetCache[6].e(user);
-      }
-      if (filteredUsers !== _$unforgetCache[5].v || user !== _$unforgetCache[6].v || i !== _$unforgetCache[4].v) {
-        _segment26();
       }
     }
-  };
-  let usersForUI = _$unforgetCache[7].v;
+  }
+  let usersForUI = _$unforgetCache[23].v;
 
   // Early return for loading state
-  const _segment29 = () => {
+  if (_$unforgetCache[23].n || setFilterUsers !== _$unforgetCache[17].v || filteredUsers !== _$unforgetCache[21].v || memoizedFollowers !== _$unforgetCache[20].v) {
     usersForUI = setFilterUsers ? filteredUsers : memoizedFollowers;
-  };
-  const _segment30 = () => {
+    _$unforgetCache[23].e(usersForUI);
+  }
+  if (loading !== _$unforgetCache[13].v || _unwrappedJsxEl !== _$unforgetCache[7].v) {
     if (loading) {
       _$unforgetCommit();
       return _unwrappedJsxEl;
     }
-    return _$unforgetNull;
-  }; // Early return for error state
-  let _unwrappedJsxEl2 = _$unforgetCache[21].v;
-  const _segment31 = () => {
+
+    // Early return for error state
+  }
+  let _unwrappedJsxEl2 = _$unforgetCache[24].v;
+  if (_$unforgetCache[24].n || error !== _$unforgetCache[15].v) {
     _unwrappedJsxEl2 = <div>Error: {error}</div>;
-  };
-  const _segment32 = () => {
+    _$unforgetCache[24].e(_unwrappedJsxEl2);
+  }
+  if (error !== _$unforgetCache[15].v || _unwrappedJsxEl2 !== _$unforgetCache[24].v) {
     if (error) {
       _$unforgetCommit();
       return _unwrappedJsxEl2;
     }
-    return _$unforgetNull;
-  };
-  let userListElement = _$unforgetCache[8].v;
-  const _segment33 = () => {
+  }
+  let userListElement = _$unforgetCache[25].v;
+  if (_$unforgetCache[25].n || usersForUI !== _$unforgetCache[23].v) {
     userListElement = usersForUI.map(follower => <UserListItem key={follower.id} user={follower} />);
-  };
-  let _unwrappedJsxExp = _$unforgetCache[12].v;
-  const _segment34 = () => {
+    _$unforgetCache[25].e(userListElement);
+  }
+  let _unwrappedJsxExp = _$unforgetCache[26].v;
+  if (_$unforgetCache[26].n || user !== _$unforgetCache[9].v) {
     _unwrappedJsxExp = user.name;
-  };
+    _$unforgetCache[26].e(_unwrappedJsxExp);
+  }
   let _unwrappedJsxExp2 = _$unforgetCache[27].v;
-  const _segment35 = () => {
+  if (_$unforgetCache[27].n || setFilterUsers !== _$unforgetCache[17].v) {
     _unwrappedJsxExp2 = setFilterUsers ? "Show Odd" : "Show Even";
-  };
-  let _unwrappedJsxEl3 = _$unforgetCache[11].v;
-  const _segment36 = () => {
+    _$unforgetCache[27].e(_unwrappedJsxExp2);
+  }
+  let _unwrappedJsxExp3 = _$unforgetCache[28].v;
+  if (_$unforgetCache[28].n || handleUserClick !== _$unforgetCache[5].v || user !== _$unforgetCache[9].v) {
+    _unwrappedJsxExp3 = () => handleUserClick(user.id);
+    _$unforgetCache[28].e(_unwrappedJsxExp3);
+  }
+  let _unwrappedJsxEl3 = _$unforgetCache[29].v;
+  if (_$unforgetCache[29].n || _unwrappedJsxExp !== _$unforgetCache[26].v) {
     _unwrappedJsxEl3 = <h1>Follwers of {_unwrappedJsxExp}</h1>;
-  };
-  let _unwrappedJsxEl5 = _$unforgetCache[28].v;
-  const _segment37 = () => {
+    _$unforgetCache[29].e(_unwrappedJsxEl3);
+  }
+  let _unwrappedJsxEl5 = _$unforgetCache[30].v;
+  if (_$unforgetCache[30].n || toggleEvenOnes !== _$unforgetCache[19].v || _unwrappedJsxExp2 !== _$unforgetCache[27].v) {
     _unwrappedJsxEl5 = <button onClick={toggleEvenOnes}>
         {_unwrappedJsxExp2}
       </button>;
-  };
-  let _unwrappedJsxEl6 = _$unforgetCache[9].v;
-  const _segment38 = () => {
-    _unwrappedJsxEl6 = <ul onClick={() => handleUserClick(user.id)}>{userListElement}</ul>;
-  };
-  let _unwrappedJsxEl7 = _$unforgetCache[10].v;
-  const _segment39 = () => {
+    _$unforgetCache[30].e(_unwrappedJsxEl5);
+  }
+  let _unwrappedJsxEl6 = _$unforgetCache[31].v;
+  if (_$unforgetCache[31].n || _unwrappedJsxExp3 !== _$unforgetCache[28].v || userListElement !== _$unforgetCache[25].v) {
+    _unwrappedJsxEl6 = <ul onClick={_unwrappedJsxExp3}>{userListElement}</ul>;
+    _$unforgetCache[31].e(_unwrappedJsxEl6);
+  }
+  let _unwrappedJsxEl7 = _$unforgetCache[32].v;
+  if (_$unforgetCache[32].n || _unwrappedJsxEl3 !== _$unforgetCache[29].v || _unwrappedJsxEl4 !== _$unforgetCache[8].v || _unwrappedJsxEl5 !== _$unforgetCache[30].v || _unwrappedJsxEl6 !== _$unforgetCache[31].v) {
     _unwrappedJsxEl7 = <div>
       {_unwrappedJsxEl3}
       {_unwrappedJsxEl4}
       {_unwrappedJsxEl5}
       {_unwrappedJsxEl6}
     </div>;
-  };
-  _segment();
-  _$unforgetCache[14].e(_unwrapped2);
-  _segment2();
-  _$unforgetCache[1].e(_unwrapped);
-  _segment3();
-  _$unforgetCache[17].e(_unwrapped3);
-  _segment4();
-  _$unforgetCache[22].e(_unwrapped4);
-  _segment5();
-  _$unforgetCache[25].e(_unwrapped5);
-  _segment6();
-  _$unforgetCache[30].e(handleUserClick);
-  if (_$unforgetCache[19].n) {
-    _segment7();
-    _$unforgetCache[19].e(_unwrappedJsxEl);
-  }
-  if (_$unforgetCache[31].n) {
-    _segment8();
-    _$unforgetCache[31].e(_unwrappedJsxEl4);
-  }
-  if (_$unforgetCache[15].n || _unwrapped2[1] !== _$unforgetCache[14].v[1] || _unwrapped2 !== _$unforgetCache[14].v) {
-    _segment9();
-    _$unforgetCache[15].e(setUser);
-  }
-  if (_$unforgetCache[2].n || _unwrapped[0] !== _$unforgetCache[1].v[0] || _unwrapped !== _$unforgetCache[1].v || i !== _$unforgetCache[4].v || memoizedFollowers !== _$unforgetCache[3].v || filteredUsers !== _$unforgetCache[5].v || memoizedFollowers.length !== _$unforgetCache[3].v.length || user !== _$unforgetCache[13].v || filteredUsers !== _$unforgetCache[5].v || memoizedFollowers !== _$unforgetCache[3].v || _unwrapped2 !== _$unforgetCache[14].v || _unwrapped2[0] !== _$unforgetCache[14].v[0] || memoizedFollowers !== _$unforgetCache[3].v) {
-    _segment10();
-    _$unforgetCache[2].e(followers);
-  }
-  _segment11();
-  _$unforgetCache[3].e(memoizedFollowers);
-  if (_$unforgetCache[5].n || filteredUsers !== _$unforgetCache[5].v || i !== _$unforgetCache[4].v || memoizedFollowers !== _$unforgetCache[3].v || memoizedFollowers.length !== _$unforgetCache[3].v.length || user !== _$unforgetCache[13].v || followers !== _$unforgetCache[2].v || _unwrapped[0] !== _$unforgetCache[1].v[0] || _unwrapped !== _$unforgetCache[1].v || memoizedFollowers !== _$unforgetCache[3].v || _unwrapped2 !== _$unforgetCache[14].v || _unwrapped2[0] !== _$unforgetCache[14].v[0] || memoizedFollowers !== _$unforgetCache[3].v) {
-    _segment12();
-    _$unforgetCache[5].e(filteredUsers);
-  }
-  if (_$unforgetCache[13].n || _unwrapped2 !== _$unforgetCache[14].v || _unwrapped2[0] !== _$unforgetCache[14].v[0] || memoizedFollowers !== _$unforgetCache[3].v || i !== _$unforgetCache[4].v || memoizedFollowers !== _$unforgetCache[3].v || filteredUsers !== _$unforgetCache[5].v || memoizedFollowers.length !== _$unforgetCache[3].v.length || followers !== _$unforgetCache[2].v || _unwrapped[0] !== _$unforgetCache[1].v[0] || _unwrapped !== _$unforgetCache[1].v || filteredUsers !== _$unforgetCache[5].v || memoizedFollowers !== _$unforgetCache[3].v) {
-    _segment13();
-    _$unforgetCache[13].e(user);
-  }
-  if (_$unforgetCache[0].n || _unwrapped !== _$unforgetCache[1].v || _unwrapped[1] !== _$unforgetCache[1].v[1]) {
-    _segment14();
-    _$unforgetCache[0].e(setFollowers);
-  }
-  if (_$unforgetCache[16].n || _unwrapped3 !== _$unforgetCache[17].v || _unwrapped3[1] !== _$unforgetCache[17].v[1]) {
-    _segment15();
-    _$unforgetCache[16].e(setLoading);
-  }
-  if (_$unforgetCache[18].n || _unwrapped3[0] !== _$unforgetCache[17].v[0] || _unwrapped3 !== _$unforgetCache[17].v) {
-    _segment16();
-    _$unforgetCache[18].e(loading);
-  }
-  if (_$unforgetCache[23].n || _unwrapped4[1] !== _$unforgetCache[22].v[1] || _unwrapped4 !== _$unforgetCache[22].v) {
-    _segment17();
-    _$unforgetCache[23].e(setError);
-  }
-  if (_$unforgetCache[20].n || _unwrapped4 !== _$unforgetCache[22].v || _unwrapped4[0] !== _$unforgetCache[22].v[0]) {
-    _segment18();
-    _$unforgetCache[20].e(error);
-  }
-  if (_$unforgetCache[24].n || _unwrapped5 !== _$unforgetCache[25].v || _unwrapped5[1] !== _$unforgetCache[25].v[1]) {
-    _segment19();
-    _$unforgetCache[24].e(setShouldFilterUsers);
-  }
-  if (_$unforgetCache[26].n || _unwrapped5[0] !== _$unforgetCache[25].v[0] || _unwrapped5 !== _$unforgetCache[25].v) {
-    _segment20();
-    _$unforgetCache[26].e(setFilterUsers);
-  }
-  _segment21();
-  if (_$unforgetCache[29].n || setShouldFilterUsers !== _$unforgetCache[24].v) {
-    _segment22();
-    _$unforgetCache[29].e(toggleEvenOnes);
-  }
-  if (_$unforgetCache[4].n || memoizedFollowers !== _$unforgetCache[3].v || filteredUsers !== _$unforgetCache[5].v || memoizedFollowers.length !== _$unforgetCache[3].v.length || user !== _$unforgetCache[13].v || followers !== _$unforgetCache[2].v || _unwrapped[0] !== _$unforgetCache[1].v[0] || _unwrapped !== _$unforgetCache[1].v || filteredUsers !== _$unforgetCache[5].v || memoizedFollowers !== _$unforgetCache[3].v || _unwrapped2 !== _$unforgetCache[14].v || _unwrapped2[0] !== _$unforgetCache[14].v[0] || memoizedFollowers !== _$unforgetCache[3].v) {
-    _segment23();
-    _$unforgetCache[4].e(i);
-  }
-  if (i !== _$unforgetCache[4].v || memoizedFollowers !== _$unforgetCache[3].v || filteredUsers !== _$unforgetCache[5].v || memoizedFollowers.length !== _$unforgetCache[3].v.length || user !== _$unforgetCache[13].v) {
-    _segment28();
-  }
-  if (_$unforgetCache[7].n || setFilterUsers !== _$unforgetCache[26].v || filteredUsers !== _$unforgetCache[5].v || memoizedFollowers !== _$unforgetCache[3].v) {
-    _segment29();
-    _$unforgetCache[7].e(usersForUI);
-  }
-  if (loading !== _$unforgetCache[18].v || _unwrappedJsxEl !== _$unforgetCache[19].v) {
-    const _temp = _segment30();
-    if (_temp !== _$unforgetNull) {
-      return _temp;
-    }
-  }
-  if (_$unforgetCache[21].n || error !== _$unforgetCache[20].v) {
-    _segment31();
-    _$unforgetCache[21].e(_unwrappedJsxEl2);
-  }
-  if (error !== _$unforgetCache[20].v || _unwrappedJsxEl2 !== _$unforgetCache[21].v) {
-    const _temp2 = _segment32();
-    if (_temp2 !== _$unforgetNull) {
-      return _temp2;
-    }
-  }
-  if (_$unforgetCache[8].n || usersForUI !== _$unforgetCache[7].v) {
-    _segment33();
-    _$unforgetCache[8].e(userListElement);
-  }
-  if (_$unforgetCache[12].n || user.name !== _$unforgetCache[13].v.name) {
-    _segment34();
-    _$unforgetCache[12].e(_unwrappedJsxExp);
-  }
-  if (_$unforgetCache[27].n || setFilterUsers !== _$unforgetCache[26].v) {
-    _segment35();
-    _$unforgetCache[27].e(_unwrappedJsxExp2);
-  }
-  if (_$unforgetCache[11].n || _unwrappedJsxExp !== _$unforgetCache[12].v) {
-    _segment36();
-    _$unforgetCache[11].e(_unwrappedJsxEl3);
-  }
-  if (_$unforgetCache[28].n || toggleEvenOnes !== _$unforgetCache[29].v || _unwrappedJsxExp2 !== _$unforgetCache[27].v) {
-    _segment37();
-    _$unforgetCache[28].e(_unwrappedJsxEl5);
-  }
-  if (_$unforgetCache[9].n || user !== _$unforgetCache[13].v || handleUserClick !== _$unforgetCache[30].v || userListElement !== _$unforgetCache[8].v) {
-    _segment38();
-    _$unforgetCache[9].e(_unwrappedJsxEl6);
-  }
-  if (_$unforgetCache[10].n || _unwrappedJsxEl3 !== _$unforgetCache[11].v || _unwrappedJsxEl5 !== _$unforgetCache[28].v || _unwrappedJsxEl4 !== _$unforgetCache[31].v || _unwrappedJsxEl6 !== _$unforgetCache[9].v) {
-    _segment39();
-    _$unforgetCache[10].e(_unwrappedJsxEl7);
+    _$unforgetCache[32].e(_unwrappedJsxEl7);
   }
   _$unforgetCommit();
   return _unwrappedJsxEl7;
@@ -1124,93 +835,69 @@ function UserList() {
 function UserListItem(_props) {
   const [_$unforgetCache2, _$unforgetCommit2, _$unforgetNull2] = useCreateCache$unforget(
   /*
-  0 => _unwrappedJsxEl10
-  1 => _unwrappedJsxExp3
-  2 => _unwrappedJsxEl8
-  3 => _unwrappedJsxExp4
+  0 => _props
+  1 => _unwrappedJsxExp4
+  2 => _unwrappedJsxExp5
+  3 => login
   4 => avatar_url
-  5 => _props
-  6 => login
+  5 => html_url
+  6 => _unwrappedJsxEl8
   7 => _unwrappedJsxEl9
-  8 => html_url
+  8 => _unwrappedJsxEl10
   */
   9);
-  let _unwrappedJsxExp3 = _$unforgetCache2[1].v;
-  const _segment61 = () => {
-    _unwrappedJsxExp3 = {
+  let _unwrappedJsxExp4 = _$unforgetCache2[1].v;
+  if (_$unforgetCache2[1].n) {
+    _unwrappedJsxExp4 = {
       display: "flex",
       alignItems: "center",
       justifyContent: "space-between",
       gap: 10,
       marginBottom: 10
     };
-  };
-  let _unwrappedJsxExp4 = _$unforgetCache2[3].v;
-  const _segment62 = () => {
-    _unwrappedJsxExp4 = {
+    _$unforgetCache2[1].e(_unwrappedJsxExp4);
+  }
+  let _unwrappedJsxExp5 = _$unforgetCache2[2].v;
+  if (_$unforgetCache2[2].n) {
+    _unwrappedJsxExp5 = {
       width: 100,
       height: 100,
       borderRadius: 20
     };
-  };
-  let html_url = _$unforgetCache2[8].v;
-  const _segment63 = () => {
-    html_url = _props.user.html_url;
-  };
-  let avatar_url = _$unforgetCache2[4].v;
-  const _segment64 = () => {
-    avatar_url = _props.user.avatar_url;
-  };
-  let login = _$unforgetCache2[6].v;
-  const _segment65 = () => {
+    _$unforgetCache2[2].e(_unwrappedJsxExp5);
+  }
+  let login = _$unforgetCache2[3].v;
+  if (_$unforgetCache2[3].n || _props !== _$unforgetCache2[0].v) {
     login = _props.user.login;
-  };
-  let _unwrappedJsxEl8 = _$unforgetCache2[2].v;
-  const _segment66 = () => {
-    _unwrappedJsxEl8 = <img style={_unwrappedJsxExp4} src={avatar_url} alt={login} />;
-  };
+    _$unforgetCache2[3].e(login);
+  }
+  let avatar_url = _$unforgetCache2[4].v;
+  if (_$unforgetCache2[4].n || _props !== _$unforgetCache2[0].v) {
+    avatar_url = _props.user.avatar_url;
+    _$unforgetCache2[4].e(avatar_url);
+  }
+  let html_url = _$unforgetCache2[5].v;
+  if (_$unforgetCache2[5].n || _props !== _$unforgetCache2[0].v) {
+    html_url = _props.user.html_url;
+    _$unforgetCache2[5].e(html_url);
+  }
+  let _unwrappedJsxEl8 = _$unforgetCache2[6].v;
+  if (_$unforgetCache2[6].n || _unwrappedJsxExp5 !== _$unforgetCache2[2].v || avatar_url !== _$unforgetCache2[4].v || login !== _$unforgetCache2[3].v) {
+    _unwrappedJsxEl8 = <img style={_unwrappedJsxExp5} src={avatar_url} alt={login} />;
+    _$unforgetCache2[6].e(_unwrappedJsxEl8);
+  }
   let _unwrappedJsxEl9 = _$unforgetCache2[7].v;
-  const _segment67 = () => {
+  if (_$unforgetCache2[7].n || html_url !== _$unforgetCache2[5].v || login !== _$unforgetCache2[3].v) {
     _unwrappedJsxEl9 = <a href={html_url}>{login}</a>;
-  };
-  let _unwrappedJsxEl10 = _$unforgetCache2[0].v;
-  const _segment68 = () => {
-    _unwrappedJsxEl10 = <li style={_unwrappedJsxExp3}>
+    _$unforgetCache2[7].e(_unwrappedJsxEl9);
+  }
+  let _unwrappedJsxEl10 = _$unforgetCache2[8].v;
+  if (_$unforgetCache2[8].n || _unwrappedJsxExp4 !== _$unforgetCache2[1].v || _unwrappedJsxEl8 !== _$unforgetCache2[6].v || _unwrappedJsxEl9 !== _$unforgetCache2[7].v) {
+    _unwrappedJsxEl10 = <li style={_unwrappedJsxExp4}>
       {_unwrappedJsxEl8}
       {_unwrappedJsxEl9}
     </li>;
-  };
-  if (_$unforgetCache2[1].n) {
-    _segment61();
-    _$unforgetCache2[1].e(_unwrappedJsxExp3);
-  }
-  if (_$unforgetCache2[3].n) {
-    _segment62();
-    _$unforgetCache2[3].e(_unwrappedJsxExp4);
-  }
-  if (_$unforgetCache2[8].n || _props.user !== _$unforgetCache2[5].v.user || _props !== _$unforgetCache2[5].v) {
-    _segment63();
-    _$unforgetCache2[8].e(html_url);
-  }
-  if (_$unforgetCache2[4].n || _props !== _$unforgetCache2[5].v || _props.user !== _$unforgetCache2[5].v.user) {
-    _segment64();
-    _$unforgetCache2[4].e(avatar_url);
-  }
-  if (_$unforgetCache2[6].n || _props.user !== _$unforgetCache2[5].v.user || _props !== _$unforgetCache2[5].v) {
-    _segment65();
-    _$unforgetCache2[6].e(login);
-  }
-  if (_$unforgetCache2[2].n || _unwrappedJsxExp4 !== _$unforgetCache2[3].v || avatar_url !== _$unforgetCache2[4].v || login !== _$unforgetCache2[6].v) {
-    _segment66();
-    _$unforgetCache2[2].e(_unwrappedJsxEl8);
-  }
-  if (_$unforgetCache2[7].n || html_url !== _$unforgetCache2[8].v || login !== _$unforgetCache2[6].v) {
-    _segment67();
-    _$unforgetCache2[7].e(_unwrappedJsxEl9);
-  }
-  if (_$unforgetCache2[0].n || _unwrappedJsxExp3 !== _$unforgetCache2[1].v || _unwrappedJsxEl8 !== _$unforgetCache2[2].v || _unwrappedJsxEl9 !== _$unforgetCache2[7].v) {
-    _segment68();
-    _$unforgetCache2[0].e(_unwrappedJsxEl10);
+    _$unforgetCache2[8].e(_unwrappedJsxEl10);
   }
   _$unforgetCommit2();
   return _unwrappedJsxEl10;
@@ -1223,55 +910,37 @@ exports[`Component fixtures applyModification fixture_11 1`] = `
 export default function App() {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
-  0 => _unwrappedJsxEl
-  1 => _unwrappedJsxExp
-  2 => a
-  3 => b
+  0 => a
+  1 => b
+  2 => _unwrappedJsxExp
+  3 => _unwrappedJsxEl
   */
   4);
-  let a = _$unforgetCache[2].v;
-  const _segment = () => {
+  let a = _$unforgetCache[0].v;
+  if (_$unforgetCache[0].n) {
     a = [];
-  };
-  const _segment2 = () => {
+    _$unforgetCache[0].e(a);
+  }
+  if (a !== _$unforgetCache[0].v) {
     a.push(1);
-  };
-  let b = _$unforgetCache[3].v;
-  const _segment3 = () => {
+  }
+  let b = _$unforgetCache[1].v;
+  if (_$unforgetCache[1].n || a !== _$unforgetCache[0].v) {
     b = a;
-  };
-  const _segment4 = () => {
+    _$unforgetCache[1].e(b);
+  }
+  if (b !== _$unforgetCache[1].v) {
     b.push(2);
-  };
-  let _unwrappedJsxExp = _$unforgetCache[1].v;
-  const _segment5 = () => {
+  }
+  let _unwrappedJsxExp = _$unforgetCache[2].v;
+  if (_$unforgetCache[2].n || a !== _$unforgetCache[0].v) {
     _unwrappedJsxExp = a[1];
-  };
-  let _unwrappedJsxEl = _$unforgetCache[0].v;
-  const _segment6 = () => {
+    _$unforgetCache[2].e(_unwrappedJsxExp);
+  }
+  let _unwrappedJsxEl = _$unforgetCache[3].v;
+  if (_$unforgetCache[3].n || _unwrappedJsxExp !== _$unforgetCache[2].v) {
     _unwrappedJsxEl = <div>{_unwrappedJsxExp}</div>;
-  };
-  if (_$unforgetCache[2].n || a !== _$unforgetCache[2].v || b !== _$unforgetCache[3].v) {
-    _segment();
-    _$unforgetCache[2].e(a);
-  }
-  if (a !== _$unforgetCache[2].v) {
-    _segment2();
-  }
-  if (_$unforgetCache[3].n || a !== _$unforgetCache[2].v || b !== _$unforgetCache[3].v || a !== _$unforgetCache[2].v) {
-    _segment3();
-    _$unforgetCache[3].e(b);
-  }
-  if (b !== _$unforgetCache[3].v) {
-    _segment4();
-  }
-  if (_$unforgetCache[1].n || a[1] !== _$unforgetCache[2].v[1]) {
-    _segment5();
-    _$unforgetCache[1].e(_unwrappedJsxExp);
-  }
-  if (_$unforgetCache[0].n || _unwrappedJsxExp !== _$unforgetCache[1].v) {
-    _segment6();
-    _$unforgetCache[0].e(_unwrappedJsxEl);
+    _$unforgetCache[3].e(_unwrappedJsxEl);
   }
   _$unforgetCommit();
   return _unwrappedJsxEl;
@@ -1284,74 +953,50 @@ import { useState } from "react";
 function Comp(_props) {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
-  0 => _unwrappedJsxEl
-  1 => _unwrappedJsxExp
-  2 => x
-  3 => a
-  4 => _props
-  5 => b
-  6 => y
+  0 => _props
+  1 => a
+  2 => b
+  3 => x
+  4 => y
+  5 => _unwrappedJsxExp
+  6 => _unwrappedJsxEl
   */
   7);
-  let b = _$unforgetCache[5].v;
-  const _segment = () => {
-    b = _props.b;
-  };
-  let a = _$unforgetCache[3].v;
-  const _segment2 = () => {
+  let a = _$unforgetCache[1].v;
+  if (_$unforgetCache[1].n || _props !== _$unforgetCache[0].v) {
     a = _props.a;
-  };
-  let x = _$unforgetCache[2].v;
-  const _segment3 = () => {
+    _$unforgetCache[1].e(a);
+  }
+  let b = _$unforgetCache[2].v;
+  if (_$unforgetCache[2].n || _props !== _$unforgetCache[0].v) {
+    b = _props.b;
+    _$unforgetCache[2].e(b);
+  }
+  let x = _$unforgetCache[3].v;
+  if (_$unforgetCache[3].n || a !== _$unforgetCache[1].v || b !== _$unforgetCache[2].v) {
     x = [];
-  };
-  const _segment4 = () => {
+    _$unforgetCache[3].e(x);
+  }
+  if (x !== _$unforgetCache[3].v || a !== _$unforgetCache[1].v) {
     x.push(a);
-  };
-  let y = _$unforgetCache[6].v;
-  const _segment5 = () => {
+  }
+  let y = _$unforgetCache[4].v;
+  if (_$unforgetCache[4].n || x !== _$unforgetCache[3].v || b !== _$unforgetCache[2].v) {
     y = x;
-  };
-  const _segment6 = () => {
+    _$unforgetCache[4].e(y);
+  }
+  if (y !== _$unforgetCache[4].v || b !== _$unforgetCache[2].v) {
     y.push(b);
-  };
-  let _unwrappedJsxExp = _$unforgetCache[1].v;
-  const _segment7 = () => {
+  }
+  let _unwrappedJsxExp = _$unforgetCache[5].v;
+  if (_$unforgetCache[5].n || x !== _$unforgetCache[3].v) {
     _unwrappedJsxExp = x.join(",");
-  };
-  let _unwrappedJsxEl = _$unforgetCache[0].v;
-  const _segment8 = () => {
+    _$unforgetCache[5].e(_unwrappedJsxExp);
+  }
+  let _unwrappedJsxEl = _$unforgetCache[6].v;
+  if (_$unforgetCache[6].n || _unwrappedJsxExp !== _$unforgetCache[5].v) {
     _unwrappedJsxEl = <div>n: {_unwrappedJsxExp}</div>;
-  };
-  if (_$unforgetCache[5].n || _props.b !== _$unforgetCache[4].v.b || _props !== _$unforgetCache[4].v || y !== _$unforgetCache[6].v || x !== _$unforgetCache[2].v || x !== _$unforgetCache[2].v || a !== _$unforgetCache[3].v || _props !== _$unforgetCache[4].v || _props.a !== _$unforgetCache[4].v.a) {
-    _segment();
-    _$unforgetCache[5].e(b);
-  }
-  if (_$unforgetCache[3].n || _props !== _$unforgetCache[4].v || _props.a !== _$unforgetCache[4].v.a || x !== _$unforgetCache[2].v || y !== _$unforgetCache[6].v || b !== _$unforgetCache[5].v || x !== _$unforgetCache[2].v || _props.b !== _$unforgetCache[4].v.b || _props !== _$unforgetCache[4].v) {
-    _segment2();
-    _$unforgetCache[3].e(a);
-  }
-  if (_$unforgetCache[2].n || x !== _$unforgetCache[2].v || a !== _$unforgetCache[3].v || _props !== _$unforgetCache[4].v || _props.a !== _$unforgetCache[4].v.a || y !== _$unforgetCache[6].v || b !== _$unforgetCache[5].v || _props.b !== _$unforgetCache[4].v.b || _props !== _$unforgetCache[4].v) {
-    _segment3();
-    _$unforgetCache[2].e(x);
-  }
-  if (x !== _$unforgetCache[2].v || a !== _$unforgetCache[3].v) {
-    _segment4();
-  }
-  if (_$unforgetCache[6].n || x !== _$unforgetCache[2].v || y !== _$unforgetCache[6].v || b !== _$unforgetCache[5].v || x !== _$unforgetCache[2].v || a !== _$unforgetCache[3].v || _props !== _$unforgetCache[4].v || _props.a !== _$unforgetCache[4].v.a || _props.b !== _$unforgetCache[4].v.b || _props !== _$unforgetCache[4].v) {
-    _segment5();
-    _$unforgetCache[6].e(y);
-  }
-  if (y !== _$unforgetCache[6].v || b !== _$unforgetCache[5].v) {
-    _segment6();
-  }
-  if (_$unforgetCache[1].n || x !== _$unforgetCache[2].v) {
-    _segment7();
-    _$unforgetCache[1].e(_unwrappedJsxExp);
-  }
-  if (_$unforgetCache[0].n || _unwrappedJsxExp !== _$unforgetCache[1].v) {
-    _segment8();
-    _$unforgetCache[0].e(_unwrappedJsxEl);
+    _$unforgetCache[6].e(_unwrappedJsxEl);
   }
   _$unforgetCommit();
   return _unwrappedJsxEl;
@@ -1359,62 +1004,50 @@ function Comp(_props) {
 export default function App() {
   const [_$unforgetCache2, _$unforgetCommit2, _$unforgetNull2] = useCreateCache$unforget(
   /*
-  0 => _unwrappedJsxEl4
-  1 => _unwrappedJsxEl2
-  2 => state
-  3 => _unwrapped
-  4 => setState
+  0 => _unwrapped
+  1 => state
+  2 => setState
+  3 => _unwrappedJsxExp2
+  4 => _unwrappedJsxEl2
   5 => _unwrappedJsxEl3
+  6 => _unwrappedJsxEl4
   */
-  6);
-  let _unwrapped = _$unforgetCache2[3].v;
-  const _segment13 = () => {
-    _unwrapped = useState(2);
-  };
-  let setState = _$unforgetCache2[4].v;
-  const _segment14 = () => {
-    setState = _unwrapped[1];
-  };
-  let state = _$unforgetCache2[2].v;
-  const _segment15 = () => {
+  7);
+  let _unwrapped = _$unforgetCache2[0].v;
+  _unwrapped = useState(2);
+  _$unforgetCache2[0].e(_unwrapped);
+  let state = _$unforgetCache2[1].v;
+  if (_$unforgetCache2[1].n || _unwrapped !== _$unforgetCache2[0].v) {
     state = _unwrapped[0];
-  };
-  let _unwrappedJsxEl2 = _$unforgetCache2[1].v;
-  const _segment16 = () => {
+    _$unforgetCache2[1].e(state);
+  }
+  let setState = _$unforgetCache2[2].v;
+  if (_$unforgetCache2[2].n || _unwrapped !== _$unforgetCache2[0].v) {
+    setState = _unwrapped[1];
+    _$unforgetCache2[2].e(setState);
+  }
+  let _unwrappedJsxExp2 = _$unforgetCache2[3].v;
+  if (_$unforgetCache2[3].n || setState !== _$unforgetCache2[2].v) {
+    _unwrappedJsxExp2 = () => setState(p => p + 1);
+    _$unforgetCache2[3].e(_unwrappedJsxExp2);
+  }
+  let _unwrappedJsxEl2 = _$unforgetCache2[4].v;
+  if (_$unforgetCache2[4].n || state !== _$unforgetCache2[1].v) {
     _unwrappedJsxEl2 = <Comp a={3} b={state} />;
-  };
+    _$unforgetCache2[4].e(_unwrappedJsxEl2);
+  }
   let _unwrappedJsxEl3 = _$unforgetCache2[5].v;
-  const _segment17 = () => {
-    _unwrappedJsxEl3 = <button onClick={() => setState(p => p + 1)}>click</button>;
-  };
-  let _unwrappedJsxEl4 = _$unforgetCache2[0].v;
-  const _segment18 = () => {
+  if (_$unforgetCache2[5].n || _unwrappedJsxExp2 !== _$unforgetCache2[3].v) {
+    _unwrappedJsxEl3 = <button onClick={_unwrappedJsxExp2}>click</button>;
+    _$unforgetCache2[5].e(_unwrappedJsxEl3);
+  }
+  let _unwrappedJsxEl4 = _$unforgetCache2[6].v;
+  if (_$unforgetCache2[6].n || _unwrappedJsxEl2 !== _$unforgetCache2[4].v || _unwrappedJsxEl3 !== _$unforgetCache2[5].v) {
     _unwrappedJsxEl4 = <div>
       {_unwrappedJsxEl2}
       {_unwrappedJsxEl3}
     </div>;
-  };
-  _segment13();
-  _$unforgetCache2[3].e(_unwrapped);
-  if (_$unforgetCache2[4].n || _unwrapped[1] !== _$unforgetCache2[3].v[1] || _unwrapped !== _$unforgetCache2[3].v) {
-    _segment14();
-    _$unforgetCache2[4].e(setState);
-  }
-  if (_$unforgetCache2[2].n || _unwrapped !== _$unforgetCache2[3].v || _unwrapped[0] !== _$unforgetCache2[3].v[0]) {
-    _segment15();
-    _$unforgetCache2[2].e(state);
-  }
-  if (_$unforgetCache2[1].n || state !== _$unforgetCache2[2].v) {
-    _segment16();
-    _$unforgetCache2[1].e(_unwrappedJsxEl2);
-  }
-  if (_$unforgetCache2[5].n || setState !== _$unforgetCache2[4].v) {
-    _segment17();
-    _$unforgetCache2[5].e(_unwrappedJsxEl3);
-  }
-  if (_$unforgetCache2[0].n || _unwrappedJsxEl2 !== _$unforgetCache2[1].v || _unwrappedJsxEl3 !== _$unforgetCache2[5].v) {
-    _segment18();
-    _$unforgetCache2[0].e(_unwrappedJsxEl4);
+    _$unforgetCache2[6].e(_unwrappedJsxEl4);
   }
   _$unforgetCommit2();
   return _unwrappedJsxEl4;
@@ -1427,136 +1060,100 @@ import { useState } from "react";
 export default function CounterWithMutationTracking() {
   const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
   /*
-  0 => _unwrappedJsxEl4
-  1 => _unwrappedJsxEl
-  2 => setState
-  3 => _unwrapped
-  4 => state
-  5 => y
-  6 => _unwrappedJsxEl3
-  7 => _unwrappedJsxExp2
-  8 => x
-  9 => _unwrappedJsxEl2
-  10 => _unwrappedJsxExp3
-  11 => z
-  12 => _unwrappedJsxExp
+  0 => _unwrapped
+  1 => _unwrappedJsxEl2
+  2 => state
+  3 => setState
+  4 => x
+  5 => z
+  6 => y
+  7 => _unwrappedJsxExp
+  8 => _unwrappedJsxExp2
+  9 => _unwrappedJsxExp3
+  10 => _unwrappedJsxExp4
+  11 => _unwrappedJsxEl
+  12 => _unwrappedJsxEl3
+  13 => _unwrappedJsxEl4
   */
-  13);
-  let _unwrapped = _$unforgetCache[3].v;
-  const _segment = () => {
-    _unwrapped = useState(0);
-  };
-  let x = _$unforgetCache[8].v;
-  const _segment2 = () => {
-    x = [];
-  };
-  let z = _$unforgetCache[11].v;
-  const _segment3 = () => {
-    z = [];
-  };
-  let _unwrappedJsxEl2 = _$unforgetCache[9].v;
-  const _segment4 = () => {
+  14);
+  let _unwrapped = _$unforgetCache[0].v;
+  _unwrapped = useState(0);
+  _$unforgetCache[0].e(_unwrapped);
+  let _unwrappedJsxEl2 = _$unforgetCache[1].v;
+  if (_$unforgetCache[1].n) {
     _unwrappedJsxEl2 = <br />;
-  };
-  let setState = _$unforgetCache[2].v;
-  const _segment5 = () => {
-    setState = _unwrapped[1];
-  };
-  let state = _$unforgetCache[4].v;
-  const _segment6 = () => {
+    _$unforgetCache[1].e(_unwrappedJsxEl2);
+  }
+  let state = _$unforgetCache[2].v;
+  if (_$unforgetCache[2].n || _unwrapped !== _$unforgetCache[0].v) {
     state = _unwrapped[0];
-  };
-  let y = _$unforgetCache[5].v;
-  const _segment7 = () => {
+    _$unforgetCache[2].e(state);
+  }
+  let setState = _$unforgetCache[3].v;
+  if (_$unforgetCache[3].n || _unwrapped !== _$unforgetCache[0].v) {
+    setState = _unwrapped[1];
+    _$unforgetCache[3].e(setState);
+  }
+  let x = _$unforgetCache[4].v;
+  if (_$unforgetCache[4].n || state !== _$unforgetCache[2].v) {
+    x = [];
+    _$unforgetCache[4].e(x);
+  }
+  let z = _$unforgetCache[5].v;
+  if (_$unforgetCache[5].n || state !== _$unforgetCache[2].v) {
+    z = [];
+    _$unforgetCache[5].e(z);
+  }
+  let y = _$unforgetCache[6].v;
+  if (_$unforgetCache[6].n || state !== _$unforgetCache[2].v || x !== _$unforgetCache[4].v || z !== _$unforgetCache[5].v) {
     y = state % 2 === 0 ? x : z;
-  };
-  const _segment8 = () => {
+    _$unforgetCache[6].e(y);
+  }
+  if (y !== _$unforgetCache[6].v || state !== _$unforgetCache[2].v) {
     y.push(state);
-  };
-  let _unwrappedJsxExp = _$unforgetCache[12].v;
-  const _segment9 = () => {
-    _unwrappedJsxExp = y[0];
-  };
-  let _unwrappedJsxExp2 = _$unforgetCache[7].v;
-  const _segment10 = () => {
-    _unwrappedJsxExp2 = JSON.stringify(x);
-  };
-  let _unwrappedJsxExp3 = _$unforgetCache[10].v;
-  const _segment11 = () => {
-    _unwrappedJsxExp3 = JSON.stringify(y);
-  };
-  let _unwrappedJsxEl = _$unforgetCache[1].v;
-  const _segment12 = () => {
-    _unwrappedJsxEl = <button onClick={() => setState(state + 1)}>Increment</button>;
-  };
-  let _unwrappedJsxEl3 = _$unforgetCache[6].v;
-  const _segment13 = () => {
+  }
+  let _unwrappedJsxExp = _$unforgetCache[7].v;
+  if (_$unforgetCache[7].n || setState !== _$unforgetCache[3].v || state !== _$unforgetCache[2].v) {
+    _unwrappedJsxExp = () => setState(state + 1);
+    _$unforgetCache[7].e(_unwrappedJsxExp);
+  }
+  let _unwrappedJsxExp2 = _$unforgetCache[8].v;
+  if (_$unforgetCache[8].n || y !== _$unforgetCache[6].v) {
+    _unwrappedJsxExp2 = y[0];
+    _$unforgetCache[8].e(_unwrappedJsxExp2);
+  }
+  let _unwrappedJsxExp3 = _$unforgetCache[9].v;
+  if (_$unforgetCache[9].n || x !== _$unforgetCache[4].v) {
+    _unwrappedJsxExp3 = JSON.stringify(x);
+    _$unforgetCache[9].e(_unwrappedJsxExp3);
+  }
+  let _unwrappedJsxExp4 = _$unforgetCache[10].v;
+  if (_$unforgetCache[10].n || y !== _$unforgetCache[6].v) {
+    _unwrappedJsxExp4 = JSON.stringify(y);
+    _$unforgetCache[10].e(_unwrappedJsxExp4);
+  }
+  let _unwrappedJsxEl = _$unforgetCache[11].v;
+  if (_$unforgetCache[11].n || _unwrappedJsxExp !== _$unforgetCache[7].v) {
+    _unwrappedJsxEl = <button onClick={_unwrappedJsxExp}>Increment</button>;
+    _$unforgetCache[11].e(_unwrappedJsxEl);
+  }
+  let _unwrappedJsxEl3 = _$unforgetCache[12].v;
+  if (_$unforgetCache[12].n || _unwrappedJsxExp3 !== _$unforgetCache[9].v || _unwrappedJsxEl2 !== _$unforgetCache[1].v || _unwrappedJsxExp4 !== _$unforgetCache[10].v) {
     _unwrappedJsxEl3 = <p data-testid="output-printer">
-        x: {_unwrappedJsxExp2}
+        x: {_unwrappedJsxExp3}
         {_unwrappedJsxEl2}
-        y: {_unwrappedJsxExp3}
+        y: {_unwrappedJsxExp4}
       </p>;
-  };
-  let _unwrappedJsxEl4 = _$unforgetCache[0].v;
-  const _segment14 = () => {
+    _$unforgetCache[12].e(_unwrappedJsxEl3);
+  }
+  let _unwrappedJsxEl4 = _$unforgetCache[13].v;
+  if (_$unforgetCache[13].n || _unwrappedJsxEl !== _$unforgetCache[11].v || _unwrappedJsxExp2 !== _$unforgetCache[8].v || _unwrappedJsxEl3 !== _$unforgetCache[12].v) {
     _unwrappedJsxEl4 = <div>
       {_unwrappedJsxEl}
-      {_unwrappedJsxExp}
+      {_unwrappedJsxExp2}
       {_unwrappedJsxEl3}
     </div>;
-  };
-  _segment();
-  _$unforgetCache[3].e(_unwrapped);
-  if (_$unforgetCache[8].n || y !== _$unforgetCache[5].v || state !== _$unforgetCache[4].v || state !== _$unforgetCache[4].v || z !== _$unforgetCache[11].v || _unwrapped[0] !== _$unforgetCache[3].v[0] || _unwrapped !== _$unforgetCache[3].v) {
-    _segment2();
-    _$unforgetCache[8].e(x);
-  }
-  if (_$unforgetCache[11].n || y !== _$unforgetCache[5].v || state !== _$unforgetCache[4].v || x !== _$unforgetCache[8].v || state !== _$unforgetCache[4].v || _unwrapped[0] !== _$unforgetCache[3].v[0] || _unwrapped !== _$unforgetCache[3].v) {
-    _segment3();
-    _$unforgetCache[11].e(z);
-  }
-  if (_$unforgetCache[9].n) {
-    _segment4();
-    _$unforgetCache[9].e(_unwrappedJsxEl2);
-  }
-  if (_$unforgetCache[2].n || _unwrapped !== _$unforgetCache[3].v || _unwrapped[1] !== _$unforgetCache[3].v[1]) {
-    _segment5();
-    _$unforgetCache[2].e(setState);
-  }
-  if (_$unforgetCache[4].n || _unwrapped[0] !== _$unforgetCache[3].v[0] || _unwrapped !== _$unforgetCache[3].v || y !== _$unforgetCache[5].v || x !== _$unforgetCache[8].v || z !== _$unforgetCache[11].v) {
-    _segment6();
-    _$unforgetCache[4].e(state);
-  }
-  if (_$unforgetCache[5].n || x !== _$unforgetCache[8].v || state !== _$unforgetCache[4].v || z !== _$unforgetCache[11].v || y !== _$unforgetCache[5].v || state !== _$unforgetCache[4].v || _unwrapped[0] !== _$unforgetCache[3].v[0] || _unwrapped !== _$unforgetCache[3].v) {
-    _segment7();
-    _$unforgetCache[5].e(y);
-  }
-  if (y !== _$unforgetCache[5].v || state !== _$unforgetCache[4].v) {
-    _segment8();
-  }
-  if (_$unforgetCache[12].n || y[0] !== _$unforgetCache[5].v[0]) {
-    _segment9();
-    _$unforgetCache[12].e(_unwrappedJsxExp);
-  }
-  if (_$unforgetCache[7].n || x !== _$unforgetCache[8].v) {
-    _segment10();
-    _$unforgetCache[7].e(_unwrappedJsxExp2);
-  }
-  if (_$unforgetCache[10].n || y !== _$unforgetCache[5].v) {
-    _segment11();
-    _$unforgetCache[10].e(_unwrappedJsxExp3);
-  }
-  if (_$unforgetCache[1].n || setState !== _$unforgetCache[2].v || state !== _$unforgetCache[4].v) {
-    _segment12();
-    _$unforgetCache[1].e(_unwrappedJsxEl);
-  }
-  if (_$unforgetCache[6].n || _unwrappedJsxExp2 !== _$unforgetCache[7].v || _unwrappedJsxEl2 !== _$unforgetCache[9].v || _unwrappedJsxExp3 !== _$unforgetCache[10].v || y !== _$unforgetCache[5].v) {
-    _segment13();
-    _$unforgetCache[6].e(_unwrappedJsxEl3);
-  }
-  if (_$unforgetCache[0].n || _unwrappedJsxEl !== _$unforgetCache[1].v || y !== _$unforgetCache[5].v || _unwrappedJsxEl3 !== _$unforgetCache[6].v || _unwrappedJsxExp !== _$unforgetCache[12].v) {
-    _segment14();
-    _$unforgetCache[0].e(_unwrappedJsxEl4);
+    _$unforgetCache[13].e(_unwrappedJsxEl4);
   }
   _$unforgetCommit();
   return _unwrappedJsxEl4;

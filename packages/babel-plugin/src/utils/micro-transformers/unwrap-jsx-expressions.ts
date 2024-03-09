@@ -3,25 +3,26 @@ import * as t from "@babel/types";
 import type { Component } from "~/models/Component";
 import { DEFAULT_UNWRAPPED_JSX_EXPRESSION_VARIABLE_NAME } from "~/utils/constants";
 import { getParentBlockStatement } from "~/utils/path-tools/get-parent-block-statement";
-import { isInTheSameFunctionScope } from "~/utils/path-tools/is-in-the-same-function-scope";
 import { unwrapGenericExpression } from "./unwrap-generic-expression";
 
 export function unwrapJsxExpressions(
   statement: babel.NodePath<t.Statement>,
   component: Component,
-  blockStatement: babel.NodePath<t.BlockStatement>,
+  blockStatement: babel.NodePath<t.BlockStatement>
 ) {
   const performTransformation: ((() => void) | null)[] = [];
+
   statement.traverse({
     JSXExpressionContainer(path) {
       const expressionPath = path.get("expression");
       const expression = expressionPath.node;
 
+
       if (getParentBlockStatement(expressionPath) !== blockStatement) {
         return;
       }
 
-      if (!isInTheSameFunctionScope(expressionPath, component.path)) {
+      if (!component.inTheSameFunctionScope(path)) {
         return;
       }
 
@@ -35,12 +36,14 @@ export function unwrapJsxExpressions(
 
       const transform = unwrapGenericExpression(
         expressionPath as babel.NodePath<t.Expression>,
-        DEFAULT_UNWRAPPED_JSX_EXPRESSION_VARIABLE_NAME,
+        DEFAULT_UNWRAPPED_JSX_EXPRESSION_VARIABLE_NAME
       );
       performTransformation.push(transform);
     },
   });
 
-  return () =>
-    performTransformation.forEach((transformation) => transformation?.());
+  return performTransformation.length === 0
+    ? null
+    : () =>
+        performTransformation.forEach((transformation) => transformation?.());
 }

@@ -7,14 +7,14 @@
     "dist",
     "README.md"
   ],
-  "main": "dist/main.cjs",
-  "module": "dist/main.js",
-  "types": "dist/main.d.ts",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/main.js",
-      "require": "./dist/main.cjs",
-      "types": "./dist/main.d.ts"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
     }
   },
   "scripts": {
@@ -38,6 +38,7 @@
     "@types/babel__standalone": "^7.1.7",
     "@types/babel__traverse": "^7.20.5",
     "babel-preset-jest": "^29.6.3",
+    "html-entities": "^2.5.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tsup": "^8.0.2"

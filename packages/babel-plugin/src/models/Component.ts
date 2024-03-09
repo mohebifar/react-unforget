@@ -1,5 +1,4 @@
 import type * as babel from "@babel/core";
-import type { Binding } from "@babel/traverse";
 import * as t from "@babel/types";
 import {
   DEFAULT_CACHE_COMMIT_VARIABLE_NAME,
@@ -7,293 +6,88 @@ import {
   DEFAULT_CACHE_VARIABLE_NAME,
   RUNTIME_MODULE_CREATE_CACHE_HOOK_NAME,
 } from "~/utils/constants";
+import { expandArrowFunctionToBlockStatement } from "~/utils/micro-transformers/expand-arrow-function-to-block-statement";
+import type { Binding } from "@babel/traverse";
 import { isControlFlowStatement } from "~/utils/path-tools/control-flow-utils";
 import { isInTheSameFunctionScope } from "~/utils/path-tools/is-in-the-same-function-scope";
-import { isChildOfScope } from "~/utils/scope-tools/is-scope-descendant-of";
-import type { ComponentSegment } from "./segment/ComponentSegment";
-import { ComponentRunnableSegment } from "./segment/ComponentRunnableSegment";
-import { ComponentVariableSegment } from "./segment/ComponentVariableSegment";
+import { ComponentSegment } from "./segment/ComponentSegment";
 
 export class Component {
-  private runnableSegments = new Map<
-    babel.NodePath<babel.types.Statement>,
-    ComponentRunnableSegment
-  >();
-  private componentVariables = new Map<Binding, ComponentVariableSegment>();
+  /* Cache props */
   private cacheValueIdentifier: t.Identifier;
   private cacheCommitIdentifier: t.Identifier;
   private cacheNullIdentifier: t.Identifier;
+  private cacheSize = 0;
 
-  private statementsToMutableSegmentMapCache: Map<
-    babel.NodePath<babel.types.Statement>,
-    ComponentSegment
-  > | null = null;
+  /* Segments map */
+  private segmentsMap = new Map<babel.NodePath<t.Node>, ComponentSegment>();
 
-  private rootSegment: ComponentRunnableSegment | null = null;
+  private rootSegment: ComponentSegment | null = null;
+  private cacheIdToName = new Map<number, string>();
 
-  private mapBlockStatementToComponentRunnableSegment = new Map<
-    babel.NodePath<babel.types.BlockStatement>,
-    ComponentRunnableSegment
-  >();
-
-  constructor(public path: babel.NodePath<babel.types.Function>) {
+  constructor(public path: babel.NodePath<t.Function>) {
     path.assertFunction();
 
     this.cacheValueIdentifier = path.scope.generateUidIdentifier(
-      DEFAULT_CACHE_VARIABLE_NAME,
+      DEFAULT_CACHE_VARIABLE_NAME
     );
 
     this.cacheCommitIdentifier = path.scope.generateUidIdentifier(
-      DEFAULT_CACHE_COMMIT_VARIABLE_NAME,
+      DEFAULT_CACHE_COMMIT_VARIABLE_NAME
     );
 
     this.cacheNullIdentifier = path.scope.generateUidIdentifier(
-      DEFAULT_CACHE_NULL_VARIABLE_NAME,
+      DEFAULT_CACHE_NULL_VARIABLE_NAME
     );
+
+    this.init();
   }
 
-  computeComponentSegments() {
-    this.prepareComponentBody();
+  getRootSegment() {
+    return this.rootSegment;
+  }
 
-    const body = this.path.get("body");
+  getFunctionBody() {
+    let body: babel.NodePath<t.BlockStatement | t.Expression> =
+      this.path.get("body");
+
     if (!body.isBlockStatement()) {
-      return;
+      expandArrowFunctionToBlockStatement(this.path);
+      body = this.path.get("body");
     }
 
-    this.rootSegment = this.addRunnableSegment(body);
+    body.assertBlockStatement();
+
+    return body;
   }
 
-  prepareComponentBody() {}
-
-  hasComponentVariable(binding: Binding) {
-    return this.componentVariables.has(binding);
+  getFunctionParams() {
+    return this.path.get("params");
   }
 
-  getComponentVariable(binding: Binding) {
-    return this.componentVariables.get(binding);
-  }
+  private init() {
+    const body = this.getFunctionBody();
+    const params = this.getFunctionParams();
 
-  findPotentialParentForSegment(
-    path: babel.NodePath<babel.types.Node>,
-  ): ComponentRunnableSegment | null {
-    const blockOrControlFlowStatement = path.findParent(
-      (innerPath) =>
-        (innerPath.isBlockStatement() || isControlFlowStatement(innerPath)) &&
-        innerPath.isDescendant(this.path) &&
-        isInTheSameFunctionScope(innerPath, this.path),
-    ) as babel.NodePath<babel.types.BlockStatement> | null;
+    this.rootSegment = this.createComponentSegment(this.path);
 
-    if (!blockOrControlFlowStatement) {
-      return null;
-    }
-
-    const parent =
-      this.mapBlockStatementToComponentRunnableSegment.get(
-        blockOrControlFlowStatement,
-      ) ?? null;
-
-    const ensuredParent = parent
-      ? parent
-      : this.addRunnableSegment(blockOrControlFlowStatement);
-
-    return ensuredParent;
-  }
-
-  lock() {
-    this.componentVariables.forEach((componentVariable) => {
-      componentVariable.lock();
+    params.forEach((param) => {
+      const paramSegment = this.createComponentSegment(param);
+      paramSegment.setParent(this.rootSegment);
     });
-    this.runnableSegments.forEach((runnableSegment) => {
-      runnableSegment.lock();
-    });
-  }
 
-  findDependents(
-    componentVariableToFindDependentsFor: ComponentVariableSegment,
-  ) {
-    const dependents = new Set<ComponentSegment>();
-
-    const addDepdendentsToSet = (segment: ComponentSegment) => {
-      if (
-        [...segment.getDependencies().values()].some(
-          (dependency) =>
-            dependency.componentVariable ===
-            componentVariableToFindDependentsFor,
-        )
-      ) {
-        dependents.add(segment);
-      }
-    };
-
-    for (const [, componentVariable] of this.componentVariables) {
-      addDepdendentsToSet(componentVariable);
-    }
-
-    for (const [, runnableSegment] of this.runnableSegments) {
-      addDepdendentsToSet(runnableSegment);
-    }
-
-    return dependents;
-  }
-
-  addComponentVariable(binding: Binding) {
-    if (!this.isBindingInComponentScope(binding)) {
-      return;
-    }
-
-    const { path } = binding;
-
-    const parent = this.findPotentialParentForSegment(path);
-
-    if (this.hasComponentVariable(binding)) {
-      const componentVariable = this.getComponentVariable(binding)!;
-      componentVariable.setParent(parent);
-      return componentVariable;
-    }
-
-    // if (isForStatementInit(path)) {
-    //   // This is for variables defined in the for statement
-    //   // return;
-    // }
-
-    const componentVariable = new ComponentVariableSegment(
-      this,
-      parent,
-      binding,
-      this.componentVariables.size,
-    );
-
-    this.componentVariables.set(binding, componentVariable);
-
-    componentVariable.unwrapAssignmentPatterns();
-    componentVariable.computeDependencyGraph();
-
-    this.statementsToMutableSegmentMapCache = null;
-    return componentVariable;
-  }
-
-  addRunnableSegment(path: babel.NodePath<babel.types.Statement>) {
-    if (path === this.rootSegment?.path) {
-      return this.rootSegment;
-    }
-
-    if (!isInTheSameFunctionScope(path, this.path)) {
-      const parent = this.findPotentialParentForSegment(path);
-      return parent;
-    }
-
-    const parent = this.findPotentialParentForSegment(path);
-
-    if (this.runnableSegments.has(path)) {
-      const found = this.runnableSegments.get(path)!;
-
-      if (parent !== found.getParent()) {
-        found.getParent()?.removeChild(found);
-        found.setParent(parent);
-      }
-
-      return found;
-    }
-
-    const runnableSegment = new ComponentRunnableSegment(this, parent, path);
-
-    if (path.isBlockStatement()) {
-      this.mapBlockStatementToComponentRunnableSegment.set(
-        path,
-        runnableSegment,
-      );
-    }
-
-    this.runnableSegments.set(path, runnableSegment);
-
-    runnableSegment.computeDependencyGraph();
-    this.statementsToMutableSegmentMapCache = null;
-
-    return runnableSegment;
-  }
-
-  getComponentVariables() {
-    return [...this.componentVariables.values()].filter(
-      (componentVariable) => !componentVariable.hasDependencies(),
-    );
-  }
-
-  getCacheVariableIdentifier() {
-    return t.cloneNode(this.cacheValueIdentifier);
-  }
-
-  getCacheCommitIdentifier() {
-    return t.cloneNode(this.cacheCommitIdentifier);
-  }
-
-  getCacheNullIdentifier() {
-    return t.cloneNode(this.cacheNullIdentifier);
-  }
-
-  getStatementsToMutableSegmentMap() {
-    if (this.statementsToMutableSegmentMapCache) {
-      return this.statementsToMutableSegmentMapCache;
-    }
-
-    const statementsToMutableSegmentMap = new Map<
-      babel.NodePath<babel.types.Statement>,
-      ComponentSegment
-    >();
-
-    const statementsMapSet = (segment: ComponentSegment) => {
-      const parent = segment.getParentStatement();
-      if (parent && !parent.isBlockStatement()) {
-        statementsToMutableSegmentMap.set(parent, segment);
-      }
-    };
-
-    this.runnableSegments.forEach(statementsMapSet);
-    this.componentVariables.forEach(statementsMapSet);
-
-    this.statementsToMutableSegmentMapCache = statementsToMutableSegmentMap;
-
-    return statementsToMutableSegmentMap;
+    const bodySegment = this.createComponentSegment(body);
+    bodySegment.setParent(this.rootSegment);
   }
 
   applyTransformation() {
-    if (!this.rootSegment) {
-      throw new Error("Root segment not found");
-    }
-
-    this.lock();
+    this.rootSegment?.applyTransformation();
     const cacheVariableDeclaration = this.makeCacheVariableDeclaration();
-
-    const body = this.path.get("body");
-
-    if (!body.isBlockStatement()) {
-      return;
-    }
-
-    this.rootSegment.applyTransformation();
-
-    body.unshiftContainer("body", cacheVariableDeclaration);
-  }
-
-  getFunctionBlockStatement(): babel.NodePath<babel.types.BlockStatement> | null {
-    const path = this.path;
-    if (path.isFunctionExpression()) {
-      return path.get("body");
-    }
-    // Need to duplicate the check because the type guard with || is not working
-    else if (path.isFunctionDeclaration()) {
-      return path.get("body");
-    } else if (path.isArrowFunctionExpression()) {
-      const body = path.get("body");
-      if (body.isBlockStatement()) {
-        return body;
-      }
-    }
-
-    return null;
+    this.getFunctionBody().unshiftContainer("body", cacheVariableDeclaration);
   }
 
   private makeCacheVariableDeclaration() {
-    const sizeNumber = t.numericLiteral(this.componentVariables.size);
+    const sizeNumber = t.numericLiteral(this.cacheSize);
     const declaration = t.variableDeclaration("const", [
       t.variableDeclarator(
         t.arrayPattern([
@@ -303,7 +97,7 @@ export class Component {
         ]),
         t.callExpression(t.identifier(RUNTIME_MODULE_CREATE_CACHE_HOOK_NAME), [
           sizeNumber,
-        ]),
+        ])
       ),
     ]);
 
@@ -311,20 +105,117 @@ export class Component {
       sizeNumber,
       "leading",
       "\n" +
-        Array.from(this.componentVariables.values())
-          .map((componentVariable) => {
-            return `${componentVariable.getIndex()} => ${
-              componentVariable.name
-            }`;
+        Array.from(this.cacheIdToName.entries())
+          .map(([id, name]) => {
+            return `${id} => ${name}`;
           })
           .join("\n") +
-        "\n",
+        "\n"
     );
 
     return declaration;
   }
 
-  isBindingInComponentScope(binding: Binding) {
-    return isChildOfScope(this.path.scope, binding.scope);
+  getSegmentsMap() {
+    return new Map(this.segmentsMap);
+  }
+
+  getSegmentByPath(path: babel.NodePath<t.Node>) {
+    return this.segmentsMap.get(path);
+  }
+
+  createComponentSegment(
+    segmentPath: babel.NodePath<t.Node>
+  ): ComponentSegment {
+    if (this.segmentsMap.has(segmentPath)) {
+      return this.segmentsMap.get(segmentPath)!;
+    }
+
+    const foundParent = this.findPotentialParentForSegment(segmentPath);
+
+    const runnableSegment = new ComponentSegment(this, segmentPath);
+
+    runnableSegment.setParent(foundParent);
+
+    this.segmentsMap.set(segmentPath, runnableSegment);
+
+    return runnableSegment;
+  }
+
+  findPotentialParentForSegment(
+    path: babel.NodePath<babel.types.Node>
+  ): ComponentSegment | null {
+    const blockOrControlFlowStatement = path.findParent(
+      (innerPath) =>
+        (innerPath.isBlockStatement() || isControlFlowStatement(innerPath)) &&
+        innerPath.isDescendant(this.path) &&
+        isInTheSameFunctionScope(innerPath, this.path)
+    ) as babel.NodePath<babel.types.BlockStatement> | null;
+
+    if (!blockOrControlFlowStatement) {
+      return null;
+    }
+
+    const foundParent =
+      this.segmentsMap.get(blockOrControlFlowStatement) ?? null;
+
+    const ensuredParent = foundParent
+      ? foundParent
+      : this.createComponentSegment(blockOrControlFlowStatement);
+
+    return ensuredParent;
+  }
+
+  removeSegment(segment: ComponentSegment) {
+    this.segmentsMap.delete(segment.getPathAsStatement());
+  }
+
+  getDeclarationSegmentByBinding(binding: Binding) {
+    if (binding.path.isVariableDeclarator()) {
+      return this.segmentsMap.get(binding.path.parentPath);
+    }
+
+    return this.segmentsMap.get(binding.path);
+  }
+
+  inTheSameFunctionScope(path: babel.NodePath<babel.types.Node>) {
+    return isInTheSameFunctionScope(path, this.path);
+  }
+
+  getDependentsOfSegment(segment: ComponentSegment) {
+    return Array.from(this.segmentsMap.values()).filter((s) =>
+      s.hasDirectDependencyOn(segment)
+    );
+  }
+
+  /**
+   * Allocate a space in cache for a new variable
+   */
+  allocateCacheSpace(name: string) {
+    const newId = this.cacheSize++;
+
+    this.cacheIdToName.set(newId, name);
+
+    return newId;
+  }
+
+  /* Methods for cache identifiers */
+  getCacheValueIdentifier() {
+    return this.cacheValueIdentifier;
+  }
+
+  getCacheCommitIdentifier() {
+    return this.cacheCommitIdentifier;
+  }
+
+  getCacheNullIdentifier() {
+    return this.cacheNullIdentifier;
+  }
+
+  /**
+   * Start the analysis of the component
+   */
+  analyze() {
+    this.rootSegment?.analyze();
   }
 }

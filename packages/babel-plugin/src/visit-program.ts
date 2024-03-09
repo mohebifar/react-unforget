@@ -4,17 +4,29 @@ import {
   RUNTIME_MODULE_CREATE_CACHE_HOOK_NAME,
   RUNTIME_MODULE_NAME,
 } from "./utils/constants";
+import type { TransformationContext } from "./models/TransformationContext";
 
-export function visitProgram(path: babel.NodePath<babel.types.Program>) {
-  const components = findComponents(path);
+export function visitProgram(
+  path: babel.NodePath<babel.types.Program>,
+  context?: TransformationContext,
+) {
+  const components = findComponents(path, context);
 
   if (components.length === 0) {
     return;
   }
 
   components.forEach((component) => {
-    component.analyze();
-    component.applyTransformation();
+    try {
+      component.analyze();
+      component.applyTransformation();
+    } catch (e) {
+      if (!context || context?.throwOnFailure) {
+        throw e;
+      } else {
+        console.warn(`Failed to transform component ${component.name}`, e);
+      }
+    }
   });
 
   const useCacheHookIdentifier = t.identifier(

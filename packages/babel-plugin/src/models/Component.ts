@@ -11,6 +11,7 @@ import type { Binding } from "@babel/traverse";
 import { isControlFlowStatement } from "~/utils/path-tools/control-flow-utils";
 import { isInTheSameFunctionScope } from "~/utils/path-tools/is-in-the-same-function-scope";
 import { ComponentSegment } from "./segment/ComponentSegment";
+import type { TransformationContext } from "./TransformationContext";
 
 export class Component {
   /* Cache props */
@@ -25,7 +26,11 @@ export class Component {
   private rootSegment: ComponentSegment | null = null;
   private cacheIdToName = new Map<number, string>();
 
-  constructor(public path: babel.NodePath<t.Function>) {
+  constructor(
+    public path: babel.NodePath<t.Function>,
+    public name: string,
+    public transformationContext?: TransformationContext,
+  ) {
     path.assertFunction();
 
     this.cacheValueIdentifier = path.scope.generateUidIdentifier(
@@ -80,7 +85,20 @@ export class Component {
     bodySegment.setParent(this.rootSegment);
   }
 
+  private hasMutation() {
+    return Array.from(this.segmentsMap.values()).some(
+      (segment) => segment.getMutationDependencies().size > 0,
+    );
+  }
+
   applyTransformation() {
+    if (
+      this.transformationContext?.skipComponentsWithMutation &&
+      this.hasMutation()
+    ) {
+      return;
+    }
+
     this.rootSegment?.applyTransformation();
     const cacheVariableDeclaration = this.makeCacheVariableDeclaration();
     this.getFunctionBody().unshiftContainer("body", cacheVariableDeclaration);

@@ -1,6 +1,6 @@
 {
   "name": "docs",
-  "version": "1.0.1-dev.2",
+  "version": "1.0.1-dev.3",
   "private": true,
   "scripts": {
     "dev": "next dev --port 3001",
@@ -12,7 +12,7 @@
     "@babel/plugin-syntax-jsx": "^7.23.3",
     "@babel/standalone": "^7.24.0",
     "@codesandbox/sandpack-react": "^2.13.4",
-    "@react-unforget/babel-plugin": "0.1.0-dev.10",
+    "@react-unforget/babel-plugin": "0.1.0-dev.11",
     "@react-unforget/runtime": "0.1.0-dev.6",
     "@vercel/analytics": "^1.2.2",
     "clsx": "^2.1.0",

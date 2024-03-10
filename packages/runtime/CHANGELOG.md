@@ -1,5 +1,11 @@
 # @react-unforget/runtime
 
+## 0.1.0-alpha.7
+
+### Patch Changes
+
+- cc98ef9: Initial alpha release
+
 ## 0.1.0-dev.6
 
 ### Minor Changes

@@ -1168,3 +1168,343 @@ export default function CounterWithMutationTracking() {
   return _unwrappedJsxEl8;
 }"
 `;
+
+exports[`Component fixtures applyModification fixture_14 1`] = `
+"import { useCreateCache$unforget } from "@react-unforget/runtime";
+import { useState } from "react";
+export default function Test() {
+  const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
+  /*
+  0 => _unwrapped
+  1 => _unwrappedJsxEl4
+  2 => _unwrappedJsxEl6
+  3 => state
+  4 => setState
+  5 => x
+  6 => z
+  7 => y
+  8 => _unwrappedJsxEl
+  9 => _unwrappedJsxEl2
+  10 => _unwrappedJsxEl3
+  11 => _unwrappedJsxEl5
+  12 => _unwrappedJsxEl7
+  13 => _unwrappedJsxEl8
+  */
+  14);
+  let _unwrapped = _$unforgetCache[0].v;
+  _unwrapped = useState(0);
+  _$unforgetCache[0].e(_unwrapped);
+  let _unwrapped2;
+  _unwrapped2 = 10;
+  let _unwrapped3;
+  _unwrapped3 = 5;
+  let _unwrappedJsxEl4 = _$unforgetCache[1].v;
+  if (_$unforgetCache[1].n) {
+    _unwrappedJsxEl4 = <br />;
+    _$unforgetCache[1].e(_unwrappedJsxEl4);
+  }
+  let _unwrappedJsxEl6 = _$unforgetCache[2].v;
+  if (_$unforgetCache[2].n) {
+    _unwrappedJsxEl6 = <br />;
+    _$unforgetCache[2].e(_unwrappedJsxEl6);
+  }
+  let state = _$unforgetCache[3].v;
+  if (_$unforgetCache[3].n || _unwrapped !== _$unforgetCache[0].v) {
+    state = _unwrapped[0];
+    _$unforgetCache[3].e(state);
+  }
+  let setState = _$unforgetCache[4].v;
+  if (_$unforgetCache[4].n || _unwrapped !== _$unforgetCache[0].v) {
+    setState = _unwrapped[1];
+    _$unforgetCache[4].e(setState);
+  }
+  let x = _$unforgetCache[5].v;
+  if (_$unforgetCache[5].n || state !== _$unforgetCache[3].v) {
+    x = [];
+    _$unforgetCache[5].e(x);
+  }
+  let z = _$unforgetCache[6].v;
+  if (_$unforgetCache[6].n || state !== _$unforgetCache[3].v) {
+    z = [];
+    _$unforgetCache[6].e(z);
+  }
+  let y = _$unforgetCache[7].v;
+  if (_$unforgetCache[7].n || state !== _$unforgetCache[3].v || x !== _$unforgetCache[5].v || z !== _$unforgetCache[6].v) {
+    y = state % 2 === 0 ? x : z;
+    _$unforgetCache[7].e(y);
+  }
+  if (y !== _$unforgetCache[7].v || state !== _$unforgetCache[3].v) {
+    y.push(state);
+  }
+  for (let i = _unwrapped2, j = _unwrapped3; j < i; j++) {
+    if (y !== _$unforgetCache[7].v) {
+      y.push(123);
+    }
+  }
+  let _unwrappedJsxEl = _$unforgetCache[8].v;
+  if (_$unforgetCache[8].n || setState !== _$unforgetCache[4].v || state !== _$unforgetCache[3].v) {
+    _unwrappedJsxEl = () => setState(state + 1);
+    _$unforgetCache[8].e(_unwrappedJsxEl);
+  }
+  let _unwrappedJsxEl2 = _$unforgetCache[9].v;
+  if (_$unforgetCache[9].n || _unwrappedJsxEl !== _$unforgetCache[8].v) {
+    _unwrappedJsxEl2 = <button onClick={_unwrappedJsxEl}>Increment</button>;
+    _$unforgetCache[9].e(_unwrappedJsxEl2);
+  }
+  let _unwrappedJsxEl3 = _$unforgetCache[10].v;
+  if (_$unforgetCache[10].n || y !== _$unforgetCache[7].v) {
+    _unwrappedJsxEl3 = y[0];
+    _$unforgetCache[10].e(_unwrappedJsxEl3);
+  }
+  let _unwrappedJsxEl5 = _$unforgetCache[11].v;
+  if (_$unforgetCache[11].n || x !== _$unforgetCache[5].v) {
+    _unwrappedJsxEl5 = JSON.stringify(x);
+    _$unforgetCache[11].e(_unwrappedJsxEl5);
+  }
+  let _unwrappedJsxEl7 = _$unforgetCache[12].v;
+  if (_$unforgetCache[12].n || y !== _$unforgetCache[7].v) {
+    _unwrappedJsxEl7 = JSON.stringify(y);
+    _$unforgetCache[12].e(_unwrappedJsxEl7);
+  }
+  let _unwrappedJsxEl8 = _$unforgetCache[13].v;
+  if (_$unforgetCache[13].n || _unwrappedJsxEl2 !== _$unforgetCache[9].v || _unwrappedJsxEl3 !== _$unforgetCache[10].v || _unwrappedJsxEl4 !== _$unforgetCache[1].v || _unwrappedJsxEl5 !== _$unforgetCache[11].v || _unwrappedJsxEl6 !== _$unforgetCache[2].v || _unwrappedJsxEl7 !== _$unforgetCache[12].v) {
+    _unwrappedJsxEl8 = <div>
+      {_unwrappedJsxEl2}
+      {_unwrappedJsxEl3}
+      {_unwrappedJsxEl4}
+      x: {_unwrappedJsxEl5}
+      {_unwrappedJsxEl6}
+      y: {_unwrappedJsxEl7}
+    </div>;
+    _$unforgetCache[13].e(_unwrappedJsxEl8);
+  }
+  _$unforgetCommit();
+  return _unwrappedJsxEl8;
+}"
+`;
+
+exports[`Component fixtures applyModification fixture_15 1`] = `
+"import { useCreateCache$unforget } from "@react-unforget/runtime";
+import { useEffect } from "react";
+const useActor = service => {
+  const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
+  /*
+  0 => service
+  */
+  1);
+  _$unforgetCache[0].e(service);
+  _$unforgetCommit();
+  return [service, action => {}];
+};
+const TestComponent = _props => {
+  const [_$unforgetCache2, _$unforgetCommit2, _$unforgetNull2] = useCreateCache$unforget(
+  /*
+  0 => _props
+  1 => _unwrappedJsxEl
+  2 => authService
+  3 => notificationsService
+  4 => sendNotifications
+  5 => _unwrappedJsxEl2
+  */
+  6);
+  let _unwrappedJsxEl = _$unforgetCache2[1].v;
+  if (_$unforgetCache2[1].n) {
+    _unwrappedJsxEl = <h1>TestComponent</h1>;
+    _$unforgetCache2[1].e(_unwrappedJsxEl);
+  }
+  _$unforgetCache2[0].e(_props);
+  let authService = _$unforgetCache2[2].v;
+  if (_$unforgetCache2[2].n || _props !== _$unforgetCache2[0].v) {
+    authService = _props.authService;
+    _$unforgetCache2[2].e(authService);
+  }
+  let notificationsService = _$unforgetCache2[3].v;
+  if (_$unforgetCache2[3].n || _props !== _$unforgetCache2[0].v) {
+    notificationsService = _props.notificationsService;
+    _$unforgetCache2[3].e(notificationsService);
+  }
+  let sendNotifications = _$unforgetCache2[4].v;
+  sendNotifications = useActor(notificationsService)[1];
+  _$unforgetCache2[4].e(sendNotifications);
+  useEffect(() => {
+    sendNotifications({
+      type: "FETCH"
+    });
+  }, [sendNotifications]);
+  let _unwrappedJsxEl2 = _$unforgetCache2[5].v;
+  if (_$unforgetCache2[5].n || _unwrappedJsxEl !== _$unforgetCache2[1].v || authService !== _$unforgetCache2[2].v) {
+    _unwrappedJsxEl2 = <div>
+      {_unwrappedJsxEl}
+      {authService}
+    </div>;
+    _$unforgetCache2[5].e(_unwrappedJsxEl2);
+  }
+  _$unforgetCommit2();
+  return _unwrappedJsxEl2;
+};
+export default TestComponent;"
+`;
+
+exports[`Component fixtures applyModification fixture_16 1`] = `
+"import { useCreateCache$unforget } from "@react-unforget/runtime";
+import { useState } from "react";
+export default function TestComponentWithFunctionDeclaration() {
+  const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
+  /*
+  0 => _unwrapped
+  1 => _unwrappedJsxEl
+  2 => state
+  3 => setState
+  4 => handleClick
+  5 => _unwrappedJsxEl2
+  6 => _unwrappedJsxEl3
+  */
+  7);
+  let _unwrapped = _$unforgetCache[0].v;
+  _unwrapped = useState(0);
+  _$unforgetCache[0].e(_unwrapped);
+  let _unwrappedJsxEl = _$unforgetCache[1].v;
+  if (_$unforgetCache[1].n) {
+    _unwrappedJsxEl = <h1>TestComponent</h1>;
+    _$unforgetCache[1].e(_unwrappedJsxEl);
+  }
+  let state = _$unforgetCache[2].v;
+  if (_$unforgetCache[2].n || _unwrapped !== _$unforgetCache[0].v) {
+    state = _unwrapped[0];
+    _$unforgetCache[2].e(state);
+  }
+  let setState = _$unforgetCache[3].v;
+  if (_$unforgetCache[3].n || _unwrapped !== _$unforgetCache[0].v) {
+    setState = _unwrapped[1];
+    _$unforgetCache[3].e(setState);
+  }
+  var handleClick = _$unforgetCache[4].v;
+  if (_$unforgetCache[4].n || setState !== _$unforgetCache[3].v || state !== _$unforgetCache[2].v) {
+    handleClick = function handleClick() {
+      setState(state + 1);
+    };
+    _$unforgetCache[4].e(handleClick);
+  }
+  let _unwrappedJsxEl2 = _$unforgetCache[5].v;
+  if (_$unforgetCache[5].n || handleClick !== _$unforgetCache[4].v) {
+    _unwrappedJsxEl2 = <button onClick={handleClick}>Click me</button>;
+    _$unforgetCache[5].e(_unwrappedJsxEl2);
+  }
+  let _unwrappedJsxEl3 = _$unforgetCache[6].v;
+  if (_$unforgetCache[6].n || _unwrappedJsxEl !== _$unforgetCache[1].v || _unwrappedJsxEl2 !== _$unforgetCache[5].v) {
+    _unwrappedJsxEl3 = <div>
+      {_unwrappedJsxEl}
+      {_unwrappedJsxEl2}
+    </div>;
+    _$unforgetCache[6].e(_unwrappedJsxEl3);
+  }
+  _$unforgetCommit();
+  return _unwrappedJsxEl3;
+}"
+`;
+
+exports[`Component fixtures applyModification fixture_17 1`] = `
+"import { useCreateCache$unforget } from "@react-unforget/runtime";
+export default function TestComponentWithConditionalJSXElement() {
+  const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
+  /*
+  0 => array
+  1 => _unwrappedJsxEl
+  2 => _unwrappedJsxEl2
+  3 => _unwrappedJsxEl3
+  4 => _unwrappedJsxEl4
+  */
+  5);
+  let array = _$unforgetCache[0].v;
+  if (_$unforgetCache[0].n) {
+    array = null;
+    _$unforgetCache[0].e(array);
+  }
+  let _unwrappedJsxEl = _$unforgetCache[1].v;
+  if (_$unforgetCache[1].n || array !== _$unforgetCache[0].v) {
+    _unwrappedJsxEl = array && array.length > 0 && array.map((item, index) => <li key={index}>{item}</li>);
+    _$unforgetCache[1].e(_unwrappedJsxEl);
+  }
+  let _unwrappedJsxEl2 = _$unforgetCache[2].v;
+  if (_$unforgetCache[2].n || array !== _$unforgetCache[0].v || _unwrappedJsxEl !== _$unforgetCache[1].v) {
+    _unwrappedJsxEl2 = array && array.length > 0 && <ul>
+          {_unwrappedJsxEl}
+        </ul>;
+    _$unforgetCache[2].e(_unwrappedJsxEl2);
+  }
+  let _unwrappedJsxEl3 = _$unforgetCache[3].v;
+  if (_$unforgetCache[3].n || array !== _$unforgetCache[0].v) {
+    _unwrappedJsxEl3 = !(array && array.length > 0) && <p>No items</p>;
+    _$unforgetCache[3].e(_unwrappedJsxEl3);
+  }
+  let _unwrappedJsxEl4 = _$unforgetCache[4].v;
+  if (_$unforgetCache[4].n || array !== _$unforgetCache[0].v || _unwrappedJsxEl2 !== _$unforgetCache[2].v || _unwrappedJsxEl3 !== _$unforgetCache[3].v) {
+    _unwrappedJsxEl4 = <div>
+      {array && array.length > 0 ? _unwrappedJsxEl2 : _unwrappedJsxEl3}
+    </div>;
+    _$unforgetCache[4].e(_unwrappedJsxEl4);
+  }
+  _$unforgetCommit();
+  return _unwrappedJsxEl4;
+}"
+`;
+
+exports[`Component fixtures applyModification fixture_18 1`] = `
+"import { useCreateCache$unforget } from "@react-unforget/runtime";
+export default function TestComponentWithConditionalJSXElement() {
+  const [_$unforgetCache, _$unforgetCommit, _$unforgetNull] = useCreateCache$unforget(
+  /*
+  0 => array
+  1 => _unwrappedJsxEl
+  2 => _unwrappedJsxEl2
+  3 => someJsx
+  4 => anotherJsx
+  5 => _unwrappedJsxEl3
+  6 => _unwrappedJsxEl4
+  */
+  7);
+  let array = _$unforgetCache[0].v;
+  if (_$unforgetCache[0].n) {
+    array = null;
+    _$unforgetCache[0].e(array);
+  }
+  let _unwrappedJsxEl = _$unforgetCache[1].v;
+  if (_$unforgetCache[1].n) {
+    _unwrappedJsxEl = <main />;
+    _$unforgetCache[1].e(_unwrappedJsxEl);
+  }
+  let _unwrappedJsxEl2 = _$unforgetCache[2].v;
+  if (_$unforgetCache[2].n) {
+    _unwrappedJsxEl2 = <main />;
+    _$unforgetCache[2].e(_unwrappedJsxEl2);
+  }
+  let someJsx = _$unforgetCache[3].v;
+  if (_$unforgetCache[3].n || _unwrappedJsxEl !== _$unforgetCache[1].v) {
+    someJsx = _unwrappedJsxEl;
+    _$unforgetCache[3].e(someJsx);
+  }
+  let anotherJsx = _$unforgetCache[4].v;
+  if (_$unforgetCache[4].n || _unwrappedJsxEl2 !== _$unforgetCache[2].v) {
+    anotherJsx = _unwrappedJsxEl2;
+    _$unforgetCache[4].e(anotherJsx);
+  }
+  let _unwrappedJsxEl3 = _$unforgetCache[5].v;
+  if (_$unforgetCache[5].n || array !== _$unforgetCache[0].v || someJsx !== _$unforgetCache[3].v || anotherJsx !== _$unforgetCache[4].v) {
+    _unwrappedJsxEl3 = (array?.length || someJsx) == null && anotherJsx;
+    _$unforgetCache[5].e(_unwrappedJsxEl3);
+  }
+  let _unwrappedJsxEl4 = _$unforgetCache[6].v;
+  if (_$unforgetCache[6].n || array !== _$unforgetCache[0].v || someJsx !== _$unforgetCache[3].v || _unwrappedJsxEl3 !== _$unforgetCache[5].v) {
+    _unwrappedJsxEl4 = <div>{(array?.length || someJsx) ?? _unwrappedJsxEl3}</div>;
+    _$unforgetCache[6].e(_unwrappedJsxEl4);
+  }
+  _$unforgetCommit();
+  return _unwrappedJsxEl4;
+}"
+`;
+
+exports[`Component fixtures applyModification fixture_19 1`] = `
+"// Should not be transformed
+
+export const secondaryListItems = () => <div></div>;"
+`;

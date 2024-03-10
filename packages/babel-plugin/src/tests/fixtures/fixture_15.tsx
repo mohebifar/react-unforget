@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
 const useActor = (service: any) => {
-  return [null, (action: { type: string; payload?: any }) => {}] as const;
+  return [service, (action: { type: string; payload?: any }) => {}] as const;
 };
 
 type Props = {

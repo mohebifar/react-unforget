@@ -33,7 +33,11 @@ export function findComponents(
       const nameMatchesComponentName = name && doesIdMatchComponentName(name);
       const nameMatchesHook = name && doesMatchHookName(name);
 
-      if (!nameMatchesComponentName && !nameMatchesHook && !name) {
+      if (!name) {
+        return;
+      }
+
+      if (!nameMatchesComponentName && !nameMatchesHook) {
         return;
       }
 

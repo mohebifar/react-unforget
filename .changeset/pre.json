@@ -11,6 +11,7 @@
     "@react-unforget/babel-plugin": "0.1.0-dev.3"
   },
   "changesets": [
+    "grumpy-papayas-agree",
     "hungry-frogs-hug",
     "metal-glasses-argue",
     "nervous-ducks-grow",

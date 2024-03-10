@@ -1,5 +1,11 @@
 # @react-unforget/compiler
 
+## 0.1.0-dev.12
+
+### Patch Changes
+
+- f46f0b7: Skip transformation of non-component functions
+
 ## 0.1.0-dev.11
 
 ### Minor Changes

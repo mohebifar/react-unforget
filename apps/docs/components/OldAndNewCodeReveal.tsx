@@ -64,7 +64,7 @@ const newCode = `<span class="text-blue-400">const</span> NiceComponent = () => 
 
 export const OldAndNewCodeReveal = () => {
   return (
-    <div className="flex items-center justify-center my-10 rounded-2xl w-full">
+    <div className="my-10 flex w-full items-center justify-center rounded-2xl">
       <TextRevealCard text={encode(oldCode)} revealText={newCode}>
         <TextRevealCardTitle>
           You don't need all that clutter!

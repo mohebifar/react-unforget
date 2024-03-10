@@ -3,8 +3,8 @@ export type LogoProps = {
 };
 export const Logo = ({ className = "text-xl" }: LogoProps) => (
   <span className={className}>
-    <span className="text-indigo-400 font-bold">React</span>{" "}
-    <span className="font-extrabold leading-normal text-transparent bg-clip-text bg-gradient bg-animate pb-2">
+    <span className="font-bold text-indigo-400">React</span>{" "}
+    <span className="bg-gradient bg-animate bg-clip-text pb-2 font-extrabold leading-normal text-transparent">
       Unforget
     </span>
   </span>

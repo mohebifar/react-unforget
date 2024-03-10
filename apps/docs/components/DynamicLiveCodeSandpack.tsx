@@ -6,12 +6,12 @@ const DynamicLiveCodeSandpack = dynamic(() => import("./LiveCodeSandpack"), {
     return (
       <BeforeAfterCodeLayout
         before={
-          <div className="h-96 flex items-center justify-center">
+          <div className="flex h-96 items-center justify-center">
             <span className="loading loading-spinner loading-md" />
           </div>
         }
         after={
-          <div className="h-96 flex items-center justify-center">
+          <div className="flex h-96 items-center justify-center">
             <span className="loading loading-spinner loading-md" />
           </div>
         }

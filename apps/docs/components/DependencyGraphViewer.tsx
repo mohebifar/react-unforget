@@ -65,7 +65,7 @@ const DependencyGraphViewer = ({
         Below is a visual representation of the dependency graph that React
         Unforget's compiler sees to ultimately optimize your code.
       </p>
-      <div ref={container} className="w-full h-[600px]" />
+      <div ref={container} className="h-[600px] w-full" />
     </div>
   );
 };

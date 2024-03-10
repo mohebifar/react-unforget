@@ -4,7 +4,7 @@ const DynamicDependencyGraphViewer = dynamic(
   () => import("./DependencyGraphViewer"),
   {
     loading: () => (
-      <div className="flex items-center justify-center h-[300px]">
+      <div className="flex h-[300px] items-center justify-center">
         <span className="loading loading-spinner loading-lg" />
       </div>
     ),

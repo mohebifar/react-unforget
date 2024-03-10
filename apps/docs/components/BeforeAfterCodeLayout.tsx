@@ -11,10 +11,10 @@ export function BeforeAfterCodeLayout({
   after,
 }: BeforeAfterCodeLayoutProps) {
   return (
-    <div className="grid xl:grid-rows-1 xl:grid-cols-beforeAfterCodingBlocks grid-cols-1 grid-row-2 gap-4 w-full mt-6">
+    <div className="xl:grid-cols-beforeAfterCodingBlocks grid-row-2 mt-6 grid w-full grid-cols-1 gap-4 xl:grid-rows-1">
       <div>
-        <div className="bg-[#1d1c20] border border-white/[0.08] rounded-lg overflow-hidden">
-          <div className="text-center font-bold flex-1 py-4 pr-4">
+        <div className="overflow-hidden rounded-lg border border-white/[0.08] bg-[#1d1c20]">
+          <div className="flex-1 py-4 pr-4 text-center font-bold">
             <div className="flex items-center justify-center gap-2">
               <PiNumberCircleOneFill size={18} /> Input Code
             </div>
@@ -24,18 +24,18 @@ export function BeforeAfterCodeLayout({
         </div>
       </div>
 
-      <div className="items-center hidden xl:flex">
+      <div className="hidden items-center xl:flex">
         <div className="relative">
           <GoArrowRight
-            className="dark:text-gray-100 text-gray-500 absolute left-1/2 -translate-x-1/3"
+            className="absolute left-1/2 -translate-x-1/3 text-gray-500 dark:text-gray-100"
             size={34}
           />
         </div>
       </div>
 
       <div>
-        <div className="bg-[#1d1c20] border border-white/[0.08] rounded-lg overflow-hidden">
-          <div className="text-center font-bold flex-1 py-4 pr-4">
+        <div className="overflow-hidden rounded-lg border border-white/[0.08] bg-[#1d1c20]">
+          <div className="flex-1 py-4 pr-4 text-center font-bold">
             <div className="flex items-center justify-center gap-2">
               <PiNumberCircleTwoFill size={18} /> React Unforget Result
             </div>

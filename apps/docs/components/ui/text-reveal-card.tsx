@@ -79,7 +79,7 @@ export const TextRevealCard = ({
                 }
           }
           transition={isMouseOver ? { duration: 0 } : { duration: 0.4 }}
-          className="absolute bg-[#1d1c20] z-20  will-change-transform"
+          className="absolute bg-[#1d1c20] z-10  will-change-transform"
         >
           <pre
             style={{
@@ -96,7 +96,7 @@ export const TextRevealCard = ({
             opacity: widthPercentage > 0 ? 1 : 0,
           }}
           transition={isMouseOver ? { duration: 0 } : { duration: 0.4 }}
-          className="h-40 w-[8px] bg-gradient-to-b from-transparent via-neutral-800 to-transparent absolute z-50 will-change-transform"
+          className="h-40 w-[8px] bg-gradient-to-b from-transparent via-neutral-800 to-transparent absolute z-20 will-change-transform"
         ></motion.div>
 
         <div className="overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,white,transparent)] text-left">

@@ -14,21 +14,13 @@ The transformation process involves two main steps:
 
 ### Features
 
-- **Intelligent Memoization:** React Unforget unwraps JSX elements and memoizes each element and expression separately, leading to more granular and effective memoization.
-
-- **Dependency Graph Computation:** It builds a comprehensive dependency graph that captures the relationships between different code segments, ensuring that transformations are done with a full understanding of the codebase.
-
-- **Optimized Transformation:** Through a topological sort and depth-first search, segments are transformed in an optimized order, replacing variables and expressions with their memoized counterparts to reduce re-renders.
-
-- **Custom Cache Hook:** Utilizes a custom hook `useCreateCache$unforget` from `@react-unforget/runtime` to manage state and cache effectively, ensuring that components only re-render when necessary.
+- **Intelligent component and hook memoization**: Automatically identifies and memoizes React components and hooks, ensuring that only necessary re-renders occur. This leads to a more performant yet with more readable code.
+- **Granular JSX element unwrapping**: Unwraps JSX elements and memoizes each element and expression separately for more effective optimization. Eliminiating the need to use `React.memo`.
+- **Memoization beyond early returns**: React Unforget uniquely enables the memoization of values even after early returns in component functions, eliminating the need to restructure your code to comply with the Rules of Hooks. This ensures optimization without altering the logical flow of your components.
 
 ## Comparison with React Compiler
 
 React Compiler (Forget) is still under development and its release date remains uncertain. React Unforget offers an alternative approach to optimizing React applications, similar to how Preact serves as an alternative to React. It not only provides a fallback option but also pushes the boundaries of what's possible within the React ecosystem, encouraging innovation and diversity in optimization techniques.
-
-## Contributing
-
-We welcome contributions from the community! Whether you're interested in fixing bugs, adding new features, or improving documentation, your help is appreciated. Please refer to our contributing guidelines for more information on how to get involved.
 
 ## License
 

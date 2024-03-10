@@ -19,6 +19,7 @@
     "framer-motion": "^11.0.8",
     "html-entities": "^2.5.2",
     "mermaid": "^10.9.0",
+    "mini-svg-data-uri": "^1.4.4",
     "next": "^14.0.4",
     "nextra": "^2.13.3",
     "nextra-theme-docs": "^2.13.3",

@@ -3,13 +3,9 @@ title: "Home"
 ---
 
 import { DynamicLiveCodeSandpack } from "@components/DynamicLiveCodeSandpack";
-import { OldAndNewCodeReveal } from "@components/OldAndNewCodeReveal";
+import { Hero } from "@components/Hero";
 
-# React Unforget
-
-React Unforget is a project inspired by the principles of React Forget, designed to streamline and optimize React component rendering. The mission of React Unforget is to enhance the performance of React applications as well as developer experience by automating the memoization process, making it unnecessary to manually use `useMemo`, `useCallback` or `React.memo`.
-
-<OldAndNewCodeReveal />
+<Hero />
 
 ## See it in action
 
@@ -19,22 +15,22 @@ React Unforget is a project inspired by the principles of React Forget, designed
 export default function CounterWithMutationTracking() {
   const [state, setState] = useState(0);
 
-let text = "The number is: ";
+  let text = "The number is: ";
 
-if (state % 2 === 0) {
-text += "even";
-} else {
-text += "odd";
-}
+  if (state % 2 === 0) {
+    text += "even";
+  } else {
+    text += "odd";
+  }
 
-return (
-<div>
-<button onClick={() => setState(state + 1)}>Increment</button>
-<div>
-<span>Count: {state}</span> {text}
-</div>
-</div>
-);
+  return (
+    <div>
+      <button onClick={() => setState(state + 1)}>Increment</button>
+      <div>
+        <span>Count: {state}</span> {text}
+      </div>
+    </div>
+  );
 }
 `}
 
@@ -44,12 +40,9 @@ Dive into the [collection of examples](./examples.mdx) and documentation to see 
 
 ## Why React Unforget?
 
-1. Intelligent Component and Hook Memoization: Automatically identifies and memoizes React components and hooks, ensuring that only necessary re-renders occur. This leads to a more performant yet with more readable code.
-1. Granular JSX Element Unwrapping: Unwraps JSX elements and memoizes each element and expression separately for more effective optimization. Eliminiating the need to use `React.memo`.
-1. Memoization Beyond Early Returns: React Unforget uniquely enables the memoization of values even after early returns in component functions, eliminating the need to restructure your code to comply with the Rules of Hooks. This ensures optimization without altering the logical flow of your components.
-1. Segmented Transformation Approach: Transforms code segments based on dependency analysis, ensuring efficient execution and minimizing unnecessary computations.
-
-Ensures segment execution is conditional based on dependency changes, reducing redundant computations and improving performance.
+1. **Intelligent component and hook memoization**: Automatically identifies and memoizes React components and hooks, ensuring that only necessary re-renders occur. This leads to a more performant yet with more readable code.
+1. **Granular JSX element unwrapping**: Unwraps JSX elements and memoizes each element and expression separately for more effective optimization. Eliminiating the need to use `React.memo`.
+1. **Memoization beyond early returns**: React Unforget uniquely enables the memoization of values even after early returns in component functions, eliminating the need to restructure your code to comply with the Rules of Hooks. This ensures optimization without altering the logical flow of your components.
 
 ### How about React Compiler (Forget)?
 

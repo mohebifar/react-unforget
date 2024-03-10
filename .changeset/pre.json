@@ -1,14 +1,13 @@
 {
   "mode": "pre",
-  "tag": "dev",
+  "tag": "alpha",
   "initialVersions": {
-    "docs": "1.0.0",
-    "@react-unforget/compiler": "0.0.0",
+    "docs": "1.0.1-dev.3",
+    "@react-unforget/babel-plugin": "0.1.0-dev.11",
     "@react-unforget/eslint-config": "0.0.0",
     "@react-unforget/jest-config": "0.0.0",
-    "@react-unforget/runtime": "0.0.0",
-    "@react-unforget/typescript-config": "0.0.0",
-    "@react-unforget/babel-plugin": "0.1.0-dev.3"
+    "@react-unforget/runtime": "0.1.0-dev.6",
+    "@react-unforget/typescript-config": "0.0.0"
   },
   "changesets": [
     "grumpy-papayas-agree",

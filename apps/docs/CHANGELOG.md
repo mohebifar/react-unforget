@@ -1,5 +1,13 @@
 # docs
 
+## 1.0.1-alpha.5
+
+### Patch Changes
+
+- Updated dependencies [cc98ef9]
+  - @react-unforget/babel-plugin@0.1.0-alpha.13
+  - @react-unforget/runtime@0.1.0-alpha.7
+
 ## 1.0.1-dev.4
 
 ### Patch Changes

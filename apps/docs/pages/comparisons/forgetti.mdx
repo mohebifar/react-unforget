@@ -4,6 +4,8 @@ import { DynamicLiveCodeSandpack } from "@components/DynamicLiveCodeSandpack";
 
 [Forgetti](https://github.com/lxsmnsyc/forgetti) is also another alternative tool made to optimize React components at build time to make it run faster at runtime. But, when it comes to more complicated patterns, it generates failing code. For example, loops and mutations can lead to generating code that does not work.
 
+Disclaimer: This comparison is not meant to degrade any of the tools. It's just a comparison of the features and limitations of the tools.
+
 | **Feature** | React Unforget | Forgetti |
 | :----- | :----: | ----: |
 | Basic components with no dependencies | ✅  |  ✅ |
@@ -37,7 +39,7 @@ export default function CounterWithMutationTracking() {
 
 </DynamicLiveCodeSandpack>
 
-Yay 🎉! It worked. Now let's make it a bit more complex. Remember the example from the home page of Unforget? Let's make the `text` value mutable.
+It works for this simple case. Now let's make it a bit more complex. Remember the example from the home page of Unforget? Let's make the `text` value mutable.
 
 
 ```ts
@@ -127,7 +129,7 @@ export default function CounterWithMutationTracking() {
 `}
 </DynamicLiveCodeSandpack>
 
-Oh no! It failed again.
+It fails again.
 
 Ok, one more test. Let's see how it handles alias analysis.
 
@@ -162,4 +164,4 @@ export default function App() {
 
 </DynamicLiveCodeSandpack>
 
-And it failed again. Click on the button and you will see that the value is not updated.
+If you click on the button, you will see that the value is not updated.

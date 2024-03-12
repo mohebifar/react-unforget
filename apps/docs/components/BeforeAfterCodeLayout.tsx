@@ -4,11 +4,13 @@ import { PiNumberCircleOneFill, PiNumberCircleTwoFill } from "react-icons/pi";
 export interface BeforeAfterCodeLayoutProps {
   before: React.ReactNode;
   after: React.ReactNode;
+  afterTitle?: React.ReactNode;
 }
 
 export function BeforeAfterCodeLayout({
   before,
   after,
+  afterTitle = "React Unforget Result",
 }: BeforeAfterCodeLayoutProps) {
   return (
     <div className="xl:grid-cols-beforeAfterCodingBlocks grid-row-2 mt-6 grid w-full grid-cols-1 gap-4 xl:grid-rows-1">
@@ -37,7 +39,7 @@ export function BeforeAfterCodeLayout({
         <div className="overflow-hidden rounded-lg border border-white/[0.08] bg-[#1d1c20]">
           <div className="flex-1 py-4 pr-4 text-center font-bold">
             <div className="flex items-center justify-center gap-2">
-              <PiNumberCircleTwoFill size={18} /> React Unforget Result
+              <PiNumberCircleTwoFill size={18} /> {afterTitle}
             </div>
           </div>
 

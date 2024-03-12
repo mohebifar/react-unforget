@@ -14,10 +14,6 @@ export function preserveReferences(binding: Binding) {
         newBinding.reference(reference);
       });
     } else {
-      console.error({
-        oldName,
-        // oldReferences: oldReferences.map((r) => r.getSource()),
-      });
       throw new Error("Binding not found");
     }
   };

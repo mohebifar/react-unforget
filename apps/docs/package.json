@@ -16,6 +16,7 @@
     "@react-unforget/runtime": "0.1.0-alpha.7",
     "@vercel/analytics": "^1.2.2",
     "clsx": "^2.1.0",
+    "forgetti": "^0.8.4",
     "framer-motion": "^11.0.8",
     "html-entities": "^2.5.2",
     "mermaid": "^10.9.0",

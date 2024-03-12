@@ -1,3 +1,5 @@
+import { DynamicLiveCodeSandpack } from "@components/DynamicLiveCodeSandpack";
+
 # Forgetti
 
 [Forgetti](https://github.com/lxsmnsyc/forgetti) is also another alternative tool made to optimize React components at build time to make it run faster at runtime. But, when it comes to more complicated patterns, it generates failing code. For example, loops and mutations can lead to generating code that does not work.
@@ -9,3 +11,155 @@
 | Breaking down JSX |  ✅   |   ✖️ |
 | Basic mutation detection | ✅  |  ✖️ |
 | Control flows | ✅  |  Fails with while/for loops |
+
+### Example
+
+Ok, let's see how Forgetti performs with a simple example. We have a counter component that uses the `useState` hook. We will see how Forgetti handles this.
+
+<DynamicLiveCodeSandpack previewClassName="h-44" plugin="forgetti">
+{`import { useState } from "react";
+
+export default function CounterWithMutationTracking() {
+  const [state, setState] = useState(0);
+
+  const text = "Yay!";
+
+  return (
+    <div>
+      <button onClick={() => setState(state + 1)}>Increment</button>
+      <div>
+        <span>Count: {state}</span> {text}
+      </div>
+    </div>
+  );
+}
+`}
+
+</DynamicLiveCodeSandpack>
+
+Yay 🎉! It worked. Now let's make it a bit more complex. Remember the example from the home page of Unforget? Let's make the test mutable.
+
+
+```ts
+let text = "The count is is: ";
+
+if (state % 2 === 0) {
+  text += "even";
+} else {
+  text += "odd";
+}
+```
+
+<DynamicLiveCodeSandpack previewClassName="h-44" plugin="forgetti">
+{`import { useState } from "react";
+
+export default function CounterWithMutationTracking() {
+  const [state, setState] = useState(0);
+
+  let text = "The number is: ";
+
+  if (state % 2 === 0) {
+    text += "even";
+  } else {
+    text += "odd";
+  }
+
+  return (
+    <div>
+      <button onClick={() => setState(state + 1)}>Increment</button>
+      <div>
+        <span>Count: {state}</span> {text}
+      </div>
+    </div>
+  );
+}
+`}
+
+</DynamicLiveCodeSandpack>
+
+And that just failed. Forgetti is not able to handle this. It's not able to detect the mutation in the `text` variable. This is a limitation of Forgetti.
+
+Now let's see how it handles loops.
+
+<DynamicLiveCodeSandpack previewClassName="h-44" plugin="forgetti">
+
+{`import { useState } from "react";
+
+const useData = () => {
+  const [data, setData] = useState([]);
+
+  return {
+    data,
+    addData: (item) => {
+      setData([...data, item]);
+    },
+  };
+};
+
+export default function CounterWithMutationTracking() {
+  const { data, addData } = useData();
+
+  const filteredData = [];
+  for (let i = 0; i < data.length; i++) {
+    if (data[i] % 2 === 0) {
+      filteredData.push(data[i]);
+    }
+  }
+
+  return (
+    <div>
+      <button onClick={() => addData(data.length)}>Add</button>
+      <div>
+        Data:{" "}
+        {data.map((item) => (
+          <span key={item}>{item} </span>
+        ))}
+      </div>
+      <div>
+        Filtered data:{" "}
+        {filteredData.map((item) => (
+          <span key={item}>{item} </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+`}
+</DynamicLiveCodeSandpack>
+
+Oh no! It failed again.
+
+Ok, one more test. Let's see how it handles alias analysis.
+
+
+<DynamicLiveCodeSandpack previewClassName="h-44" plugin="forgetti">
+{`import { useState } from "react";
+
+function Comp({ a, b }) {
+  const x = [];
+
+  x.push(a);
+
+  const y = x;
+
+  y.push(b);
+
+  return <div>n: {x.join(",")}</div>;
+}
+
+export default function App() {
+  const [state, setState] = useState(1);
+
+  return (
+    <div>
+      {/* We use a constant value for a, but change b */}
+      <Comp a={1} b={state} />
+      <button onClick={() => setState((p) => p + 1)}>click</button>
+    </div>
+  );
+}
+`}
+
+</DynamicLiveCodeSandpack>
+
+And it failed again. Click on the button and you will see that the value is not updated.

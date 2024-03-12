@@ -573,10 +573,6 @@ export class ComponentSegment {
     return hasHookCall(this.path, this.component.path);
   }
 
-  isTransformable() {
-    return !this.hasHookCall() && this.isInReturnNetwork();
-  }
-
   /**
    * Apply the transformation to the segment
    */

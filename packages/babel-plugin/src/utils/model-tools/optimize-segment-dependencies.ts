@@ -36,7 +36,4 @@ export function optimizeSegmentDependencies(dependencies: SegmentDependency[]) {
   });
 
   return optimizedDependencies;
-  return optimizedDependencies.filter((dependency) =>
-    dependency.segment.isTransformable(),
-  );
 }

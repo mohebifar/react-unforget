@@ -1,0 +1,4 @@
+apps/docs/** linguist-detectable=false
+**/fixtures/** linguist-detectable=false
+**/tests/**/*.{ts,tsx} linguist-detectable=false
+*.css linguist-detectable=false

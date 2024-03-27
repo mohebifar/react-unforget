@@ -1,32 +1,13 @@
+use std::ops::Deref;
 use std::{cell::RefCell, rc::Rc};
 
-use swc_common::pass::Either;
-use swc_ecma_ast::{BlockStmt, Expr, Function};
-use swc_ecma_visit::{as_folder, noop_visit_mut_type, Fold, VisitMut, VisitMutWith};
+use swc_common::DUMMY_SP;
+use swc_ecma_ast::{BlockStmt, Expr, FnDecl, Function, VarDecl, VarDeclarator};
+use swc_ecma_visit::{noop_fold_type, Fold};
 
-use crate::{Config, State};
+use crate::{models::component::Component, Config, State};
 
-use super::ast_tools::generic::find_body;
-
-struct ComponentFinderState {
-    return_type_mathces_component: bool,
-    return_count: u32,
-}
-
-impl Default for ComponentFinderState {
-    fn default() -> Self {
-        Self {
-            return_type_mathces_component: true,
-            return_count: 0,
-        }
-    }
-}
-
-impl ComponentFinderState {
-    fn does_return_type_match_component(&self) -> bool {
-        self.return_type_mathces_component && self.return_count > 0
-    }
-}
+use super::babel_shims::GenericFn;
 
 struct ComponentFinder {
     config: Rc<Config>,
@@ -39,121 +20,121 @@ impl ComponentFinder {
     }
 }
 
-impl VisitMut for ComponentFinder {
-    noop_visit_mut_type!();
+impl Fold for ComponentFinder {
+    noop_fold_type!();
 
-    fn visit_mut_fn_decl(&mut self, fn_decl: &mut swc_ecma_ast::FnDecl) {
-        if matches_component_name(&fn_decl.ident.sym.to_string()) {
-            let mut return_visitor: VisitReturnStatements = VisitReturnStatements {
-                state: Default::default(),
-            };
+    fn fold_fn_decl(&mut self, fn_decl: FnDecl) -> FnDecl {
+        let name_matches_component = matches_component_name(fn_decl.ident.sym.as_ref());
+        let name_matches_hook = matches_hook_name(fn_decl.ident.sym.as_ref());
+        if name_matches_component || name_matches_hook {
+            let gfn = GenericFn::Function(Box::new(fn_decl.function.deref().clone()));
+            let function = Rc::new(RefCell::new(gfn));
 
-            fn_decl
-                .function
-                .body
-                .visit_mut_children_with(&mut return_visitor);
+            if !name_matches_component || function.borrow().return_type_matches_component() {
+                let component =
+                    Component::new(fn_decl.ident.sym.to_string(), name_matches_hook, function);
+                let function = component.function.borrow();
 
-            if return_visitor.state.does_return_type_match_component() {
-                println!("Found component: {:?}", fn_decl.ident.sym);
+                if let GenericFn::Function(ref f) = *function {
+                    let new_fn = Function {
+                        span: DUMMY_SP,
+                        params: f.params.clone(),
+                        decorators: f.decorators.clone(),
+                        body: f.body.clone(),
+                        is_async: f.is_async,
+                        is_generator: f.is_generator,
+                        type_params: f.type_params.clone(),
+                        return_type: f.return_type.clone(),
+                    };
+
+                    return FnDecl {
+                        declare: fn_decl.declare,
+                        ident: fn_decl.ident,
+                        function: Box::new(new_fn),
+                    };
+                }
             }
         }
 
-        if matches_hook_name(&fn_decl.ident.sym.to_string()) {
-            println!("Found hook: {:?}", fn_decl.ident.sym);
-        }
+        fn_decl
     }
 
-    fn visit_mut_var_decl(&mut self, n: &mut swc_ecma_ast::VarDecl) {
-        for decl in &mut n.decls {
+    fn fold_var_decl(&mut self, var_decl: VarDecl) -> VarDecl {
+        let mut new_decls: Vec<VarDeclarator> = vec![];
+        let mut found_component_in_decls = false;
+
+        'visit_decl: for decl in &var_decl.decls {
             if let swc_ecma_ast::Pat::Ident(ref id) = decl.name {
-                if matches_component_name(&id.sym.to_string()) {
-                    if let Some(ref mut init) = decl.init {
-                        let fn_body = find_body(init);
+                let name_matches_component = matches_component_name(id.sym.as_ref());
+                let name_matches_hook = matches_hook_name(id.sym.as_ref());
 
-                        let mut visitor: VisitReturnStatements = Default::default();
-
-                        if let Some(fn_body) = fn_body {
-                            let block_stmt = match fn_body {
-                                Either::Left(block_stmt) => block_stmt,
-                                Either::Right(_) => {
-                                    todo!("Arrow functions with inline returns not supported yet")
-                                }
-                            };
-
-                            block_stmt.visit_mut_children_with(&mut visitor);
-
-                            if visitor.state.does_return_type_match_component() {
-                                println!("Found component: {:?}", id.sym);
-                            }
-                        }
-                    }
+                if decl.init.is_none() || (!name_matches_component && !name_matches_hook) {
+                    new_decls.push(decl.clone());
+                    continue 'visit_decl;
                 }
 
-                if matches_hook_name(&id.sym.to_string()) {
-                    println!("Found hook: {:?}", id.sym);
+                let init = decl.init.as_ref().unwrap().deref().clone();
+
+                let function = match init {
+                    Expr::Arrow(fn_node) => Some(Rc::new(RefCell::new(GenericFn::ArrowFunction(
+                        Box::new(fn_node),
+                    )))),
+                    Expr::Fn(fn_node) => Some(Rc::new(RefCell::new(GenericFn::Function(
+                        Box::new(*fn_node.function),
+                    )))),
+                    _ => None,
+                };
+
+                if function.is_none() {
+                    new_decls.push(decl.clone());
+                    continue 'visit_decl;
                 }
+
+                let function = function.unwrap();
+
+                if !name_matches_component || function.borrow().return_type_matches_component() {
+                    found_component_in_decls = true;
+                    let component = Component::new(id.sym.to_string(), name_matches_hook, function);
+
+                    let expr = match *component.function.borrow() {
+                        GenericFn::Function(ref f) => Expr::Fn(f.deref().clone().into()),
+                        GenericFn::ArrowFunction(ref f) => Expr::Arrow(f.deref().clone()),
+                    };
+
+                    new_decls.push(VarDeclarator {
+                        span: decl.span,
+                        name: decl.name.clone(),
+                        init: Some(Box::new(expr)),
+                        definite: decl.definite,
+                    });
+
+                    continue 'visit_decl;
+                }
+            } else {
+                new_decls.push(decl.clone());
             }
         }
-    }
-}
 
-struct VisitReturnStatements {
-    state: ComponentFinderState,
-}
-
-impl Default for VisitReturnStatements {
-    fn default() -> Self {
-        Self {
-            state: Default::default(),
+        if found_component_in_decls {
+            VarDecl {
+                span: var_decl.span,
+                kind: var_decl.kind,
+                decls: new_decls,
+                declare: var_decl.declare,
+            }
+        } else {
+            var_decl
         }
     }
 }
 
-impl VisitMut for VisitReturnStatements {
-    noop_visit_mut_type!();
-    fn visit_mut_fn_decl(&mut self, _: &mut swc_ecma_ast::FnDecl) {}
-
-    fn visit_mut_function(&mut self, _: &mut Function) {}
-
-    fn visit_mut_arrow_expr(&mut self, _: &mut swc_ecma_ast::ArrowExpr) {}
-
-    fn visit_mut_return_stmt(&mut self, n: &mut swc_ecma_ast::ReturnStmt) {
-        let arg = n.arg.as_mut().unwrap();
-        self.state.return_count += 1;
-        if !is_component_return_type(arg) {
-            self.state.return_type_mathces_component = false;
-        }
-    }
-}
-
-/**
- * Check if the given expression qualifies as a component return type.
- */
-fn is_component_return_type(node: &mut Expr) -> bool {
-    if let Expr::JSXElement(_) = node {
-        return true;
-    }
-
-    if let Expr::JSXFragment(_) = node {
-        return true;
-    }
-
-    if let Expr::Lit(literal) = node {
-        if let swc_ecma_ast::Lit::Null(_) = literal {
-            return true;
-        }
-    }
-
-    false
-}
-
-pub fn component_finder(config: Rc<Config>, state: Rc<RefCell<State>>) -> impl VisitMut + Fold {
-    as_folder(ComponentFinder::new(config, state))
+pub fn component_finder(config: Rc<Config>, state: Rc<RefCell<State>>) -> impl Fold {
+    ComponentFinder::new(config, state)
 }
 
 fn matches_component_name(name: &str) -> bool {
     name.chars().next().unwrap().is_uppercase()
-        | (name.chars().next().unwrap() == '_' && name.chars().nth(1).unwrap().is_uppercase())
+        || (name.starts_with('_') && name.chars().nth(1).unwrap().is_uppercase())
 }
 
 fn matches_hook_name(name: &str) -> bool {

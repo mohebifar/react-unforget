@@ -1,8 +1,8 @@
-use std::{cell::RefCell, ptr::null, rc::Rc};
+use std::{cell::RefCell, rc::Rc};
 
 use serde::Deserialize;
-use swc_common::{chain, comments::Comments, FileName};
-use swc_ecma_visit::{Fold, VisitMut};
+use swc_common::{comments::Comments, FileName};
+use swc_ecma_visit::Fold;
 
 pub use crate::utils::{component_finder, State};
 
@@ -28,15 +28,12 @@ fn default_skip_components() -> Vec<String> {
     vec![]
 }
 
-pub fn react_unforget<C>(_file_name: FileName, config: Config, _comments: C) -> impl Fold + VisitMut
+pub fn react_unforget<C>(_file_name: FileName, config: Config, _comments: C) -> impl Fold
 where
     C: Comments,
 {
     let state: Rc<RefCell<State>> = Default::default();
     let config = Rc::new(config);
 
-    println!("Calling component_finder");
-    let finder = crate::utils::component_finder(config, state);
-
-    return finder
+    crate::utils::component_finder(config, state)
 }

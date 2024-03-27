@@ -1,8 +1,13 @@
+use crate::models::component::Component;
+
 pub use self::find_components::component_finder;
 
-mod find_components;
-mod babel_shims;
-mod ast_tools;
+pub mod ast_tools;
+pub mod babel_shims;
+pub mod find_components;
+pub mod micro_transformers;
 
 #[derive(Debug, Default)]
-pub struct State {}
+pub struct State {
+    components: Vec<Component>,
+}

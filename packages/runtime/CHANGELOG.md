@@ -1,5 +1,11 @@
 # @react-unforget/runtime
 
+## 0.1.0-alpha.8
+
+### Minor Changes
+
+- 49d7eef: Release alpha versions as latest
+
 ## 0.1.0-alpha.7
 
 ### Patch Changes

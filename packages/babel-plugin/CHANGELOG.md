@@ -1,5 +1,11 @@
 # @react-unforget/compiler
 
+## 0.1.0-alpha.14
+
+### Minor Changes
+
+- 49d7eef: Release alpha versions as latest
+
 ## 0.1.0-alpha.13
 
 ### Patch Changes

@@ -20,11 +20,15 @@ Then, add it to your Babel configuration. For example, in your `.babelrc`:
 
 ```json
 {
-  "plugins": ["@react-unforget/babel-plugin"]
+  "plugins": [["@react-unforget/babel-plugin", { /* options */ }]]
 }
 ```
 
-If you are using webpack, you can add it to your `babel-loader` configuration:
+## Usage with bundlers
+
+### With Webpack
+
+If you are using webpack, and `babel-loader` is not using a `.babelrc` file, you can add the plugin to your webpack configuration:
 
 ```js
 module.exports = {
@@ -36,13 +40,27 @@ module.exports = {
         use: {
           loader: "babel-loader",
           options: {
-            plugins: ["@react-unforget/babel-plugin"],
+            plugins: [["@react-unforget/babel-plugin", { /* options */ }]],
           },
         },
       },
     ],
   },
 };
+```
+
+### With Vite
+
+If you are using Vite and `@vitejs/plugin-react`, you can add the babel plugin to your `vite.config.js`:
+
+```js
+plugins: [
+  react({
+    babel: {
+      plugins: [["@react-unforget/babel-plugin", { /* options */ }]],
+    },
+  }),
+]
 ```
 
 ## Options

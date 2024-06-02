@@ -1,0 +1,16 @@
+{
+  "name": "@react-unforget/swc-plugin",
+  "version": "0.1.0",
+  "author": "Mohamad Mohebifar",
+  "license": "MIT",
+  "keywords": [
+    "swc-plugin",
+    "react-unforget"
+  ],
+  "main": "target/wasm32-wasi/release/react_unforget.wasm",
+  "scripts": {
+    "prepublishOnly": "cargo build-wasi --release"
+  },
+  "files": [],
+  "preferUnplugged": true
+}

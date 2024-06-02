@@ -1,3 +1,7 @@
+> **[2023-06-02] Note** ⚠ - React Unforget was an experimental project developed before the release of the React Compiler. As the React Compiler is now available, we recommend using it instead of React Unforget for your projects. For more information and to get started with the React Compiler, visit the official documentation: React Compiler
+
+---
+
 # React Unforget
 
 React Unforget is a compiler designed to enhance the performance of React applications through intelligent memoization and optimization. By analyzing and transforming React components and hooks, React Unforget aims to reduce unnecessary re-renders and optimize the execution flow, thus bridging the performance gap with more efficient frameworks like Svelte.
